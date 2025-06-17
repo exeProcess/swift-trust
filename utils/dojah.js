@@ -9,7 +9,7 @@ const headers = {
 };
 
 exports.verifyBVN = async (bvn) => {
-  return axios.post('https://api.dojah.io/api/v1/kyc/bvn', { bvn }, { headers });
+  return axios.get('https://api.dojah.io/api/v1/kyc/bvn/advance', { bvn }, { headers });
 };
 
 exports.resolveBankAccount = async (account_number, bank_code) => {
@@ -19,3 +19,11 @@ exports.resolveBankAccount = async (account_number, bank_code) => {
 exports.sendOtp = async (phone) => {
   return axios.post('https://api.dojah.io/api/v1/messaging/otp', { phone_number: phone }, { headers });
 };
+
+exports.verifySelfieWithPhotoId = async (selfie_image, photoid_image, first_name, last_name) => {
+  const payload = { selfie_image, photoid_image };
+  if (first_name) payload.first_name = first_name;
+  if (last_name) payload.last_name = last_name;
+
+  return axios.post('https://api.dojah.io/api/v1/kyc/selfie-photoid', payload, { headers });
+}

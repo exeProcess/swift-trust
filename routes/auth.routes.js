@@ -6,4 +6,7 @@ const auth = require('../middleware/auth.middleware');
 router.post('/register', authController.register);
 router.post('/set-pin', auth, authController.setPin);
 
+router.use(auth)
+router.post('/verify-selfie', authController.verifySelfieWithPhotoId);
+
 module.exports = router;

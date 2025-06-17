@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true
     },
     type: {
-      type: DataTypes.ENUM('credit', 'debit'),
+      type: DataTypes.ENUM('loan', 'repayment', 'withdrawal', 'deposit', 'fee'),
       allowNull: false
     },
     amount: {

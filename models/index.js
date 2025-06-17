@@ -35,10 +35,15 @@ db.Withdrawal = require('./withdrawal.model')(sequelize, DataTypes);
 db.BillPayment = require('./billPayment.model')(sequelize, DataTypes);
 db.Card = require('./card.model')(sequelize, DataTypes);
 db.Admin = require('./admin.model')(sequelize, DataTypes);
+db.Notification = require('./notification.model')(sequelize, DataTypes);
+
 
 // Associations
 db.User.hasMany(db.Card);
 db.Card.belongsTo(db.User);
+
+db.User.hasMany(db.Notification);
+db.Notification.belongsTo(db.User);
 
 db.User.hasMany(db.BillPayment);
 db.BillPayment.belongsTo(db.User);

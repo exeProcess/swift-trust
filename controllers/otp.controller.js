@@ -1,10 +1,16 @@
 const { User } = require('../models');
 const otpService = require('../utils/otp');
+const notifier = require('../utils/notifier');
 
-exports.sendOtp = async (req, res) => {
+exports.sendSMS = async (req, res) => {
   try {
     const { phone } = req.body;
-    const code = otpService.sendOTP(phone);
+    const code = await notifier.sendSMS(phone, 'Your Swift-Trust Authentication OTP code is: 123456'); 
+    if(code.status === 'error') {
+      return res.status(500).json({ error: 'Failed to send OTP', details: code.message });
+    }else {
+      return res.status(200).json({ message: 'OTP sent successfully', code: code.sms_status });
+    }
     res.status(200).json({ message: 'OTP sent' });
   } catch (err) {
     res.status(500).json({ error: err.message });
