@@ -1,13 +1,31 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('./index');
+module.exports = (sequelize, DataTypes) => {
+  const Card = sequelize.define('Card', {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    token: {
+      type: DataTypes.STRING
+    },
+    last4: {
+      type: DataTypes.STRING
+    },
+    expMonth: {
+      type: DataTypes.STRING
+    },
+    expYear: {
+      type: DataTypes.STRING
+    },
+    brand: {
+      type: DataTypes.STRING
+    },
+    UserId: {
+      type: DataTypes.UUID,
+      allowNull: false
+    }
+  });
 
-const Card = sequelize.define('Card', {
-  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-  token: DataTypes.STRING,
-  last4: DataTypes.STRING,
-  expMonth: DataTypes.STRING,
-  expYear: DataTypes.STRING,
-  brand: DataTypes.STRING
-});
+  return Card;
+};
 
-module.exports = Card;

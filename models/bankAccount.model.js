@@ -1,11 +1,27 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('./index');
+module.exports = (sequelize, DataTypes) => {
+  const BankAccount = sequelize.define('BankAccount', {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    accountNumber: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    bankName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    bankCode: {
+      type: DataTypes.STRING
+    },
+    UserId: {
+      type: DataTypes.UUID,
+      allowNull: false
+    }
+  });
 
-const BankAccount = sequelize.define('BankAccount', {
-  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-  accountNumber: { type: DataTypes.STRING, allowNull: false },
-  bankName: { type: DataTypes.STRING, allowNull: false },
-  bankCode: { type: DataTypes.STRING }
-});
+  return BankAccount;
+};
 
-module.exports = BankAccount;

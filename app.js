@@ -4,10 +4,10 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const otpRoutes = require('./routes/otp.routes');
 const kycRoutes = require('./routes/kyc.routes');
-const bankRoutes = require('./routes/bank.routes');
+const bankRoutes = require('./routes/bankAccount.routes');
 const addressRoutes = require('./routes/address.routes');
 const walletRoutes = require('./routes/wallet.routes');
-const transactionRoutes = require('./routes/transaction.routes');
+const transactionRoutes = require('./routes/transactions.routes');
 const loanRoutes = require('./routes/loan.routes');
 const bvnRoutes = require('./routes/bvn.routes');
 const webhookRoutes = require('./routes/webhook.routes');
@@ -18,7 +18,7 @@ const paymentRoutes = require('./routes/payment.routes');
 const cardRoutes = require('./routes/card.routes');
 const adminRoutes = require('./routes/admin.routes');
 const adminKycRoutes = require('./routes/admin.kyc.routes');
-const adminLoanRoutes = require('./routes/admin.loan.routes');
+const adminLoanRoutes = require('./routes/adminLoan.routes');
 
 
 
@@ -60,7 +60,10 @@ app.use('/api/admin/loans', adminLoanRoutes);
 
 
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 sequelize.sync().then(() => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+});
+app.get('/swift-trust', (req, res) => {
+  res.send('Swift Trust API is running');
 });
