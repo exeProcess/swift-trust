@@ -1,13 +1,28 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('./index');
+const bcrypt = require('bcryptjs');
 
-const Pin = sequelize.define('Pin', {
-  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-  hashedPin: { type: DataTypes.STRING, allowNull: false },
-});
+module.exports = (sequelize, DataTypes) => {
+  const Pin = sequelize.define('Pin', {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    hashedPin: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    UserId: {
+      type: DataTypes.UUID,
+      allowNull: false
+    }
+  });
 
-Pin.beforeCreate(async (pin) => {
-  pin.hashedPin = await bcrypt.hash(pin.hashedPin, 10);
-});
+  Pin.beforeCreate(async (pin) => {
+    if (pin.hashedPin) {
+      pin.hashedPin = await bcrypt.hash(pin.hashedPin, 10);
+    }
+  });
 
-module.exports = Pin;
+  return Pin;
+};
+

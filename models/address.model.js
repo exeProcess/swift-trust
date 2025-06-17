@@ -1,12 +1,28 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('./index');
+module.exports = (sequelize, DataTypes) => {
+  const Address = sequelize.define('Address', {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    addressLine: {
+      type: DataTypes.STRING,
+    },
+    state: {
+      type: DataTypes.STRING,
+    },
+    city: {
+      type: DataTypes.STRING,
+    },
+    proofDocUrl: {
+      type: DataTypes.STRING,
+    },
+    UserId: {
+      type: DataTypes.UUID,
+      allowNull: false
+    }
+  });
 
-const Address = sequelize.define('Address', {
-  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-  addressLine: DataTypes.STRING,
-  state: DataTypes.STRING,
-  city: DataTypes.STRING,
-  proofDocUrl: DataTypes.STRING
-});
+  return Address;
+};
 
-module.exports = Address;

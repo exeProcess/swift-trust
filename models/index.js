@@ -1,88 +1,77 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const DB_NAME = process.env.DB_NAME || 'swift_trust';
+const DB_USER = process.env.DB_USER || 'swift_user';
+const DB_PASS = process.env.DB_PASS || 'swift-trust-jubril';
 const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASS,
+  DB_NAME,
+  DB_USER,
+  DB_PASS,
   {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+    host: process.env.DB_HOST || localhost,
+    port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
     logging: false,
   }
 );
 
-const User = require('./user.model');
-const Pin = require('./pin.model');
-const KYC = require('./kyc.model');
-const BankAccount = require('./bankAccount.model');
-const Address = require('./address.model');
-const Wallet = require('./wallet.model');
-const Transaction = require('./transaction.model');
-const Loan = require('./loan.model');
-const PaymentIntent = require('./paymentIntent.model');
-const Withdrawal = require('./withdrawal.model');
-const BillPayment = require('./billPayment.model');
-const Card = require('./card.model');
-const Admin = require('./admin.model');
-User.hasMany(Card);
-Card.belongsTo(User);
+const db = {};
 
-User.hasMany(BillPayment);
-BillPayment.belongsTo(User);
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
+db.User = require('./user.model')(sequelize, DataTypes);
+db.Pin = require('./pin.model')(sequelize, DataTypes);
+db.KYC = require('./kyc.model')(sequelize, DataTypes);
+db.BankAccount = require('./bankAccount.model')(sequelize, DataTypes);
+db.Address = require('./address.model')(sequelize, DataTypes);
+db.Wallet = require('./wallet.model')(sequelize, DataTypes);
+db.Transaction = require('./transaction.model')(sequelize, DataTypes);
+db.Loan = require('./loan.model')(sequelize, DataTypes);
+db.PaymentIntent = require('./paymentIntent.model')(sequelize, DataTypes);
+db.Withdrawal = require('./withdrawal.model')(sequelize, DataTypes);
+db.BillPayment = require('./billPayment.model')(sequelize, DataTypes);
+db.Card = require('./card.model')(sequelize, DataTypes);
+db.Admin = require('./admin.model')(sequelize, DataTypes);
 
-User.hasMany(Withdrawal);
-Withdrawal.belongsTo(User);
+// Associations
+db.User.hasMany(db.Card);
+db.Card.belongsTo(db.User);
 
-BankAccount.hasMany(Withdrawal);
-Withdrawal.belongsTo(BankAccount);
+db.User.hasMany(db.BillPayment);
+db.BillPayment.belongsTo(db.User);
 
+db.User.hasMany(db.Withdrawal);
+db.Withdrawal.belongsTo(db.User);
 
+db.BankAccount.hasMany(db.Withdrawal);
+db.Withdrawal.belongsTo(db.BankAccount);
 
-User.hasMany(PaymentIntent);
-PaymentIntent.belongsTo(User);
+db.User.hasMany(db.PaymentIntent);
+db.PaymentIntent.belongsTo(db.User);
 
+db.User.hasMany(db.Loan);
+db.Loan.belongsTo(db.User);
 
-User.hasMany(Loan);
-Loan.belongsTo(User);
+db.User.hasOne(db.Wallet);
+db.Wallet.belongsTo(db.User);
 
+db.Wallet.hasMany(db.Transaction);
+db.Transaction.belongsTo(db.Wallet);
 
-User.hasOne(Wallet);
-Wallet.belongsTo(User);
+db.User.hasMany(db.BankAccount);
+db.BankAccount.belongsTo(db.User);
 
-Wallet.hasMany(Transaction);
-Transaction.belongsTo(Wallet);
+db.User.hasOne(db.Address);
+db.Address.belongsTo(db.User);
 
+db.User.hasOne(db.Pin);
+db.Pin.belongsTo(db.User);
 
-User.hasMany(BankAccount);
-BankAccount.belongsTo(User);
+db.User.hasOne(db.KYC);
+db.KYC.belongsTo(db.User);
 
-User.hasOne(Address);
-Address.belongsTo(User);
+module.exports = db;
 
-User.hasOne(Pin);
-Pin.belongsTo(User);
-
-User.hasOne(KYC);
-KYC.belongsTo(User);
-
-module.exports = { 
-    Sequelize, 
-    User, 
-    Pin, 
-    KYC, 
-    BankAccount, 
-    Address, 
-    Wallet, 
-    Transaction, 
-    Loan, 
-    PaymentIntent, 
-    Withdrawal, 
-    BillPayment,
-    Card,
-    Admin 
-};
-// This file initializes the Sequelize connection and models, and sets up associations between them.
