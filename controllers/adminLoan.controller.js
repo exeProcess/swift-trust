@@ -1,4 +1,4 @@
-const { Loan, User, sequelize } = require('../models');
+const { Loan, LoanRate, User, sequelize } = require('../models');
 const { Op } = require('sequelize');
 
 exports.getLoanMetrics = async (req, res) => {
@@ -30,6 +30,28 @@ exports.getLoanMetrics = async (req, res) => {
   }
 };
 
+exports.setRate = async (req, res) => {
+  try {
+    const { rate } = req.body;
+    const loanRate = await LoanRate.create({
+      rate
+    });
+    return res.status(200).json({message: "Loan Rate Specified"})
+  } catch (error) {
+    return res.status(500).json({message: "Internal server error", status: "error"})
+  }
+}
+// exports.setRate = async (req, res) => {
+//   try {
+//     const { rate } = req.body;
+//     const loanRate = await LoanRate.create({
+//       rate
+//     });
+//     return res.status(200).json({message: "Loan Rate Specified"})
+//   } catch (error) {
+//     return res.status(500).json({message: "Internal server error", status: "error"})
+//   }
+// }
 exports.listLoans = async (req, res) => {
   try {
     const { status, q } = req.query;

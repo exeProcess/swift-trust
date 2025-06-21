@@ -61,9 +61,8 @@ exports.repayLoan = async (req, res) => {
     await wallet.update({ balance: newWalletBalance }, { transaction: t });
     await loan.update({ balance: newLoanBalance <= 0 ? 0 : newLoanBalance }, { transaction: t });
 
-    if (newLoanBalance <= 0) {
-      await loan.update({ status: 'paid' }, { transaction: t });
-    }
+    if (newLoanBalance <= 0) await loan.update({ status: 'paid' }, { transaction: t });
+    
 
     await Transaction.create({
       WalletId: wallet.id,

@@ -59,9 +59,8 @@ exports.handleRemitaWithdrawalStatus = async (req, res) => {
 
 exports.handleRemitaWebhook = async (req, res) => {
   try {
-    if (!remita.verifyWebhookSignature(req)) {
-      return res.status(403).json({ error: 'Invalid webhook signature' });
-    }
+    if (!remita.verifyWebhookSignature(req)) return res.status(403).json({ error: 'Invalid webhook signature' });
+    
 
     const { reference, amount } = req.body;
     const intent = await PaymentIntent.findOne({ where: { reference } });

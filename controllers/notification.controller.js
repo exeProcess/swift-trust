@@ -17,14 +17,13 @@ exports.sendPushNotification = async (req, res) => {
         message,
         subject
     });
-    if (!notification) {
-        return res.status(500).json({ error: 'Failed to send notification' });
-    } else { 
-        return res.status(201).json({ message: 'Notification sent successfully', notification });
-    }
-    } catch (err) {
-        return res.status(500).json({ error: err.message });
-    }
+    if (!notification)  return res.status(500).json({ error: 'Failed to send notification' });
+
+    else return res.status(201).json({ message: 'Notification sent successfully', notification });
+
+  } catch (err) {
+      return res.status(500).json({ error: err.message });
+  }
 };
 
 

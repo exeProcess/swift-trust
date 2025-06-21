@@ -1,4 +1,4 @@
-const { User, Pin } = require('../models');
+const { User, Pin, Wallet } = require('../models');
 const jwt = require('../utils/jwt');
 const bcrypt = require('bcrypt');
 const dojah = require('../utils/dojah');
@@ -82,7 +82,10 @@ exports.register = async (req, res) => {
       title,
       watch_listed
     });
-
+    const id = user.id;
+    await Wallet.create({
+      userId: id
+    });
     const token = jwt.generateToken(user); // assumes `generateToken(user)` returns a JWT
     res.status(201).json({ token, user:{ first_name, last_name, bvn, phone_number1} });
   } catch (err) {
@@ -91,9 +94,8 @@ exports.register = async (req, res) => {
   }
 };
 
-const axios = require('axios');
 
-// Controller handling the request
+
 exports.verifySelfieWithPhotoId = async (req, res) => {
   const user = req.user;  
   try {
@@ -201,18 +203,4 @@ exports.getUser = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.updateUser = async (req, res) => {
-  try {
-    const { phone, bvn } = req.body;
-    const user = await User.findByPk(req.user.id);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    user.phone = phone || user.phone;
-    user.bvn = bvn || user.bvn;
-    await user.save();
-    res.status(200).json(user);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+

@@ -36,6 +36,8 @@ db.BillPayment = require('./billPayment.model')(sequelize, DataTypes);
 db.Card = require('./card.model')(sequelize, DataTypes);
 db.Admin = require('./admin.model')(sequelize, DataTypes);
 db.Notification = require('./notification.model')(sequelize, DataTypes);
+db.LoanRate = require('./loanRate.model')(sequelize, DataTypes);
+
 
 
 // Associations
