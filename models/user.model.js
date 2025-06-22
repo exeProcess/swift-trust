@@ -29,6 +29,14 @@ module.exports = (sequelize, DataTypes) => {
     date_of_birth: {
       type: DataTypes.DATEONLY
     },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    isEmailVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     phone_number1: {
       type: DataTypes.STRING,
       allowNull: false
@@ -38,12 +46,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     image: {
       type: DataTypes.TEXT // to hold base64 image
-    },
-    email: {
-      type: DataTypes.STRING,
-      validate: {
-        isEmail: true
-      }
     },
     enrollment_bank: {
       type: DataTypes.STRING
@@ -92,6 +94,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+    bankbankoneCustomerId: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    bankoneAccountNumber: {
+      type: DataTypes.STRING,
+      allowNull: true
+    }
   });
 
   return User;
