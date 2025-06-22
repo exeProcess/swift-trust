@@ -9,7 +9,6 @@ const headers = {
 };
 
 exports.verifyBVN = async (bvn) => {
-  console.log('🔑 DOJAH_API_KEY:', process.env.DOJAH_API_KEY);
 
   return axios.get('https://api.dojah.io/api/v1/kyc/bvn/advance', { bvn }, { headers });
 };
