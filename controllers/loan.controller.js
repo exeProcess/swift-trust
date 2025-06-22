@@ -1,39 +1,40 @@
-// const { Wallet, Transaction, Loan, sequelize, PaymentIntent } = require('../models');
-// const { Op } = require('sequelize');
-// const remita = require('../utils/remita');
-// const { v4: uuidv4 } = require('uuid');
 
-// exports.initiateCardRepayment = async (req, res) => {
-//   try {
-//     const { loanId } = req.params;
-//     const { amount } = req.body;
-//     const userId = req.user.id;
+const { User, Wallet, Transaction, Loan, sequelize, PaymentIntent } = require('../models');
+const { requestLoan, getLoanDetails, getCustomerLoans, repayLoan } = require('../utils/loanService');
+const { Op } = require('sequelize');
+const remita = require('../utils/remita');
+const { v4: uuidv4 } = require('uuid');
+exports.initiateCardRepayment = async (req, res) => {
+  try {
+    const { loanId } = req.params;
+    const { amount } = req.body;
+    const userId = req.user.id;
 
-//     const loan = await Loan.findOne({ where: { id: loanId, UserId: userId } });
-//     if (!loan) return res.status(404).json({ error: 'Loan not found' });
-//     if (loan.status === 'paid') return res.status(400).json({ error: 'Loan already repaid' });
+    const loan = await Loan.findOne({ where: { id: loanId, UserId: userId } });
+    if (!loan) return res.status(404).json({ error: 'Loan not found' });
+    if (loan.status === 'paid') return res.status(400).json({ error: 'Loan already repaid' });
 
-//     const reference = uuidv4();
-//     await PaymentIntent.create({
-//       reference,
-//       UserId: userId,
-//       type: 'loan-repayment',
-//       status: 'pending',
-//       metadata: { loanId, amount }
-//     });
+    const reference = uuidv4();
+    await PaymentIntent.create({
+      reference,
+      UserId: userId,
+      type: 'loan-repayment',
+      status: 'pending',
+      metadata: { loanId, amount }
+    });
 
-//     const remitaPayment = await remita.initiatePayment({
-//       amount,
-//       description: `Loan repayment via card for Loan ID ${loanId}`,
-//       reference,
-//       user: req.user
-//     });
+    const remitaPayment = await remita.initiatePayment({
+      amount,
+      description: `Loan repayment via card for Loan ID ${loanId}`,
+      reference,
+      user: req.user
+    });
 
-//     res.status(201).json({ message: 'Payment initiated', payment: remitaPayment });
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
+    res.status(201).json({ message: 'Payment initiated', payment: remitaPayment });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 
 // exports.repayLoan = async (req, res) => {
@@ -96,60 +97,60 @@
 //   }
 // };
 
-// exports.getLoans = async (req, res) => {
-//   try {
-//     const loans = await Loan.findAll({ where: { UserId: req.user.id } });
-//     res.json(loans);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
+exports.getLoans = async (req, res) => {
+  try {
+    const loans = await Loan.findAll({ where: { UserId: req.user.id } });
+    res.json(loans);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-// exports.approveLoan = async (req, res) => {
-//   try {
-//     const { loanId } = req.body;
-//     const loan = await Loan.findByPk(loanId);
-//     if (!loan) return res.status(404).json({ error: 'Loan not found' });
-//     loan.status = 'approved';
-//     await loan.save();
-//     res.json({ message: 'Loan approved' });
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
+exports.approveLoan = async (req, res) => {
+  try {
+    const { loanId } = req.body;
+    const loan = await Loan.findByPk(loanId);
+    if (!loan) return res.status(404).json({ error: 'Loan not found' });
+    loan.status = 'approved';
+    await loan.save();
+    res.json({ message: 'Loan approved' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-// exports.disburseLoan = async (req, res) => {
-//   try {
-//     const { loanId } = req.body;
-//     const loan = await Loan.findByPk(loanId);
-//     if (!loan || loan.status !== 'approved') return res.status(400).json({ error: 'Loan not approved' });
+exports.disburseLoan = async (req, res) => {
+  try {
+    const { loanId } = req.body;
+    const loan = await Loan.findByPk(loanId);
+    if (!loan || loan.status !== 'approved') return res.status(400).json({ error: 'Loan not approved' });
 
-//     const wallet = await Wallet.findOne({ where: { UserId: loan.UserId } });
-//     const amount = parseFloat(loan.amount);
-//     const balanceBefore = parseFloat(wallet.balance);
-//     const newBalance = balanceBefore + amount;
+    const wallet = await Wallet.findOne({ where: { UserId: loan.UserId } });
+    const amount = parseFloat(loan.amount);
+    const balanceBefore = parseFloat(wallet.balance);
+    const newBalance = balanceBefore + amount;
 
-//     await wallet.update({ balance: newBalance });
-//     await Transaction.create({
-//       WalletId: wallet.id,
-//       type: 'credit',
-//       amount,
-//       description: 'Loan disbursement',
-//       balanceBefore,
-//       balanceAfter: newBalance
-//     });
+    await wallet.update({ balance: newBalance });
+    await Transaction.create({
+      WalletId: wallet.id,
+      type: 'credit',
+      amount,
+      description: 'Loan disbursement',
+      balanceBefore,
+      balanceAfter: newBalance
+    });
 
-//     await remita.disburseToBank({ amount, userId: loan.UserId }); // mock call
+    await remita.disburseToBank({ amount, userId: loan.UserId }); // mock call
 
-//     loan.status = 'disbursed';
-//     loan.dueDate = new Date(Date.now() + loan.tenor * 24 * 60 * 60 * 1000);
-//     await loan.save();
+    loan.status = 'disbursed';
+    loan.dueDate = new Date(Date.now() + loan.tenor * 24 * 60 * 60 * 1000);
+    await loan.save();
 
-//     res.json({ message: 'Loan disbursed', loan });
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
+    res.json({ message: 'Loan disbursed', loan });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 // exports.repayLoan = async (req, res) => {
 //   try {
@@ -187,9 +188,6 @@
 //   }
 // };
 
-// controllers/loanController.js
-const { User } = require('../models');
-const { requestLoan, getLoanDetails, getCustomerLoans, repayLoan } = require('../utils/loanService');
 
 exports.applyForLoan = async (req, res) => {
   const { amount, tenor, purpose } = req.body;
