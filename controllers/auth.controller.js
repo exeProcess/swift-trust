@@ -19,12 +19,12 @@ const notifier = require('../utils/notifier');
 //     }
 
 //     // Verify BVN with Dojah
-//     const response = await dojah.verifyBVN(bvn);
-//     if (!response || !response.entity) {
+//     const result = await dojah.verifyBVN(bvn);
+//     if (!result || !result.entity) {
 //       return res.status(400).json({ error: 'Invalid BVN' });
 //     }
 
-//     const entity = response.entity;
+//     const entity = result.entity;
 //     const {
 //       first_name,
 //       last_name,
@@ -112,7 +112,7 @@ exports.register = async (req, res) => {
     // Verify BVN with Dojah
     const result = await dojah.kycBVN(bvn);
     // return res.status(200).json(result);
-    if (!response || !response.data || !response.data.entity) {
+    if (!result || !result.data || !result.data.entity) {
       return res.status(400).json({ error: 'Invalid BVN' });
     }
 
@@ -219,7 +219,7 @@ exports.register = async (req, res) => {
 
     //const token = jwt.generateToken(user);
     // return res.status(201).json({
-    //   response: response.data
+    //   result: result.data
     // });
     // res.status(201).json({
     //   token,
@@ -244,7 +244,7 @@ exports.register = async (req, res) => {
     //   }
     // });
   } catch (err) {
-    console.error('Registration error:', err.response?.data || err.message);
+    console.error('Registration error:', err.result?.data || err.message);
     res.status(500).json({ error: 'Something went wrong', details: err.message });
   }
 };
@@ -268,32 +268,32 @@ exports.verifySelfieWithPhotoId = async (req, res) => {
 
 
     // Call Dojah API
-    const response = await dojah.verifySelfieWithPhotoId(
+    const result = await dojah.verifySelfieWithPhotoId(
       selfie_image,
       photoid_image,
       first_name,
       last_name
     );
-    // Check for errors in response
-    if (!response || !response.data || !response.data.entity || !response.data.entity.selfie) {
-      return res.status(400).json({ error: 'Invalid response from Dojah API' });
+    // Check for errors in result
+    if (!result || !result.data || !result.data.entity || !result.data.entity.selfie) {
+      return res.status(400).json({ error: 'Invalid result from Dojah API' });
     }
-    if (response.data.status !== 'success') {
-      return res.status(400).json({ error: 'Selfie verification failed', details: response.data });
+    if (result.data.status !== 'success') {
+      return res.status(400).json({ error: 'Selfie verification failed', details: result.data });
     }
-    if (!response.data.entity.selfie) {
+    if (!result.data.entity.selfie) {
       return res.status(400).json({ error: 'Selfie verification result not found' });
     }
     
-    if (!response.data.entity.selfie.match || response.data.entity.selfie.confidence_value < 0.5) {
-      return res.status(400).json({ error: 'Selfie verification confidence too low', details: response.data });
+    if (!result.data.entity.selfie.match || result.data.entity.selfie.confidence_value < 0.5) {
+      return res.status(400).json({ error: 'Selfie verification confidence too low', details: result.data });
     }
-    if (response.data.entity.selfie.match && response.data.entity.selfie.confidence_value >= 0.5) {
+    if (result.data.entity.selfie.match && result.data.entity.selfie.confidence_value >= 0.5) {
       user.isVerified = true; 
       await user.save(); 
-      const sendOtpResponse = await notifier.sendSMS(user.phone_number1);
-      if (sendOtpResponse.status === 'error') {
-        return res.status(500).json({ error: 'Failed to send OTP', details: sendOtpResponse.message });
+      const sendOtpresult = await notifier.sendSMS(user.phone_number1);
+      if (sendOtpresult.status === 'error') {
+        return res.status(500).json({ error: 'Failed to send OTP', details: sendOtpresult.message });
       }else {
         return res.status(200).json({
           message: 'Selfie and photo ID verification successful',
@@ -303,10 +303,10 @@ exports.verifySelfieWithPhotoId = async (req, res) => {
     }
     
   } catch (err) {
-    console.error('Dojah API error:', err.response?.data || err.message);
+    console.error('Dojah API error:', err.result?.data || err.message);
     res.status(500).json({
       error: 'Failed to verify selfie and photo ID',
-      details: err.response?.data || err.message
+      details: err.result?.data || err.message
     });
   }
 };
