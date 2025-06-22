@@ -112,9 +112,9 @@ exports.register = async (req, res) => {
     // Verify BVN with Dojah
     const result = await dojah.kycBVN(bvn);
     // return res.status(200).json(result);
-    // if (!response || !response.data || !response.data.entity) {
-    //   return res.status(400).json({ error: 'Invalid BVN' });
-    // }
+    if (!response || !response.data || !response.data.entity) {
+      return res.status(400).json({ error: 'Invalid BVN' });
+    }
 
     const entity = result.data;
     // const {
@@ -143,7 +143,7 @@ exports.register = async (req, res) => {
     //   watch_listed
     // } = entity;
     return res.status(200).json({
-      result: result.data,
+      result: entity,
     });
 
     // if (!first_name || !last_name || !phone_number1) {
