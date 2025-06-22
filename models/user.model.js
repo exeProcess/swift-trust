@@ -12,21 +12,21 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true
     },
-    first_name: {
+    firstName: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    last_name: {
+    lastName: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    middle_name: {
+    middleName: {
       type: DataTypes.STRING
     },
     gender: {
       type: DataTypes.ENUM('Male', 'Female', 'Other')
     },
-    date_of_birth: {
+    dateOfBirth: {
       type: DataTypes.DATEONLY
     },
     email: {
@@ -37,56 +37,56 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
-    phone_number1: {
+    phoneNumber1: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    phone_number2: {
+    phoneNumber2: {
       type: DataTypes.STRING
     },
     image: {
       type: DataTypes.TEXT // to hold base64 image
     },
-    enrollment_bank: {
+    enrollmentBank: {
       type: DataTypes.STRING
     },
-    enrollment_branch: {
+    enrollmentBranch: {
       type: DataTypes.STRING
     },
-    level_of_account: {
+    levelOfAccount: {
       type: DataTypes.STRING
     },
-    lga_of_origin: {
+    lgaOfOrigin: {
       type: DataTypes.STRING
     },
-    lga_of_residence: {
+    lgaOfResidence: {
       type: DataTypes.STRING
     },
-    marital_status: {
+    maritalStatus: {
       type: DataTypes.ENUM('SINGLE', 'MARRIED', 'DIVORCED', 'WIDOWED', 'OTHER')
     },
-    name_on_card: {
+    nameOnCard: {
       type: DataTypes.STRING
     },
     nationality: {
       type: DataTypes.STRING
     },
-    registration_date: {
+    registrationDate: {
       type: DataTypes.DATEONLY
     },
-    residential_address: {
+    residentialAddress: {
       type: DataTypes.STRING
     },
-    state_of_origin: {
+    stateOfOrigin: {
       type: DataTypes.STRING
     },
-    state_of_residence: {
+    stateOfResidence: {
       type: DataTypes.STRING
     },
     title: {
       type: DataTypes.STRING
     },
-    watch_listed: {
+    watchListed: {
       type: DataTypes.ENUM('YES', 'NO'),
       defaultValue: 'NO'
     },
@@ -94,7 +94,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
-    bankbankoneCustomerId: {
+    bankoneCustomerId: {
       type: DataTypes.STRING,
       allowNull: true
     },
