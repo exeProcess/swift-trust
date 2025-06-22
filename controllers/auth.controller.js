@@ -143,7 +143,7 @@ exports.register = async (req, res) => {
       watch_listed
     } = entity;
     return res.status(200).json({
-      result.data.entity
+      entity
     });
 
     // if (!first_name || !last_name || !phone_number1) {
