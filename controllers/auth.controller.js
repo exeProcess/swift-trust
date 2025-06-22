@@ -110,72 +110,72 @@ exports.register = async (req, res) => {
     }
 
     // Verify BVN with Dojah
-    const response = await dojah.verifyBVN(bvn);
-    if (!response || !response.entity) {
-      return res.status(400).json({ error: 'Invalid BVN' });
-    }
+    // const response = await dojah.verifyBVN(bvn);
+    // if (!response || !response.entity) {
+    //   return res.status(400).json({ error: 'Invalid BVN' });
+    // }
 
-    const entity = response.data.entity;
-    const {
-      first_name,
-      last_name,
-      middle_name,
-      gender,
-      date_of_birth,
-      phone_number1,
-      phone_number2,
-      image,
-      email,
-      enrollment_bank,
-      enrollment_branch,
-      level_of_account,
-      lga_of_origin,
-      lga_of_residence,
-      marital_status,
-      name_on_card,
-      nationality,
-      registration_date,
-      residential_address,
-      state_of_origin,
-      state_of_residence,
-      title,
-      watch_listed
-    } = entity;
+    // const entity = response.data.entity;
+    // const {
+    //   first_name,
+    //   last_name,
+    //   middle_name,
+    //   gender,
+    //   date_of_birth,
+    //   phone_number1,
+    //   phone_number2,
+    //   image,
+    //   email,
+    //   enrollment_bank,
+    //   enrollment_branch,
+    //   level_of_account,
+    //   lga_of_origin,
+    //   lga_of_residence,
+    //   marital_status,
+    //   name_on_card,
+    //   nationality,
+    //   registration_date,
+    //   residential_address,
+    //   state_of_origin,
+    //   state_of_residence,
+    //   title,
+    //   watch_listed
+    // } = entity;
 
-    if (!first_name || !last_name || !phone_number1) {
-      return res.status(400).json({ error: 'BVN verification failed, missing essential user details' });
-    }
+    // if (!first_name || !last_name || !phone_number1) {
+    //   return res.status(400).json({ error: 'BVN verification failed, missing essential user details' });
+    // }
 
-    // Create user
-    const user = await User.create({
-      bvn,
-      first_name,
-      last_name,
-      middle_name,
-      gender,
-      date_of_birth,
-      phone_number1,
-      phone_number2,
-      image,
-      email,
-      enrollment_bank,
-      enrollment_branch,
-      level_of_account,
-      lga_of_origin,
-      lga_of_residence,
-      marital_status,
-      name_on_card,
-      nationality,
-      registration_date,
-      residential_address,
-      state_of_origin,
-      state_of_residence,
-      title,
-      watch_listed
-    });
+    // // Create user
+    // const user = await User.create({
+    //   bvn,
+    //   first_name,
+    //   last_name,
+    //   middle_name,
+    //   gender,
+    //   date_of_birth,
+    //   phone_number1,
+    //   phone_number2,
+    //   image,
+    //   email,
+    //   enrollment_bank,
+    //   enrollment_branch,
+    //   level_of_account,
+    //   lga_of_origin,
+    //   lga_of_residence,
+    //   marital_status,
+    //   name_on_card,
+    //   nationality,
+    //   registration_date,
+    //   residential_address,
+    //   state_of_origin,
+    //   state_of_residence,
+    //   title,
+    //   watch_listed
+    // });
 
-    const id = user.id;
-    await Wallet.create({ userId: id });
+    // const id = user.id;
+    // await Wallet.create({ userId: id });
 
     // // --- CREATE CUSTOMER & ACCOUNT ON BANKONE ---
     // const bankoneRes = await axios.post(
@@ -215,16 +215,19 @@ exports.register = async (req, res) => {
 
     const token = jwt.generateToken(user);
     res.status(201).json({
-      token,
-      user: {
-        first_name,
-        last_name,
-        bvn,
-        phone_number1,
-        // bankoneCustomerId: bankoneData.Payload?.CustomerID || null,
-        // bankoneAccountNumber: bankoneData.Payload?.AccountNumber || null
-      }
+      bvn
     });
+    // res.status(201).json({
+    //   token,
+    //   user: {
+    //     first_name,
+    //     last_name,
+    //     bvn,
+    //     phone_number1,
+    //     // bankoneCustomerId: bankoneData.Payload?.CustomerID || null,
+    //     // bankoneAccountNumber: bankoneData.Payload?.AccountNumber || null
+    //   }
+    // });
     // res.status(201).json({
     //   token,
     //   user: {
