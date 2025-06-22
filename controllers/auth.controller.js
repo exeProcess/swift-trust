@@ -117,31 +117,31 @@ exports.register = async (req, res) => {
     // }
 
     const entity = result.data;
-    const {
-      first_name,
-      last_name,
-      middle_name,
-      gender,
-      date_of_birth,
-      phone_number1,
-      phone_number2,
-      image,
-      email,
-      enrollment_bank,
-      enrollment_branch,
-      level_of_account,
-      lga_of_origin,
-      lga_of_residence,
-      marital_status,
-      name_on_card,
-      nationality,
-      registration_date,
-      residential_address,
-      state_of_origin,
-      state_of_residence,
-      title,
-      watch_listed
-    } = entity;
+    // const {
+    //   first_name,
+    //   last_name,
+    //   middle_name,
+    //   gender,
+    //   date_of_birth,
+    //   phone_number1,
+    //   phone_number2,
+    //   image,
+    //   email,
+    //   enrollment_bank,
+    //   enrollment_branch,
+    //   level_of_account,
+    //   lga_of_origin,
+    //   lga_of_residence,
+    //   marital_status,
+    //   name_on_card,
+    //   nationality,
+    //   registration_date,
+    //   residential_address,
+    //   state_of_origin,
+    //   state_of_residence,
+    //   title,
+    //   watch_listed
+    // } = entity;
     return res.status(200).json({
       result: result.data,
     });
