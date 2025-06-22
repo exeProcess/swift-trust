@@ -213,7 +213,7 @@ exports.register = async (req, res) => {
     //   });
     // }
 
-    const token = jwt.generateToken(user);
+    //const token = jwt.generateToken(user);
     return res.status(201).json({
       bvn
     });
