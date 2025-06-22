@@ -111,37 +111,40 @@ exports.register = async (req, res) => {
 
     // Verify BVN with Dojah
     const result = await dojah.kycBVN(bvn);
-    return res.status(200).json(result);
+    // return res.status(200).json(result);
     // if (!response || !response.data || !response.data.entity) {
     //   return res.status(400).json({ error: 'Invalid BVN' });
     // }
 
-    // const entity = response.data.entity;
-    // const {
-    //   first_name,
-    //   last_name,
-    //   middle_name,
-    //   gender,
-    //   date_of_birth,
-    //   phone_number1,
-    //   phone_number2,
-    //   image,
-    //   email,
-    //   enrollment_bank,
-    //   enrollment_branch,
-    //   level_of_account,
-    //   lga_of_origin,
-    //   lga_of_residence,
-    //   marital_status,
-    //   name_on_card,
-    //   nationality,
-    //   registration_date,
-    //   residential_address,
-    //   state_of_origin,
-    //   state_of_residence,
-    //   title,
-    //   watch_listed
-    // } = entity;
+    const entity = result.data.entity;
+    const {
+      first_name,
+      last_name,
+      middle_name,
+      gender,
+      date_of_birth,
+      phone_number1,
+      phone_number2,
+      image,
+      email,
+      enrollment_bank,
+      enrollment_branch,
+      level_of_account,
+      lga_of_origin,
+      lga_of_residence,
+      marital_status,
+      name_on_card,
+      nationality,
+      registration_date,
+      residential_address,
+      state_of_origin,
+      state_of_residence,
+      title,
+      watch_listed
+    } = entity;
+    return res.status(200).json({
+      result.data.entity
+    });
 
     // if (!first_name || !last_name || !phone_number1) {
     //   return res.status(400).json({ error: 'BVN verification failed, missing essential user details' });
