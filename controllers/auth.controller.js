@@ -115,8 +115,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ error: 'Invalid BVN' });
     }
 
-    const entity = response.entity;
-    console.log('Dojah BVN verification response:', entity);
+    const entity = response.data.entity;
     const {
       first_name,
       last_name,
