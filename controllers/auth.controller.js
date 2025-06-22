@@ -116,6 +116,7 @@ exports.register = async (req, res) => {
     }
 
     const entity = response.entity;
+    console.log('Dojah BVN verification response:', entity);
     const {
       first_name,
       last_name,
