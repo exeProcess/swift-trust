@@ -214,7 +214,7 @@ exports.register = async (req, res) => {
     // }
 
     const token = jwt.generateToken(user);
-    res.status(201).json({
+    return res.status(201).json({
       bvn
     });
     // res.status(201).json({
