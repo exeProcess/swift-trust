@@ -110,10 +110,11 @@ exports.register = async (req, res) => {
     }
 
     // Verify BVN with Dojah
-    const response = await dojah.verifyBVN(bvn);
-    if (!response || !response.data || !response.data.entity) {
-      return res.status(400).json({ error: 'Invalid BVN' });
-    }
+    const result = await dojah.kycBVN(bvn);
+    return res.status(200).json(result);
+    // if (!response || !response.data || !response.data.entity) {
+    //   return res.status(400).json({ error: 'Invalid BVN' });
+    // }
 
     // const entity = response.data.entity;
     // const {
@@ -214,9 +215,9 @@ exports.register = async (req, res) => {
     // }
 
     //const token = jwt.generateToken(user);
-    return res.status(201).json({
-      response: response.data
-    });
+    // return res.status(201).json({
+    //   response: response.data
+    // });
     // res.status(201).json({
     //   token,
     //   user: {
