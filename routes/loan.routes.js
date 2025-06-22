@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const loanController = require('../controllers/loanController');
+const loanController = require('../controllers/loan.controller');
 
 router.post('/apply', loanController.applyForLoan);
 router.get('/:reference', loanController.getLoanInfo);
