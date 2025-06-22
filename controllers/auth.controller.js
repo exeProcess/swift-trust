@@ -116,133 +116,117 @@ exports.register = async (req, res) => {
       return res.status(400).json({ error: 'Invalid BVN' });
     }
 
-    const entity = result.data;
-    // const {
-    //   first_name,
-    //   last_name,
-    //   middle_name,
-    //   gender,
-    //   date_of_birth,
-    //   phone_number1,
-    //   phone_number2,
-    //   image,
-    //   email,
-    //   enrollment_bank,
-    //   enrollment_branch,
-    //   level_of_account,
-    //   lga_of_origin,
-    //   lga_of_residence,
-    //   marital_status,
-    //   name_on_card,
-    //   nationality,
-    //   registration_date,
-    //   residential_address,
-    //   state_of_origin,
-    //   state_of_residence,
-    //   title,
-    //   watch_listed
-    // } = entity;
-    return res.status(200).json({
-      result: entity,
-    });
+    const entity = result.data.entity;
+    const {
+      first_name,
+      last_name,
+      middle_name,
+      gender,
+      date_of_birth,
+      phone_number1,
+      phone_number2,
+      image,
+      email,
+      enrollment_bank,
+      enrollment_branch,
+      level_of_account,
+      lga_of_origin,
+      lga_of_residence,
+      marital_status,
+      name_on_card,
+      nationality,
+      registration_date,
+      residential_address,
+      state_of_origin,
+      state_of_residence,
+      title,
+      watch_listed
+    } = entity;
+   
 
-    // if (!first_name || !last_name || !phone_number1) {
-    //   return res.status(400).json({ error: 'BVN verification failed, missing essential user details' });
-    // }
+    if (!first_name || !last_name || !phone_number1) {
+      return res.status(400).json({ error: 'BVN verification failed, missing essential user details' });
+    }
 
     // // Create user
-    // const user = await User.create({
-    //   bvn,
-    //   first_name,
-    //   last_name,
-    //   middle_name,
-    //   gender,
-    //   date_of_birth,
-    //   phone_number1,
-    //   phone_number2,
-    //   image,
-    //   email,
-    //   enrollment_bank,
-    //   enrollment_branch,
-    //   level_of_account,
-    //   lga_of_origin,
-    //   lga_of_residence,
-    //   marital_status,
-    //   name_on_card,
-    //   nationality,
-    //   registration_date,
-    //   residential_address,
-    //   state_of_origin,
-    //   state_of_residence,
-    //   title,
-    //   watch_listed
-    // });
+    const user = await User.create({
+      bvn,
+      first_name,
+      last_name,
+      middle_name,
+      gender,
+      date_of_birth,
+      phone_number1,
+      phone_number2,
+      image,
+      email,
+      enrollment_bank,
+      enrollment_branch,
+      level_of_account,
+      lga_of_origin,
+      lga_of_residence,
+      marital_status,
+      name_on_card,
+      nationality,
+      registration_date,
+      residential_address,
+      state_of_origin,
+      state_of_residence,
+      title,
+      watch_listed
+    });
 
-    // const id = user.id;
-    // await Wallet.create({ userId: id });
+    const id = user.id;
+    await Wallet.create({ userId: id });
 
-    // // --- CREATE CUSTOMER & ACCOUNT ON BANKONE ---
-    // const bankoneRes = await axios.post(
-    //   `${process.env.BANKONE_BASE_URL}/CreateCustomerAndAccount/2`,
-    //   {
-    //     TransactionTrackingRef: `trx-${Date.now()}-${id}`,
-    //     AccountOpeningTrackingRef: `acct-${Date.now()}-${id}`,
-    //     ProductCode: process.env.BANKONE_PRODUCT_CODE,
-    //     LastName: last_name,
-    //     OtherNames: first_name + (middle_name ? ' ' + middle_name : ''),
-    //     BVN: bvn,
-    //     PhoneNo: phone_number1,
-    //     PlaceOfBirth: state_of_origin || 'Unknown',
-    //     Gender: gender?.startsWith('m') ? 'M' : 'F',
-    //     DateOfBirth: date_of_birth,
-    //     Address: residential_address || 'Unknown',
-    //     NationalIdentityNo: '',
-    //     Email: email,
-    //     HasSufficientInfoOnAccountInfo: true
-    //   },
-    //   {
-    //     params: { authtoken: process.env.BANKONE_AUTHTOKEN, version: '2' }
-    //   }
-    // );
+    // --- CREATE CUSTOMER & ACCOUNT ON BANKONE ---
+    const bankoneRes = await axios.post(
+      `${process.env.BANKONE_BASE_URL}/CreateCustomerAndAccount/2`,
+      {
+        TransactionTrackingRef: `trx-${Date.now()}-${id}`,
+        AccountOpeningTrackingRef: `acct-${Date.now()}-${id}`,
+        ProductCode: process.env.BANKONE_PRODUCT_CODE,
+        LastName: last_name,
+        OtherNames: first_name + (middle_name ? ' ' + middle_name : ''),
+        BVN: bvn,
+        PhoneNo: phone_number1,
+        PlaceOfBirth: state_of_origin || 'Unknown',
+        Gender: gender?.startsWith('m') ? 'M' : 'F',
+        DateOfBirth: date_of_birth,
+        Address: residential_address || 'Unknown',
+        NationalIdentityNo: '',
+        Email: email,
+        HasSufficientInfoOnAccountInfo: true
+      },
+      {
+        params: { authtoken: process.env.BANKONE_AUTHTOKEN, version: '2' }
+      }
+    );
 
-    // const bankoneData = bankoneRes.data;
-    // if (!bankoneData.IsSuccessful) {
-    //   console.warn('BankOne account creation failed:', bankoneData.Description);
-    //   // optionally: store this result for retrying later
-    // } else {
-    //   // Optional: Save BankOne CustomerID & AccountNumber in DB
-    //   await user.update({
-    //     bankoneCustomerId: bankoneData.Payload.CustomerID,
-    //     bankoneAccountNumber: bankoneData.Payload.AccountNumber
-    //   });
-    // }
+    const bankoneData = bankoneRes.data;
+    if (!bankoneData.IsSuccessful) {
+      console.warn('BankOne account creation failed:', bankoneData.Description);
+      // optionally: store this result for retrying later
+    } else {
+      // Optional: Save BankOne CustomerID & AccountNumber in DB
+      await user.update({
+        bankoneCustomerId: bankoneData.Payload.CustomerID,
+        bankoneAccountNumber: bankoneData.Payload.AccountNumber
+      });
+    }
 
-    //const token = jwt.generateToken(user);
-    // return res.status(201).json({
-    //   result: result.data
-    // });
-    // res.status(201).json({
-    //   token,
-    //   user: {
-    //     first_name,
-    //     last_name,
-    //     bvn,
-    //     phone_number1,
-    //     // bankoneCustomerId: bankoneData.Payload?.CustomerID || null,
-    //     // bankoneAccountNumber: bankoneData.Payload?.AccountNumber || null
-    //   }
-    // });
-    // res.status(201).json({
-    //   token,
-    //   user: {
-    //     first_name,
-    //     last_name,
-    //     bvn,
-    //     phone_number1,
-    //     bankoneCustomerId: bankoneData.Payload?.CustomerID || null,
-    //     bankoneAccountNumber: bankoneData.Payload?.AccountNumber || null
-    //   }
-    // });
+    const token = jwt.generateToken(user);
+    return res.status(201).json({
+      token,
+      user: {
+        first_name,
+        last_name,
+        bvn,
+        phone_number1,
+        bankoneCustomerId: bankoneData.Payload?.CustomerID || null,
+        bankoneAccountNumber: bankoneData.Payload?.AccountNumber || null
+      }
+    });
   } catch (err) {
     console.error('Registration error:', err.result?.data || err.message);
     res.status(500).json({ error: 'Something went wrong', details: err.message });
