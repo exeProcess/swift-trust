@@ -1,36 +1,84 @@
 // services/loanService.js
 const axios = require('axios');
+const { Loan, LoanRate, sequelize } = require('../models');
+
 
 const BANKONE_BASE_URL = process.env.BANKONE_BASE_URL;
 const BANKONE_AUTHTOKEN = process.env.BANKONE_AUTHTOKEN;
 const BANKONE_PRODUCT_CODE = process.env.BANKONE_PRODUCT_CODE;
 const BANKONE_LOAN_PRODUCT_CODE = process.env.BANKONE_LOAN_PRODUCT_CODE;
 
-exports.requestLoan = async (accountNumber, customerId, amount, tenor = 6, purpose = 'Personal Loan') => {
-  const response = await axios.get(
-    `http://staging.mybankone.com/BankOneWebAPI/api/Loan/LoanApplication/LoanCreationApplication2/version?authToken=${BANKONE_AUTHTOKEN}&mfbCode=${BANKONE_PRODUCT_CODE}`,
-    {
-      AccountNumber: accountNumber,
-      Amount: amount,
-      LoanProductCode: BANKONE_LOAN_PRODUCT_CODE,
-      RepaymentFrequency: 'Monthly',
-      RepaymentTenor: tenor,
-      Purpose: purpose,
-      TransactionTrackingRef: `loan-${Date.now()}`,
-      ProductCode: BANKONE_PRODUCT_CODE,
-      Narration: 'Loan request from platform',
-      CustomerID: customerId
-    },
-    {
-      params: {
-        authtoken: BANKONE_AUTHTOKEN,
-        version: '2'
-      }
-    }
-  );
+exports.requestLoan = async (data) => {
+  // const { accountNumber, customerId, amount, tenor, purpose } = data;
+  // if (!accountNumber || !customerId || !amount || !tenor || !purpose) {
+  //   return {
+  //     status: 400,
+  //     error: 'Account number, customer ID, amount, tenor and purpose are required'
+  //   };
+  // }
 
-  return response.data;
+  const loanInterest = calculateInterestRate()
+  return {
+    status: 200,
+    message: 'Loan request successfully submitted',
+    data: {
+      tenor,
+      amount,
+      interest: loanInterest
+    }
+  };
+
+
+  // const response = await axios.get(
+  //   `http://staging.mybankone.com/BankOneWebAPI/api/Loan/LoanApplication/LoanCreationApplication2/version?authToken=${BANKONE_AUTHTOKEN}&mfbCode=${BANKONE_PRODUCT_CODE}`,
+  //   {
+  //     AccountNumber: accountNumber,
+  //     Amount: amount,
+  //     LoanProductCode: BANKONE_LOAN_PRODUCT_CODE,
+  //     RepaymentFrequency: 'Monthly',
+  //     RepaymentTenor: tenor,
+  //     Purpose: purpose,
+  //     TransactionTrackingRef: `loan-${Date.now()}`,
+  //     ProductCode: BANKONE_PRODUCT_CODE,
+  //     Narration: 'Loan request from platform',
+  //     CustomerID: customerId
+  //   }
+  // );
 };
+
+exports.createLoan = async (data) => {
+  const { type, amount, tenor, userId,  } = data;
+  if (!type || !amount || !tenor || !userId) {
+    return {
+      status: 400,
+      error: 'Type, amount, tenor and user ID are required'
+    };
+  }
+  const interest = await calculateInterestRate(data);
+  const loan = await Loan.create({
+    type,
+    amount,
+    tenor,
+    interest,
+    UserId: userId
+  });
+  return {
+    status: 201,
+    message: 'Loan successfully created',
+    data: loan
+  };
+}
+
+
+const calculateInterestRate = async (data) => {
+  const { amount, timeInDays, interest } = data;
+  const definedRate = await LoanRate.findAll();
+
+  const principal = amount;
+
+  const days = timeInDays / 365;
+  return  (principal * definedRate * days) / 100;
+}
 
 exports.getLoanDetails = async (loanReference) => {
   const response = await axios.get(

@@ -2,7 +2,7 @@ const { Wallet, Transaction, PaymentIntent, User, Address } = require('../models
 const remita = require('../utils/remita');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
-const { fundBankoneAccount, withdrawFromBankoneAccount } = require('../utils/bankOne');
+const { fundBankoneAccount, withdrawFromBankoneAccount, intraBankTransfer, transferLocalBank } = require('../utils/bankOne');
 const { checkCreditScore } = require('../utils/dojah');
 const BANKONE_BASE_URL = process.env.BANKONE_BASE_URL;
 const BANKONE_AUTHTOKEN = process.env.BANKONE_AUTHTOKEN;
@@ -244,13 +244,10 @@ exports.getBankoneAccountDetails = async (req, res) => {
     }
 
     const response = await axios.get(
-      `${BANKONE_BASE_URL}/GetAccountDetailsByAccountNumber/2`,
+      `https://staging.mybankone.com/thirdpartyapiservice/apiservice/Account/AccountEnquiry`,
       {
-        params: {
-          accountNumber: user.bankoneAccountNumber,
-          authtoken: BANKONE_AUTHTOKEN,
-          version: '2'
-        }
+        AccountNumber: user.bankoneAccountNumber,
+        AuthenticationCode: BANKONE_AUTHTOKEN
       }
     );
 
@@ -276,12 +273,53 @@ exports.fundBankone = async (req, res) => {
   try {
     const result = await fundBankoneAccount(user.bankoneAccountNumber, amount, description);
     if (!result.IsSuccessful) throw new Error(result.Description);
-    res.status(200).json({ message: 'Account funded', reference: result.Payload?.TransactionRef });
+    res.status(200).json({ message: 'Account funded', reference: result.Payload?.RetrievalReference });
   } catch (err) {
     res.status(500).json({ error: 'Funding failed', details: err.message });
   }
 };
 
+exports.intraBankTransfer = async (req, res) => {
+  const user = await User.findByPk(req.user.id);
+  if (!user?.bankoneAccountNumber) return res.status(400).json({ error: 'No BankOne account found' });
+  try {
+    const result = await intraBankTransfer(req.body);
+    if (!result.IsSuccessful) throw new Error(result.Description);
+    res.status(200).json({ message: 'Transfer successful', reference: result.Payload?.TransactionRef });
+  } catch (err) {
+    res.status(500).json({ error: 'Transfer failed', details: err.message });
+  }
+}
+
+exports.reverseTransfer = async (req, res) => {
+  const { RetrievalReference, TransactionDate, TransactionType, Amount } = req.body;
+  if (!RetrievalReference || !TransactionDate || !TransactionType || !Amount) {
+    return res.status(400).json({ error: 'Retrieval reference, transaction date, transaction type and amount are required' });
+  }
+
+  try {
+    const result = await reverseTransfer(req.body);
+    if (result.status !== 200) throw new Error(result.error || 'Reversal failed');
+    res.status(200).json({ message: 'Transfer reversed successfully', reference: result.Payload?.TransactionRef });
+  } catch (err) {
+    res.status(500).json({ error: 'Reversal failed', details: err.message });
+  }
+}
+
+
+exports.transferLocalBank = async (req, res) => {
+  const { amount, description, recipientAccountNumber, recipientBankCode } = req.body;
+  const user = await User.findByPk(req.user.id);
+  if (!user?.bankoneAccountNumber) return res.status(400).json({ error: 'No BankOne account found' });
+
+  try {
+    const result = await transferLocalBank(req.body);
+    if (!result.IsSuccessful) throw new Error(result.Description);
+    res.status(200).json({ message: 'Transfer successful', reference: result.Payload?.TransactionRef });
+  } catch (err) {
+    res.status(500).json({ error: 'Transfer failed', details: err.message });
+  }
+}
 exports.withdrawBankone = async (req, res) => {
   const { amount, description } = req.body;
   const user = await User.findByPk(req.user.id);

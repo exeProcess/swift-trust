@@ -6,26 +6,34 @@ const BANKONE_AUTHTOKEN = process.env.BANKONE_AUTHTOKEN;
 const BANKONE_PRODUCT_CODE = process.env.BANKONE_PRODUCT_CODE;
 
 exports.fundBankoneAccount = async (accountNumber, amount, description = 'Wallet Funding') => {
-  const url = `${BANKONE_BASE_URL}/PostTransactionCreditCustomerAccount/2`;
+  const url = `https://staging.mybankone.com/thirdpartyapiservice/apiservice/ CoreTransactions/Credit`;
   const response = await axios.post(url,
     {
       AccountNumber: accountNumber,
-      TransactionAmount: amount,
-      TransactionDesc: description,
-      TransactionTrackingRef: `fund-${Date.now()}`,
-      ProductCode: BANKONE_PRODUCT_CODE,
-      Narration: 'Wallet funding via platform',
-      DrCrIndicator: 'C' // CREDIT
-    },
-    {
-      params: {
-        authtoken: BANKONE_AUTHTOKEN,
-        version: '2'
-      }
+      Amount: amount,
+      RetrievalReference: `fund-${Date.now()}`,
+      NibssCode: '888888',
+      Token: BANKONE_AUTHTOKEN,
+      Narration: description,
     }
   );
   return response.data;
 };
+exports.debitBankoneAccount = async (accountNumber, amount, description = 'Wallet Debit') => {
+  const url = `https://staging.mybankone.com/thirdpartyapiservice/apiservice/CoreTransactions/Debit`;
+  const response = await axios.post(url,
+    {
+      AccountNumber: accountNumber,
+      Amount: amount,
+      RetrievalReference: `fund-${Date.now()}`,
+      NibssCode: '888888',
+      Token: BANKONE_AUTHTOKEN,
+      Narration: description,
+    }
+  );
+  return response.data;
+};
+
 
 exports.withdrawFromBankoneAccount = async (accountNumber, amount, description = 'Wallet Withdrawal') => {
   const url = `${BANKONE_BASE_URL}/PostTransactionDebitCustomerAccount/2`;
@@ -49,10 +57,10 @@ exports.withdrawFromBankoneAccount = async (accountNumber, amount, description =
   return response.data;
 };
 
-exports.validateAccountNumber = async (req, res) => {
-  const { AccountNumber, Bankcode } = req.body;
+exports.validateAccountNumber = async (data) => {
+  const { AccountNumber, Bankcode } = data;
   if (!AccountNumber || !Bankcode) {
-    return res.status(400).json({ error: 'Account number and bank code are required' });
+    return {status: 400, error: 'Account number and bank code are required' };
   }
   try {
      const response = await axios.post(`https://staging.mybankone.com/thirdpartyapiservice/apiservice/Transfer/ NameEnquiry`,
@@ -63,21 +71,22 @@ exports.validateAccountNumber = async (req, res) => {
     }
   );
   if (response.data.IsSuccessful) {
-    return res.status(200).json({ message: 'Account number is valid', data: response.data });
+    return {status: 200, message: 'Account number is valid', data: response.data };
   } else {
-    return res.status(400).json({ error: response.data.Description });
+    return {status: 400, error: response.data.Description };
   }
   } catch (error) {
     console.error('❌ Validate account number error:', error.response?.data || error.message);
-    return res.status(500).json({
+    return {
+      status: 500,
       error: 'Failed to validate account number',
       details: error.response?.data || error.message
-    });
+    };
   }
 }
 
-exports.transferLocalBank = async (req, res) => {
-  const { AccountNumber, Bankcode, Amount, Description,ToAccountNumber } = req.body;
+exports.transferLocalBank = async (data) => {
+  const { AccountNumber, Bankcode, Amount, Description,ToAccountNumber } = data;
   if (!AccountNumber || !Bankcode || !Amount) {
     return res.status(400).json({ error: 'Account number, bank code, and amount are required' });
   }
@@ -116,8 +125,8 @@ exports.getMFBankList = async () => {
   return response.data;
 };
 
-exports.intraBankTransfer = async (req, res) => {
-  const { Amount, PayerAccountNumber, Payer, RecieversBankCode, ReceiverAccountNumber, ReceiverName, ReceiverPhoneNumber, ReceiverAccountType, ReceiverKYC, ReceiverBVN, Narration, NIPSessionID} = req.body;
+exports.intraBankTransfer = async (data) => {
+  const { Amount, PayerAccountNumber, Payer, RecieversBankCode, ReceiverAccountNumber, ReceiverName, ReceiverPhoneNumber, ReceiverAccountType, ReceiverKYC, ReceiverBVN, Narration, NIPSessionID} = data;
   if (!PayerAccountNumber || !ReceiverAccountNumber || !Amount || !NIPSessionID || !RecieversBankCode, !ReceiverName) {
     return res.status(400).json({ error: 'Payer account number, receiver account number, amount, NIP session ID, receiver bank code and receiver name are required' });
 
@@ -166,16 +175,16 @@ exports.intraBankTransfer = async (req, res) => {
   }
 }
 
-exports.reverseTransfer = async (req, res) => {
-  const { RetrievalReference,TransactionDate, TransactionType, Amount } = req.body;
+exports.reverseTransfer = async (data) => {
+  const { RetrievalReference,TransactionDate, TransactionType, Amount } = data;
   if (!RetrievalReference || !TransactionDate || !TransactionType || !Amount) {
-    return res.status(400).json({ error: 'Retrieval reference, transaction date, transaction type and amount are required' });
+    return {status: 400, error: 'Retrieval reference, transaction date, transaction type and amount are required' };
   }
 
   const Token = BANKONE_AUTHTOKEN;
 
   try {
-    const response = await axios.post(`https://staging.mybankone.com/thirdpartyapiservice/apiservice/ CoreTransactions/Reversal`, {
+    const response = await axios.post(`https://staging.mybankone.com/thirdpartyapiservice/apiservice/CoreTransactions/Reversal`, {
       RetrievalReference,
       TransactionDate,
       TransactionType,
@@ -186,6 +195,30 @@ exports.reverseTransfer = async (req, res) => {
     return response.data;
   } catch (error) {
     console.error('❌ Reverse transfer error:', error.response?.data || error.message);
-    throw new Error(error.response?.data?.Description || error.message);
+    return {status: 500, message: error.response?.data?.Description || error.message};
+  }
+}
+
+
+exports.updateAccountTier = async () => {
+  const user = User.findOne({ where: { id: req.user.id} });
+  if (!user.bankoneAccountNumber || !user.bankoneCustomerId) {
+    return {status: 404, error: 'User does not have a BankOne account or customer ID'};
+  }
+
+  const url = `https://staging.mybankone.com/thirdpartyapiservice/apiservice/Account/UpdateAccountTier`;
+  try {
+    const response = await axios.post(url, {
+      AccountNumber: user.bankoneAccountNumber,
+      AccountTier: 2, 
+      SkipAddressVerification: true,
+      CustomerID: user.bankoneCustomerId,
+      FullName: `${user.firstName} ${user.lastName}`
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('❌ Update account tier error:', error.response?.data || error.message);
+    return {status: 500, error: 'Failed to update account tier', details: error.response?.data || error.message};
   }
 }

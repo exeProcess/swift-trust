@@ -1,5 +1,5 @@
 
-const { User, Wallet, Transaction, Loan, sequelize, PaymentIntent } = require('../models');
+const { User, Wallet, Transaction, Loan, sequelize, PaymentIntent, LoanTenor } = require('../models');
 const { requestLoan, getLoanDetails, getCustomerLoans, repayLoan } = require('../utils/loanService');
 const { Op } = require('sequelize');
 const remita = require('../utils/remita');
@@ -76,3 +76,31 @@ exports.repayLoan = async (req, res) => {
   }
 };
 
+exports.getLoanTenors = async (req, res) => {
+  try {
+    const tenors = await LoanTenor.findAll({
+      attributes: ['id', 'tenor', 'amount']
+    });
+    res.status(200).json({ tenors });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve loan tenors', details: err.message });
+  }
+};
+
+getLoanRate = async (req, res) => {
+  try {
+
+    const loanRate = await Loan.findOne({
+      where: { type },
+      attributes: ['id', 'type', 'rate']
+    });
+
+    if (!loanRate) {
+      return res.status(404).json({ error: 'Loan rate not found for the specified type' });
+    }
+
+    res.status(200).json({ loanRate });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve loan rate', details: err.message });
+  }
+}

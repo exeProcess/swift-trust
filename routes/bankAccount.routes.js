@@ -4,5 +4,8 @@ const bankController = require('../controllers/bankAccount.controller');
 const auth = require('../middleware/auth.middleware');
 
 router.post('/add', auth, bankController.addBankAccount);
-
+router.get('/mfbanks', auth, bankController.getMFBankAccounts);
+router.get('/commercialbanks', auth, bankController.getCommercialBankAccounts);
+router.post('/validate-account', auth, bankController.validateAccountNumber);
+router.post('/update-account-tier', auth, bankController.updateAccountTier);
 module.exports = router;

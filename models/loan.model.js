@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     type: {
       type: DataTypes.ENUM('personal', 'business'),
-      allowNull: false
+      defaultValue: 'personal',
     },
     amount: {
       type: DataTypes.DECIMAL(20, 2),
@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 'pending'
     },
     tenor: {
-      type: DataTypes.INTEGER
+      type: DataTypes.STRING,
     },
     dueDate: {
       type: DataTypes.DATE
@@ -30,10 +30,6 @@ module.exports = (sequelize, DataTypes) => {
     UserId: {
       type: DataTypes.UUID,
       allowNull: false
-    },
-    WalletId: {
-      type: DataTypes.UUID,
-      allowNull: true // only needed if tied to wallet disbursement
     }
   });
 
