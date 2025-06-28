@@ -37,7 +37,7 @@ db.Card = require('./card.model')(sequelize, DataTypes);
 db.Admin = require('./admin.model')(sequelize, DataTypes);
 db.Notification = require('./notification.model')(sequelize, DataTypes);
 db.LoanRate = require('./loanRate.model')(sequelize, DataTypes);
-db.LoanRate = require('./loanTenor.model')(sequelize, DataTypes);
+db.LoanTenor = require('./loanTenor.model')(sequelize, DataTypes);
 
 
 

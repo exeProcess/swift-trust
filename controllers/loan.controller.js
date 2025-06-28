@@ -1,6 +1,7 @@
 
 const { User, Wallet, Transaction, Loan, sequelize, PaymentIntent, LoanTenor } = require('../models');
 const { requestLoan, getLoanDetails, getCustomerLoans, repayLoan } = require('../utils/loanService');
+const { updateBankoneCustomer } = require('./wallet.controller');
 const { Op } = require('sequelize');
 const remita = require('../utils/remita');
 const { v4: uuidv4 } = require('uuid');
@@ -24,6 +25,31 @@ exports.applyForLoan = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: 'Loan request failed', details: err.message });
+  }
+};
+exports.createLoan = async (req, res) => {
+  const user = await User.findByPk(req.user.id);
+  if (!user?.bankoneAccountNumber || !user?.bankoneCustomerId) {
+    return res.status(400).json({ error: 'BankOne account or customer ID missing' });
+  }
+  const { type, amount, tenor } = req.body;
+  if (!type || !amount || !tenor) {
+    return res.status(400).json({ error: 'Type, amount and tenor are required' });
+  }
+  try {
+    const loan = await Loan.create({
+      type,
+      amount,
+      tenor,
+      UserId: user.id
+    });
+    const updateAccount = await updateBankoneCustomer(req, res);
+    if (!updateAccount) {
+      return res.status(500).json({ error: 'Failed to update BankOne customer' });
+    }
+    res.status(201).json({ loan, message: 'Loan created successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create loan', details: err.message });
   }
 };
 
