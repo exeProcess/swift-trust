@@ -1,13 +1,13 @@
-const { Wallet, Transaction, PaymentIntent, User } = require('../models');
+const { Wallet, Transaction, PaymentIntent, User, Address } = require('../models');
 const remita = require('../utils/remita');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const { fundBankoneAccount, withdrawFromBankoneAccount } = require('../utils/bankOne');
-
-
+const { checkCreditScore } = require('../utils/dojah');
 const BANKONE_BASE_URL = process.env.BANKONE_BASE_URL;
 const BANKONE_AUTHTOKEN = process.env.BANKONE_AUTHTOKEN;
 const BANKONE_PRODUCT_CODE = process.env.BANKONE_PRODUCT_CODE;
+const AccountOfficerCode = process.env.ACCOUNT_OFFICER_CODE || 'default-officer';
 
 exports.getWallet = async (req, res) => {
   try {
@@ -31,10 +31,150 @@ exports.initiateFunding = async (req, res) => {
   }
 };
 
+exports.createCustomer = async (req, res) => {
+  const user = req.user;
+  try {
+    // Check if user already has a BankOne account
+    if (user.bankoneCustomerId) {
+      return res.status(400).json({ error: 'BankOne account already exists' });
+    }
+    const creditScore = await checkCreditScore(user.bvn); 
+    const HasCurrentRunningLoanAnddNottDefaultingg = creditScore?.data.entity.totalNoOfActiveLoans.value === 1 && creditScore?.data.entity.totalOverdue.value === 0
+    const HasDefaultedInAnyLoan = creditScore?.data.entity.totalNoOfOverdueAccounts.value === 1
+
+    // Front end should provide this Interface to collect these details
+    const{ refferalName, refferalPhoneNo, email, NextOfKinName, NextOfKinPhoneNo } = req.body; 
+    const HasNoOutStandingLoanAndNotDefaulting = creditScore?.data.entity.totalOutstanding.value === 0 && creditScore?.data.entity.totalOverdue.value === 0;
+    const payload = {
+      LastName: user.last_name,
+      FirstName: user.first_name,
+      OtherNames: user.middle_name || '',
+      City: user.enrollmentBranch || 'Unknown',
+      Address: user.residential_address || 'Unknown',
+      Gender: user.gender,
+      DateOfBirth: user.date_of_birth,
+      PhoneNo: user.phone_number1,
+      PlaceOfBirth: user.state_of_origin || 'Unknown',
+      NationalIdentityNo: user.national_identity_number || '',
+      NextOfKinName: user.next_of_kin_name || NextOfKinName || '',
+      NextOfKinPhoneNo: user.next_of_kin_phone_number || NextOfKinPhoneNo || '',
+      RefferalName: refferalName,
+      RefferalPhoneNo: refferalPhoneNo,
+      CustomerType: 'Individual',
+      BranchID: user.enrollmentBank || 'Unknown',
+      BankVerificationNumber: user.bvn,
+      Email: email,
+      HasCurrentRunningLoanAnddNottDefaultingg,
+      HasDefaultedInAnyLoan,
+      HasNoOutStandingLoanAndNotDefaulting,
+      HasCompleteDocumentation: false,
+      HasSufficientInfoOnAccountInfo: true,
+      customerPassportInBytes: "",
+      AccountOfficerCode
+    };
+    // Create customer in BankOne
+    const response = await axios.post(
+      `http://staging.mybankone.com/BankOneWebAPI/api/Customer/CreateCustomer/2?authToken=${BANKONE_AUTHTOKEN}`,
+      payload,
+    );
+    const data = response.data;
+    if (!data.IsSuccessful) {
+      return res.status(400).json({ error: 'BankOne account creation failed', details: data.Description });
+    } 
+    // Save customer ID and account number to user
+    await user.update({
+      bankoneCustomerId: data.Payload.CustomerID,
+      bankoneAccountNumber: data.Payload.AccountNumber,
+      bankoneFullName: data.Payload.FullName,
+    });
+    res.status(201).json({
+      message: 'BankOne account created successfully',
+      bankone: {
+        customerId: data.Payload.CustomerID,
+        accountNumber: data.Payload.AccountNumber,
+        fullName: data.Payload.FullName
+      }
+    });
+  } catch (err) {
+    console.error('Create customer error:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Failed to create BankOne account', details: err.message });
+  }
+};
+
+exports.updateBankoneCustomer = async (req, res) => {
+  const customerId = req.user.bankoneCustomerId;
+  const data = req.body
+  if (!customerId) {
+    return res.status(404).json({ error: 'BankOne customer not found' });
+  }
+  const payload = {
+    customerID: customerId,
+    BankVerificationNumber: req.user.bvn,
+    EmailNotification: true,
+    PhoneNotification: true,
+    ...data 
+  };
+  try {
+    const response = await axios.post(
+      `http://staging.mybankone.com/BankOneWebAPI/api/Customer/UpdateCustomer/2?authToken=${BANKONE_AUTHTOKEN}`,
+      payload
+    );
+    const result = response.data;
+    if (!result.IsSuccessful) {
+      return res.status(400).json({ error: 'Failed to update BankOne customer', details: result.Description });
+    }
+    // Update user details in local DB
+    return res.status(200).json({
+      message: 'BankOne customer updated successfully',
+      customer: {
+        customerId: result.Payload.CustomerID,
+        accountNumber: result.Payload.AccountNumber,
+        fullName: result.Payload.FullName
+      }
+    });
+  } catch (err) {
+    console.error('Update customer error:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Failed to update BankOne customer', details: err.message });
+  }
+};
+
+
+exports.getBankoneCustomer = async (req, res) => {
+  const customerId = req.user.bankoneCustomerId;
+  if (!customerId) {
+    return res.status(404).json({ error: 'BankOne customer not found' });
+  }
+  try {
+    const accountNumber = req.user.bankoneAccountNumber || '';
+    const response = await axios.get(
+      `http://staging.mybankone.com/BankOneWebAPI/api/Customer/GetByAccountNo/2?accountNumber=${accountNumber}&authToken=${BANKONE_AUTHTOKEN}`,
+    );
+    const data = response.data;
+    if (!data.IsSuccessful) {
+      return res.status(400).json({ error: 'Failed to fetch BankOne customer', details: data.Description });
+    }
+    res.status(200).json({
+      customer: {
+        customerId: data.Payload.CustomerID,
+        accountNumber: data.Payload.AccountNumber,
+        fullName: data.Payload.FullName,
+        email: data.Payload.Email,
+        phoneNumber: data.Payload.PhoneNo,
+        address: data.Payload.Address,
+        dateOfBirth: data.Payload.DateOfBirth,
+      }
+    });
+  } catch (err) {
+    console.error('Get customer error:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Failed to retrieve BankOne customer', details: err.message });
+  }
+};
+
 // ✅ Create Wallet and BankOne Account
 exports.createWallet = async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id);
+    
     if (!user) return res.status(404).json({ error: 'User not found' });
 
     // Create wallet in local DB
@@ -42,7 +182,8 @@ exports.createWallet = async (req, res) => {
 
     // Create account in BankOne
     const bankoneRes = await axios.post(
-      `${BANKONE_BASE_URL}/CreateCustomerAndAccount/2`,
+      `${BANKONE_BASE_URL}/https://staging.mybankone.com/BankOneWebAPI/api/Account/CreateAccount/2?authtoken=${BANKONE_AUTHTOKEN}`,
+    
       {
         TransactionTrackingRef: `trx-${Date.now()}-${user.id}`,
         AccountOpeningTrackingRef: `acct-${Date.now()}-${user.id}`,
@@ -55,12 +196,17 @@ exports.createWallet = async (req, res) => {
         Gender: user.gender?.startsWith('m') ? 'M' : 'F',
         DateOfBirth: user.date_of_birth,
         Address: user.residential_address || 'Unknown',
-        NationalIdentityNo: '',
+        NextOfKinPhoneNo: user.next_of_kin_phone_number || '',
+        NextOfKinName: user.next_of_kin_name || '',
+        AccountInformationSource: 'Swift Trust MFB',
+        NotificationPreference: 1, 
+        TransactionPermission: 1,
+        AccountTier: 'Tier 1',
+        AccountOfficerCode: AccountOfficerCode || 'default-officer',
+        FirstName: user.first_name,
+        NationalIdentityNo: user.national_identity_number || '',
         Email: user.email,
         HasSufficientInfoOnAccountInfo: true
-      },
-      {
-        params: { authtoken: BANKONE_AUTHTOKEN, version: '2' }
       }
     );
 
@@ -71,7 +217,6 @@ exports.createWallet = async (req, res) => {
 
     // Save account info to user
     await user.update({
-      bankoneCustomerId: data.Payload.CustomerID,
       bankoneAccountNumber: data.Payload.AccountNumber
     });
 

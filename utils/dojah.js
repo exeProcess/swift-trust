@@ -1,4 +1,10 @@
 // const axios = require('axios');
+// services/dojahService.js
+const axios = require('axios');
+
+const DOJAH_BASE_URL = process.env.DOJAH_BASE_URL;
+const APP_ID = process.env.DOJAH_APP_ID;
+const SECRET_KEY = process.env.DOJAH_API_KEY;
 
 // const DOJAH_API_KEY = process.env.DOJAH_API_KEY;
 // const DOJAH_APP_ID = process.env.DOJAH_APP_ID;
@@ -21,20 +27,15 @@
 //   return axios.post('https://api.dojah.io/api/v1/messaging/otp', { phone_number: phone }, { headers });
 // };
 
-// exports.verifySelfieWithPhotoId = async (selfie_image, photoid_image, first_name, last_name) => {
-//   const payload = { selfie_image, photoid_image };
-//   if (first_name) payload.first_name = first_name;
-//   if (last_name) payload.last_name = last_name;
+exports.verifySelfieWithPhotoId = async (selfie_image, photoid_image, first_name, last_name) => {
+  const payload = { selfie_image, photoid_image };
+  if (first_name) payload.first_name = first_name;
+  if (last_name) payload.last_name = last_name;
 
-//   return axios.post('https://api.dojah.io/api/v1/kyc/selfie-photoid', payload, { headers });
-// }
+  return axios.post('https://api.dojah.io/api/v1/kyc/selfie-photoid', payload, { headers });
+}
 
-// services/dojahService.js
-const axios = require('axios');
 
-const DOJAH_BASE_URL = process.env.DOJAH_BASE_URL;
-const APP_ID = process.env.DOJAH_APP_ID;
-const SECRET_KEY = process.env.DOJAH_API_KEY;
 
 
 // POST /api/kyc/verify-bvn
@@ -130,6 +131,30 @@ exports.kycBVN = async (bvn) => {
     }
   };
 
+  exports.checkCreditScore = async (bvn) => {
+  
+    if (!bvn) {
+      return { error: 'BVN is required as a query parameter' };
+    }
+    try {
+      const response = await axios.get('https://api.dojah.io/api/v1/credit_bureau', {
+        params: { bvn }, // Pass the BVN as a query param
+        headers: {
+          'AppId': APP_ID,
+          'Authorization': SECRET_KEY
+        }
+      });
+      return {
+        message: 'Credit score check successful',
+        data: response.data
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to check credit score',
+        details: error.response?.data || error.message
+      };
+    }
+  };
 // Example: Verify NIN
 exports.verifyNIN = async (nin) => {
 

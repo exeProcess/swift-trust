@@ -7,8 +7,8 @@ const BANKONE_PRODUCT_CODE = process.env.BANKONE_PRODUCT_CODE;
 const BANKONE_LOAN_PRODUCT_CODE = process.env.BANKONE_LOAN_PRODUCT_CODE;
 
 exports.requestLoan = async (accountNumber, customerId, amount, tenor = 6, purpose = 'Personal Loan') => {
-  const response = await axios.post(
-    `${BANKONE_BASE_URL}/CreateLoanRequest/2`,
+  const response = await axios.get(
+    `http://staging.mybankone.com/BankOneWebAPI/api/Loan/LoanApplication/LoanCreationApplication2/version?authToken=${BANKONE_AUTHTOKEN}&mfbCode=${BANKONE_PRODUCT_CODE}`,
     {
       AccountNumber: accountNumber,
       Amount: amount,
@@ -34,12 +34,10 @@ exports.requestLoan = async (accountNumber, customerId, amount, tenor = 6, purpo
 
 exports.getLoanDetails = async (loanReference) => {
   const response = await axios.get(
-    `${BANKONE_BASE_URL}/GetLoanDetails/2`,
+    `http://staging.mybankone.com/BankOneWebAPI/api/Loan/GetLoansByCustomerId/2?authToken=${BANKONE_AUTHTOKEN}`,
     {
       params: {
-        loanReference,
-        authtoken: BANKONE_AUTHTOKEN,
-        version: '2'
+        loanReference
       }
     }
   );
@@ -86,12 +84,10 @@ exports.repayLoan = async (loanAccountNumber, amount) => {
 };
 exports.getLoanRepaymentSchedule = async (loanReference) => {
   const response = await axios.get(
-    `${BANKONE_BASE_URL}/GetLoanRepaymentSchedule/2`,
+    `http://staging.mybankone.com/BankOneWebAPI/api/Loan/GetLoanRepaymentSchedule/2?loanAccountNumber=${loanReference}`,
     {
       params: {
         loanReference,
-        authtoken: BANKONE_AUTHTOKEN,
-        version: '2'
       }
     }
   );
