@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Loan = sequelize.define('LoanTenor', {
+  const LoanTenor = sequelize.define('LoanTenor', {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
