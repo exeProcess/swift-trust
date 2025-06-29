@@ -222,3 +222,63 @@ exports.updateAccountTier = async () => {
     return {status: 500, error: 'Failed to update account tier', details: error.response?.data || error.message};
   }
 }
+
+exports.createStandingOrder = async (data) => {
+  const { Name, Description, CreditAccount, DebitAccount, AccountNumber, AmountToTransfer, Frequency, StartDate, EndDate } = data;
+  if (!Name || !Description || !CreditAccount || !DebitAccount || !AccountNumber || !AmountToTransfer || !Frequency || !StartDate || !EndDate) {
+    return {status: 400, error: 'All fields are required'};
+  }
+  if (new Date(StartDate) < new Date()) {
+    return {status: 400, error: 'Start date cannot be in the past'};
+  }
+  if (new Date(EndDate) <= new Date(StartDate)) {
+    return {status: 400, error: 'End date must be after start date'};
+  }
+
+  const url = `https://staging.mybankone.com/thirdpartyapiservice/apiservice/StandingOrder/Create`;
+  try {
+    const response = await axios.post(url, {
+      Name,
+      Description,
+      CreditAccount,
+      DebitAccount,
+      AccountNumber,
+      AmountToTransfer,
+      Frequency,
+      AllowForceDebit: true,
+      IsPercentage: false,
+      StandingOrderFrequency: Frequency,
+      StartDate,
+      EndDate,
+      StandingOrderChargeFeeID: 1,
+      StandingOrderChargeFeeAmount: 200
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('❌ Create standing order error:', error.response?.data || error.message);
+    return {status: 500, error: 'Failed to create standing order', details: error.response?.data || error.message};
+  }
+}
+
+exports.getBankOneStandingOrders = async (param) => {
+
+   const { debitaccountNumber, pageIndex, pageSize } = param;
+   if (!AccountNumber || !StartDate || !EndDate) {
+      return {status: 400, error: 'Account number, start date and end date are required'};
+    }
+  const url = `http://api.mybankone.com/BankOneWebAPI/api/StandingOrder/GetStandingOrdersByDebitAccountNumber?${debitaccountNumber}=&pageIndex${pageIndex}=&pageSize=${pageSize}`;
+  try {
+    const response = await axios.get(url, {
+      params: {
+        debitaccountNumber,
+        pageIndex,
+        pageSize
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('❌ Get BankOne standing orders error:', error.response?.data || error.message);
+    return {status: 500, error: 'Failed to retrieve standing orders', details: error.response?.data || error.message};
+  }

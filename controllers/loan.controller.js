@@ -2,6 +2,7 @@
 const { User, Wallet, Transaction, Loan, sequelize, PaymentIntent, LoanTenor } = require('../models');
 const { requestLoan, getLoanDetails, getCustomerLoans, repayLoan } = require('../utils/loanService');
 const { updateBankoneCustomer } = require('./wallet.controller');
+const bankOne = require('../utils/bankOne');
 const { Op } = require('sequelize');
 const remita = require('../utils/remita');
 const { v4: uuidv4 } = require('uuid');
@@ -128,5 +129,31 @@ getLoanRate = async (req, res) => {
     res.status(200).json({ loanRate });
   } catch (err) {
     res.status(500).json({ error: 'Failed to retrieve loan rate', details: err.message });
+  }
+}
+
+exports.createStandingOrder = async (req, res) => {
+  const user = await User.findByPk(req.user.id);
+  
+  if (!user?.bankoneAccountNumber || !user?.bankoneCustomerId) {
+    return res.status(400).json({ error: 'BankOne account or customer ID missing' });
+  }
+
+  if (!amount || !frequency || !startDate || !endDate || !beneficiaryAccountNumber) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  try {
+    // Assuming remita.createStandingOrder is a function that handles the standing order creation
+    const result = await bankOne.createStandingOrder(req.body);
+
+    if (!result.IsSuccessful) return res.status(400).json({error: result.Description});
+
+    res.status(201).json({
+      message: 'Standing order created successfully',
+      reference: result.Payload?.Reference
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create standing order', details: err.message });
   }
 }
