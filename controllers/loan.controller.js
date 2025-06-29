@@ -157,3 +157,28 @@ exports.createStandingOrder = async (req, res) => {
     res.status(500).json({ error: 'Failed to create standing order', details: err.message });
   }
 }
+
+exports.getStandingOrders = async (req, res) => {
+  const user = await User.findByPk(req.user.id);
+  
+  if (!user?.bankoneAccountNumber || !user?.bankoneCustomerId) {
+    return res.status(400).json({ error: 'BankOne account or customer ID missing' });
+  }
+
+  try {
+    const bankAccountNumber = user.bankoneAccountNumber;
+    const param = {
+      bankAccountNumber,
+      pageIndex: req.query.pageIndex || 1,
+      pageSize: req.query.pageSize || 10
+    }
+    const result = await bankOne.getStandingOrders(param);
+    
+
+    if (!result.IsSuccessful) return res.status(400).json({error: result.Description});
+
+    res.status(200).json({ standingOrders: result.Payload });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve standing orders', details: err.message });
+  }
+};

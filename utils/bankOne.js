@@ -282,3 +282,4 @@ exports.getBankOneStandingOrders = async (param) => {
     console.error('❌ Get BankOne standing orders error:', error.response?.data || error.message);
     return {status: 500, error: 'Failed to retrieve standing orders', details: error.response?.data || error.message};
   }
+}
