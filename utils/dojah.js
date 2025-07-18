@@ -118,6 +118,7 @@ exports.kycBVN = async (bvn) => {
           'Authorization': SECRET_KEY
         }
       });
+      console.log(response)
       return response.data;
     } catch (error) {
   
