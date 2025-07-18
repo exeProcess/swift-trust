@@ -13,6 +13,12 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST || localhost,
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
+    pool: {
+      max: 10,        // max connections in pool
+      min: 0,
+      acquire: 30000, // max time (ms) to try getting connection
+      idle: 10000     // remove idle connections after this (ms)
+    },
     logging: false,
   }
 );

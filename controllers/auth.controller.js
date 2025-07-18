@@ -1,8 +1,9 @@
-const { User, Pin, Wallet } = require('../models');
+const { User, Pin, Wallet, BankAccount, Transaction } = require('../models');
 const jwt = require('../utils/jwt');
 const bcrypt = require('bcrypt');
 const dojah = require('../utils/dojah');
 const notifier = require('../utils/notifier');
+const paymentIntentModel = require('../models/paymentIntent.model');
 
 // exports.register = async (req, res) => {
 //   try {
@@ -330,12 +331,25 @@ exports.login = async (req, res) => {
   }
 }
 exports.getUser = async (req, res) => {
-  const user = req.user;
+  const authUser = req.user; // from token middleware
+
   try {
-    const user = await User.findByPk(user.id);
+    const user = await User.findByPk(authUser.id, {
+      include: [
+        { model: Profile },       // assuming Profile has userId foreign key
+        { model: Wallet },
+        { model: Transaction },
+        {model: BankAccount},
+        {model: PaymentIntentModel},
+        {model: Transaction},
+        {model: Wallet}   // adjust these based on your models
+      ]
+    });
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });

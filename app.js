@@ -68,3 +68,9 @@ sequelize.sync({ force: true }).then(() => {
 app.get('/swift-trust', (req, res) => {
   res.send('Swift Trust API is running');
 });
+
+//Copilot: Generate a Postman collection JSON with these routes:
+// POST /api/v1/auth/login
+// POST /api/v1/auth/register
+// GET /api/v1/auth/profile
+// Include example request body and response for each route
