@@ -41,54 +41,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    phoneNumber2: {
-      type: DataTypes.STRING
-    },
     image: {
       type: DataTypes.TEXT // to hold base64 image
-    },
-    enrollmentBank: {
-      type: DataTypes.STRING
-    },
-    enrollmentBranch: {
-      type: DataTypes.STRING
-    },
-    levelOfAccount: {
-      type: DataTypes.STRING
-    },
-    lgaOfOrigin: {
-      type: DataTypes.STRING
-    },
-    lgaOfResidence: {
-      type: DataTypes.STRING
-    },
-    maritalStatus: {
-      type: DataTypes.ENUM('SINGLE', 'MARRIED', 'DIVORCED', 'WIDOWED', 'OTHER')
-    },
-    nameOnCard: {
-      type: DataTypes.STRING
-    },
-    nationality: {
-      type: DataTypes.STRING
-    },
-    registrationDate: {
-      type: DataTypes.DATEONLY
-    },
-    residentialAddress: {
-      type: DataTypes.STRING
-    },
-    stateOfOrigin: {
-      type: DataTypes.STRING
-    },
-    stateOfResidence: {
-      type: DataTypes.STRING
-    },
-    title: {
-      type: DataTypes.STRING
-    },
-    watchListed: {
-      type: DataTypes.ENUM('YES', 'NO'),
-      defaultValue: 'NO'
     },
     isVerified: {
       type: DataTypes.BOOLEAN,
