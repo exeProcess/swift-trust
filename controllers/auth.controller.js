@@ -112,6 +112,7 @@ exports.register = async (req, res) => {
 
     // Verify BVN with Dojah
     const result = await dojah.kycBVN(bvn);
+    console.log(result);
     // return res.status(200).json(result);
     if (!result || !result.data || !result.data.entity) {
       return res.status(400).json({ error: 'Invalid BVN' });

@@ -118,15 +118,12 @@ exports.kycBVN = async (bvn) => {
           'Authorization': SECRET_KEY
         }
       });
-      return {
-        message: 'BVN verification successful',
-        data: response.data
-      };
+      return response.data;
     } catch (error) {
   
       return {
         error: 'Failed to verify BVN',
-        details: error.response?.data || error.message
+        details: error.message
       };
     }
   };
