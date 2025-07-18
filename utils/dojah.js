@@ -123,7 +123,7 @@ exports.kycBVN = async (bvn) => {
   
       return {
         error: 'Failed to verify BVN',
-        details: error.message
+        details: response?.data || error.message
       };
     }
   };
