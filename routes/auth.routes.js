@@ -6,7 +6,9 @@ const auth = require('../middleware/auth.middleware');
 router.post('/register', authController.register);
 router.post('/set-pin', auth, authController.setPin);
 router.post('/login', auth, authController.login);
-
+router.get("/", (req, res) => {
+    res.send('Swift Trust Auth API is running');
+})
 router.use(auth)
 router.post('/verify-selfie', authController.verifySelfieWithPhotoId);
 router.get('/get-user', auth, authController.getUser);
