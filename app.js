@@ -65,7 +65,7 @@ sequelize.sync({ force: true }).then(() => {
   console.log("✅ Database synced (all tables recreated).");
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
-app.get('/swift-trust', (req, res) => {
+app.get('/', (req, res) => {
   res.send('Swift Trust API is running');
 });
 
