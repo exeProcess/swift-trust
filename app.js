@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+dotenv.config();
 const otpRoutes = require('./routes/otp.routes');
 const kycRoutes = require('./routes/kyc.routes');
 const bankRoutes = require('./routes/bankAccount.routes');
@@ -22,7 +23,7 @@ const adminLoanRoutes = require('./routes/adminLoan.routes');
 
 
 
-dotenv.config();
+
 
 const app = express();
 app.use(cors());
