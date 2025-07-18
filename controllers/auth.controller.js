@@ -117,7 +117,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ error: 'Invalid BVN' });
     }
 
-    const entity = result.data.entity;
+    const entity = result.entity;
     const {
       first_name,
       last_name,
