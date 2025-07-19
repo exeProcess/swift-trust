@@ -203,6 +203,7 @@ exports.register = async (req, res) => {
 
 exports.verifySelfieWithPhotoId = async (req, res) => {
   const user = req.user;  
+  console.log('📦 Payload size (KB):', Buffer.byteLength(JSON.stringify(req.body)) / 1024);
   try {
     const {
       selfie_image,
