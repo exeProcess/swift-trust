@@ -98,7 +98,7 @@ const paymentIntentModel = require('../models/paymentIntent.model');
 exports.kycBVN = async (req, res) => {
    try {
     const { bvn } = req.body;
-    const result = await dojah.kycBVN(bvn);
+    const result = await dojah.kycBVNAdvance(bvn);
     return result;
    } catch (error) {
     res.status(500).json({ error: 'Something went wrong', details: err.message });
@@ -120,12 +120,10 @@ exports.register = async (req, res) => {
     }
 
     // Verify BVN with Dojah
-    const result = await dojah.kycBVN(bvn);
-    console.log(result);
-    // return res.status(200).json(result);
-    // if (!result || !result.data || !result.data.entity) {
-    //   return res.status(400).json({ error: 'Invalid BVN' });
-    // }
+    const result = await dojah.kycBVNFull(bvn);
+    if (!result || !result.entity) {
+      return res.status(400).json({ error: 'Invalid BVN' });
+    }
 
     const entity = result.entity;
     const firstName = entity.first_name;

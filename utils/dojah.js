@@ -101,7 +101,7 @@ exports.AMLCheck = async (data) => {
     }
   };
 
-  exports.kycBVN = async (bvn) => {
+  exports.kycBVNAdvance = async (bvn) => {
     try {
       const response = await axios.get('https://api.dojah.io/api/v1/kyc/bvn/advance', {
         params: {
@@ -113,8 +113,8 @@ exports.AMLCheck = async (data) => {
         },
       });
 
-      console.log('✅ BVN Verification Response:');
-      console.log(response.data);
+      // console.log('✅ BVN Verification Response:');
+      // console.log(response.data);
       return response.data;
 
     } catch (error) {
@@ -123,33 +123,28 @@ exports.AMLCheck = async (data) => {
     }
 } ;
 
-// exports.kycBVN = async (bvn) => {
+exports.kycBVNFull = async (bvn) => {
   
-//     if (!bvn) {
-//       return { error: 'BVN is required as a query parameter' };
-//     }
+    if (!bvn) {
+      return { error: 'BVN is required as a query parameter' };
+    }
   
-//     try {
-//       // const url = `${DOJAH_BASE_URL}/api/v1/kyc/bvn/full`;
-//       // const response = await axios.get(url, { headers,  params: {bvn } });
+    try {
+      // const url = `${DOJAH_BASE_URL}/api/v1/kyc/bvn/full`;
+      // const response = await axios.get(url, { headers,  params: {bvn } });
   
-//       const response = await axios.get('https://api.dojah.io/api/v1/kyc/bvn/advance', {
-//         params: { bvn }, // Pass the BVN as a query param
-//         headers: {
-//           'AppId': APP_ID,
-//           'Authorization': SECRET_KEY
-//         }
-//       });
-//       console.log(response)
-//       return response.data;
-//     } catch (error) {
-  
-//       return {
-//         error: 'Failed to verify BVN',
-//         details: error.message
-//       };
-//     }
-//   };
+      const response = await axios.get('https://api.dojah.io/api/v1/kyc/bvn/full', {
+        params: { bvn }, // Pass the BVN as a query param
+        headers: {
+          'AppId': APP_ID,
+          'Authorization': SECRET_KEY
+        }
+      });
+      return response.data;
+    } catch (error) {
+      return { error: error.response?.data || error.message };
+    }
+  };
 
   exports.checkCreditScore = async (bvn) => {
   
