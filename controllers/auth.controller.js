@@ -130,11 +130,11 @@ exports.register = async (req, res) => {
     const lastName = entity.last_name;
     const middleName = entity.middle_name
     const gender = entity.gender;
-    const phoneNumber2 = entity.phone_number1;
+    const phoneNumber1 = entity.phone_number1;
     const dateOfBirth = entity.date_of_birth;
     const image = entity.image;
 
-    if (firstName === "" || lastName === "" || phoneNumber2 === "") {
+    if (firstName === "" || lastName === "" || phoneNumber1 === "") {
       return res.status(400).json({ error: 'BVN verification failed, missing essential user details' });
     }
 
@@ -146,7 +146,7 @@ exports.register = async (req, res) => {
       middleName,
       gender,
       dateOfBirth,
-      phoneNumber2,
+      phoneNumber1,
       image
     });
 
