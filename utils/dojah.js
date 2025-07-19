@@ -30,6 +30,7 @@ const SECRET_KEY = process.env.DOJAH_API_KEY || 'prod_sk_nLczkaXORcuMuus8M5YSY9a
 
 exports.verifySelfieWithPhotoId = async (payload) => {
   const { selfie_image, photoid_image, first_name, last_name } = payload;
+  
 
   try {
     const compressedSelfie = await compressBase64Image(selfie_image);
