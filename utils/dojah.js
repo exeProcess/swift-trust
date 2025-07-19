@@ -3,8 +3,8 @@
 const axios = require('axios');
 
 const DOJAH_BASE_URL = process.env.DOJAH_BASE_URL;
-const APP_ID = process.env.DOJAH_APP_ID;
-const SECRET_KEY = process.env.DOJAH_API_KEY;
+const APP_ID = process.env.DOJAH_APP_ID || '682aeea9d60ba3c1b823db4f';
+const SECRET_KEY = process.env.DOJAH_API_KEY || 'prod_sk_nLczkaXORcuMuus8M5YSY9a5Z';
 
 // const DOJAH_API_KEY = process.env.DOJAH_API_KEY;
 // const DOJAH_APP_ID = process.env.DOJAH_APP_ID;
@@ -101,33 +101,56 @@ exports.AMLCheck = async (data) => {
     }
   };
 
-exports.kycBVN = async (bvn) => {
-  
-    if (!bvn) {
-      return { error: 'BVN is required as a query parameter' };
-    }
-  
+  exports.kycBVN = async (bvn) => {
     try {
-      // const url = `${DOJAH_BASE_URL}/api/v1/kyc/bvn/full`;
-      // const response = await axios.get(url, { headers,  params: {bvn } });
-  
-      const response = await axios.get('https://api.dojah.io/api/v1/kyc/bvn/full', {
-        params: { bvn }, // Pass the BVN as a query param
+      const response = await axios.get('https://api.dojah.io/api/v1/kyc/bvn', {
+        params: {
+          bvn: bvn,
+        },
         headers: {
-          'AppId': APP_ID,
-          'Authorization': SECRET_KEY
-        }
+          'Accept': 'application/json',
+          'app_id': APP_ID,
+          'app_secret': SECRET_KEY,
+        },
       });
-      console.log(response)
+
+      console.log('✅ BVN Verification Response:');
+      console.log(response.data);
       return response.data;
+
     } catch (error) {
-  
-      return {
-        error: 'Failed to verify BVN',
-        details: error.message
-      };
+      console.error('❌ Error verifying BVN:', error.response?.data || error.message);
+      return { error: error.response?.data || error.message };
     }
-  };
+} ;
+
+// exports.kycBVN = async (bvn) => {
+  
+//     if (!bvn) {
+//       return { error: 'BVN is required as a query parameter' };
+//     }
+  
+//     try {
+//       // const url = `${DOJAH_BASE_URL}/api/v1/kyc/bvn/full`;
+//       // const response = await axios.get(url, { headers,  params: {bvn } });
+  
+//       const response = await axios.get('https://api.dojah.io/api/v1/kyc/bvn/advance', {
+//         params: { bvn }, // Pass the BVN as a query param
+//         headers: {
+//           'AppId': APP_ID,
+//           'Authorization': SECRET_KEY
+//         }
+//       });
+//       console.log(response)
+//       return response.data;
+//     } catch (error) {
+  
+//       return {
+//         error: 'Failed to verify BVN',
+//         details: error.message
+//       };
+//     }
+//   };
 
   exports.checkCreditScore = async (bvn) => {
   

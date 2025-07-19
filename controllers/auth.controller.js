@@ -95,6 +95,15 @@ const paymentIntentModel = require('../models/paymentIntent.model');
 //   }
 // };
 
+exports.kycBVN = async (req, res) => {
+   try {
+    const { bvn } = req.body;
+    const result = await dojah.kycBVN(bvn);
+    return result;
+   } catch (error) {
+    res.status(500).json({ error: 'Something went wrong', details: err.message });
+   }
+}
 
 exports.register = async (req, res) => {
   try {
@@ -114,20 +123,20 @@ exports.register = async (req, res) => {
     const result = await dojah.kycBVN(bvn);
     console.log(result);
     // return res.status(200).json(result);
-    if (!result || !result.data || !result.data.entity) {
-      return res.status(400).json({ error: 'Invalid BVN' });
-    }
+    // if (!result || !result.data || !result.data.entity) {
+    //   return res.status(400).json({ error: 'Invalid BVN' });
+    // }
 
     const entity = result.entity;
     const firstName = entity.first_name;
-    const last_name = entity.last_name;
+    const lastName = entity.last_name;
     const middleName = entity.middle_name
     const gender = entity.gender;
-    const phoneNumber1 = entity.phone_number1;
+    const phoneNumber2 = entity.phone_number2;
     const dateOfBirth = entity.date_of_birth;
     const image = entity.image;
 
-    if (!firstName || !lastName || !phoneNumber1) {
+    if (!firstName || !lastName || !phoneNumber2) {
       return res.status(400).json({ error: 'BVN verification failed, missing essential user details' });
     }
 
@@ -139,7 +148,7 @@ exports.register = async (req, res) => {
       middleName,
       gender,
       dateOfBirth,
-      phone_number1,
+      phoneNumber2,
       image
     });
 
