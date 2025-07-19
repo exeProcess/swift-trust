@@ -108,9 +108,8 @@ exports.AMLCheck = async (data) => {
           bvn: bvn,
         },
         headers: {
-          'Accept': 'application/json',
-          'app_id': APP_ID,
-          'app_secret': SECRET_KEY,
+          "AppId": APP_ID,
+          'Authorization': SECRET_KEY,
         },
       });
 
