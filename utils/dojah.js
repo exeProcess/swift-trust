@@ -1,5 +1,6 @@
 // const axios = require('axios');
 // services/dojahService.js
+const sharp = require('sharp');
 const axios = require('axios');
 
 const DOJAH_BASE_URL = process.env.DOJAH_BASE_URL;
@@ -31,11 +32,13 @@ exports.verifySelfieWithPhotoId = async (payload) => {
   const { selfie_image, photoid_image, first_name, last_name } = payload;
 
   try {
+    const compressedSelfie = await compressBase64Image(selfie_image);
+    const compressedPhotoId = await compressBase64Image(photoid_image);
     const response = await axios.post(
       'https://api.dojah.io/api/v1/kyc/biometric/photoid/selfie',
       {
-        selfie_image: selfie_image,
-        photoid_image: photoid_image,
+        selfie_image: compressedSelfie,
+        photoid_image: compressedPhotoId,
         first_name: first_name,
         last_name: last_name
       },
@@ -58,6 +61,17 @@ exports.verifySelfieWithPhotoId = async (payload) => {
   
 }
 
+
+const compressBase64Image = async (base64String, maxWidth = 500, quality = 60) =>{
+  const buffer = Buffer.from(base64String, 'base64');
+
+  const compressedBuffer = await sharp(buffer)
+    .resize({ width: maxWidth, withoutEnlargement: true }) // prevent upscaling
+    .jpeg({ quality }) // compress
+    .toBuffer();
+
+  return compressedBuffer.toString('base64');
+}
 
 
 
