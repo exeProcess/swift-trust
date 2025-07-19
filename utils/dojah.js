@@ -103,7 +103,7 @@ exports.AMLCheck = async (data) => {
 
   exports.kycBVN = async (bvn) => {
     try {
-      const response = await axios.get('https://api.dojah.io/api/v1/kyc/bvn', {
+      const response = await axios.get('https://api.dojah.io/api/v1/kyc/bvn/advance', {
         params: {
           bvn: bvn,
         },
