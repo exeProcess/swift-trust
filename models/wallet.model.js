@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 'NGN'
     },
-    UserId: {
+    userId: {
       type: DataTypes.UUID,
       allowNull: false
     }

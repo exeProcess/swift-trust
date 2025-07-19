@@ -151,7 +151,7 @@ exports.register = async (req, res) => {
     });
 
     const id = user.id;
-    // await Wallet.create({ userId: id });
+    await Wallet.create({ userId: id });
 
     // --- CREATE CUSTOMER & ACCOUNT ON BANKONE ---
     // const bankoneRes = await axios.post(
@@ -209,8 +209,15 @@ exports.verifySelfieWithPhotoId = async (req, res) => {
     } = req.body;
 
     const photoid_image = user.image; 
-    const first_name = user.first_name; 
-    const last_name = user.last_name;
+    const first_name = user.firstName; 
+    const last_name = user.lastname;
+
+    const payload = {
+      selfie_image,
+      photoid_image,
+      first_name,
+      last_name
+    };
 
     // Validate input
     if (!selfie_image) {
@@ -220,41 +227,35 @@ exports.verifySelfieWithPhotoId = async (req, res) => {
 
     // Call Dojah API
     const result = await dojah.verifySelfieWithPhotoId(
-      selfie_image,
-      photoid_image,
-      first_name,
-      last_name
+      payload
     );
     // Check for errors in result
-    if (!result || !result.data || !result.data.entity || !result.data.entity.selfie) {
+    if (!result || !result.data.entity) {
       return res.status(400).json({ error: 'Invalid result from Dojah API' });
     }
-    if (result.data.status !== 'success') {
-      return res.status(400).json({ error: 'Selfie verification failed', details: result.data });
-    }
-    if (!result.data.entity.selfie) {
-      return res.status(400).json({ error: 'Selfie verification result not found' });
-    }
     
-    if (!result.data.entity.selfie.match || result.data.entity.selfie.confidence_value < 0.5) {
-      return res.status(400).json({ error: 'Selfie verification confidence too low', details: result.data });
+    
+    if (result.entity.selfie.confidence_value < 90) {
+      return res.status(400).json({ error: 'Selfie verification confidence too low', details: result.entity });
+    }else{
+      return res.status(200).json(result.entity);
     }
-    if (result.data.entity.selfie.match && result.data.entity.selfie.confidence_value >= 0.5) {
-      user.isVerified = true; 
-      await user.save(); 
-      const sendOtpresult = await notifier.sendSMS(user.phone_number1);
-      if (sendOtpresult.status === 'error') {
-        return res.status(500).json({ error: 'Failed to send OTP', details: sendOtpresult.message });
-      }else {
-        return res.status(200).json({
-          message: 'Selfie and photo ID verification successful',
-          otp_sent: true
-        });
-      }
-    }
+    // if (result.data.entity.selfie.match && result.data.entity.selfie.confidence_value >= 0.5) {
+    //   user.isVerified = true; 
+    //   await user.save(); 
+    //   const sendOtpresult = await notifier.sendSMS(user.phone_number1);
+    //   if (sendOtpresult.status === 'error') {
+    //     return res.status(500).json({ error: 'Failed to send OTP', details: sendOtpresult.message });
+    //   }else {
+    //     return res.status(200).json({
+    //       message: 'Selfie and photo ID verification successful',
+    //       otp_sent: true
+    //     });
+    //   }
+    // }
     
   } catch (err) {
-    console.error('Dojah API error:', err.result?.data || err.message);
+    // console.error('Dojah API error:', err.result?.data || err.message);
     res.status(500).json({
       error: 'Failed to verify selfie and photo ID',
       details: err.result?.data || err.message

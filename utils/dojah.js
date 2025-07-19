@@ -27,12 +27,35 @@ const SECRET_KEY = process.env.DOJAH_API_KEY || 'prod_sk_nLczkaXORcuMuus8M5YSY9a
 //   return axios.post('https://api.dojah.io/api/v1/messaging/otp', { phone_number: phone }, { headers });
 // };
 
-exports.verifySelfieWithPhotoId = async (selfie_image, photoid_image, first_name, last_name) => {
-  const payload = { selfie_image, photoid_image };
-  if (first_name) payload.first_name = first_name;
-  if (last_name) payload.last_name = last_name;
+exports.verifySelfieWithPhotoId = async (payload) => {
+  const { selfie_image, photoid_image, first_name, last_name } = payload;
 
-  return axios.post('https://api.dojah.io/api/v1/kyc/selfie-photoid', payload, { headers });
+  try {
+    const response = await axios.post(
+      'https://api.dojah.io/api/v1/kyc/biometric/photoid/selfie',
+      {
+        selfie_image: selfie_image,
+        photoid_image: photoid_image,
+        first_name: first_name,
+        last_name: last_name
+      },
+      {
+        headers: {
+          "AppId": APP_ID,
+          'Authorization': SECRET_KEY,
+        }
+      }
+    );
+
+    // console.log('✅ Selfie Verification Response:');
+    // console.log(response.data);
+    return response.data;
+
+  } catch (error) {
+    return { error: error.response?.data || error.message };
+  }
+
+  
 }
 
 
