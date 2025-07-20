@@ -46,7 +46,7 @@ exports.registerSenderId = async () => {
     );
 
     if(!senderId.data.enity){
-      console.log(senderId.data.message)
+      console.log("from here"+ senderId.data.message)
       return {
         error: "Failed to register SMS sender ID"
       }
@@ -75,7 +75,7 @@ exports.getSenderId = async () => {
     );
 
     if(!senderId.data.enity){
-      console.log(senderId.data.message)
+      console.log("from here"+ senderId.data.message)
       return {
         error: "Failed to Fetch SMS sender ID"
       }
