@@ -46,6 +46,7 @@ exports.registerSenderId = async () => {
     );
 
     if(!senderId.data.enity){
+      console.log(senderId.data.message)
       return {
         error: "Failed to register SMS sender ID"
       }
@@ -64,12 +65,19 @@ exports.registerSenderId = async () => {
 
 exports.getSenderId = async () => {
   try {
-    const senderId = await axios.get('https://api.dojah.io/api/v1/messaging/sender_ids');
+    const senderId = await axios.get('https://api.dojah.io/api/v1/messaging/sender_ids', 
+      {
+        headers: {
+          "AppId": APP_ID,
+          'Authorization': SECRET_KEY,
+        }
+      }
+    );
 
     if(!senderId.data.enity){
-      console.log(senderId.data.message);
+      console.log(senderId.data.message)
       return {
-        error: "Failed to register SMS sender ID"
+        error: "Failed to Fetch SMS sender ID"
       }
     }
     const mess = senderId.data;
