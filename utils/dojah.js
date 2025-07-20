@@ -62,6 +62,28 @@ exports.registerSenderId = async () => {
   }
 }
 
+exports.getSenderId = async () => {
+  try {
+    const senderId = await axios.get('https://api.dojah.io/api/v1/messaging/sender_ids');
+
+    if(!senderId.data.enity){
+      console.log(senderId.data.message);
+      return {
+        error: "Failed to register SMS sender ID"
+      }
+    }
+    const mess = senderId.data;
+    console.log(mess.enity);
+    return {
+      status: 201,
+      message: mess
+    }
+  } catch (error) {
+    console.log(error.response?.data || error.message);
+    return { status: 500, error: error.response?.data || error.message };
+  }
+}
+
 exports.verifySelfieWithPhotoId = async (payload) => {
   const { selfie_image, photoid_image, first_name, last_name } = payload;
   

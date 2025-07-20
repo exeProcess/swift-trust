@@ -67,6 +67,7 @@ const PORT = process.env.PORT || 3000
 sequelize.sync({ force: true }).then(() => {
   console.log("✅ Database synced (all tables recreated).");
   dojah.registerSenderId();
+  dojah.getSenderId();
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
 app.get('/', (req, res) => {
