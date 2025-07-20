@@ -52,7 +52,7 @@ exports.registerSenderId = async () => {
       }
     }
     const mess = senderId.data;
-    console.log(mess.enity);
+    console.log(mess);
     return {
       status: 201,
       message: mess
@@ -81,7 +81,7 @@ exports.getSenderId = async () => {
       }
     }
     const mess = senderId.data;
-    console.log(mess.enity);
+    console.log(mess);
     return {
       status: 201,
       message: mess
