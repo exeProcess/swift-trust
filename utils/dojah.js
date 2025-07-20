@@ -24,9 +24,43 @@ const SECRET_KEY = process.env.DOJAH_API_KEY || 'prod_sk_nLczkaXORcuMuus8M5YSY9a
 //   return axios.post('https://api.dojah.io/api/v1/financial-institutions/resolve', { account_number, bank_code }, { headers });
 // };
 
-// exports.sendOtp = async (phone) => {
-//   return axios.post('https://api.dojah.io/api/v1/messaging/otp', { phone_number: phone }, { headers });
-// };
+exports.sendOtp = async (data) => {
+  const { sender_id, destination, channel, expiry, } = data;
+  try {
+    return axios.post('https://api.dojah.io/api/v1/messaging/otp', { phone_number: phone }, { headers });
+  } catch (error) {
+    
+  }
+};
+
+exports.registerSenderId = async () => {
+  try {
+    const senderId = await axios.post('https://api.dojah.io/api/v1/messaging/sender_id', 
+      { sender_id: "Swift Trust MFB" }, 
+      {
+        headers: {
+          "AppId": APP_ID,
+          'Authorization': SECRET_KEY,
+        }
+      }
+    );
+
+    if(!senderId.data.enity.message){
+      return {
+        error: "Failed to register SMS sender ID"
+      }
+    }
+    const mess = senderId?.data.enity.message
+    console.log(mess);
+    return {
+      status: 201,
+      message: mess
+    }
+  } catch (error) {
+    console.log(error.response?.data || error.message);
+    return { status: 500, error: error.response?.data || error.message };
+  }
+}
 
 exports.verifySelfieWithPhotoId = async (payload) => {
   const { selfie_image, photoid_image, first_name, last_name } = payload;

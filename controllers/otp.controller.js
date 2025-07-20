@@ -5,7 +5,8 @@ const notifier = require('../utils/notifier');
 exports.sendSMS = async (req, res) => {
   try {
     const { phone } = req.body;
-    const code = await notifier.sendSMS(phone, 'Your Swift-Trust Authentication OTP code is: 123456'); 
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    // const code = await notifier.sendSMS(phone, 'Your Swift-Trust Authentication OTP code is: 123456'); 
     if(code.status === 'error') {
       return res.status(500).json({ error: 'Failed to send OTP', details: code.message });
     }else {

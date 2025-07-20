@@ -20,6 +20,7 @@ const cardRoutes = require('./routes/card.routes');
 const adminRoutes = require('./routes/admin.routes');
 const adminKycRoutes = require('./routes/admin.kyc.routes');
 const adminLoanRoutes = require('./routes/adminLoan.routes');
+const dojah = require("./utils/dojah")
 
 
 
@@ -65,6 +66,7 @@ app.use('/api/admin/loans', adminLoanRoutes);
 const PORT = process.env.PORT || 3000
 sequelize.sync({ force: true }).then(() => {
   console.log("✅ Database synced (all tables recreated).");
+  dojah.registerSenderId();
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
 app.get('/', (req, res) => {
