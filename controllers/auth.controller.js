@@ -231,16 +231,16 @@ exports.verifySelfieWithPhotoId = async (req, res) => {
       payload
     );
     // Check for errors in result
-    if (!result || !result.data.entity) {
-      return res.status(400).json({ error: 'Invalid result from Dojah API' });
-    }
+    // if (!result || !result.entity) {
+    //   return res.status(400).json({ error: 'Invalid result from Dojah API' });
+    // }
     
     
-    if (result.entity.selfie.confidence_value < 90) {
-      return res.status(400).json({ error: 'Selfie verification confidence too low', details: result.entity });
-    }else{
-      return res.status(200).json(result.entity);
-    }
+    // if (result.entity.selfie.confidence_value < 90) {
+    //   return res.status(400).json({ error: 'Selfie verification confidence too low', details: result.entity });
+    // }else{
+      return res.status(200).json(result);
+    // }
     // if (result.data.entity.selfie.match && result.data.entity.selfie.confidence_value >= 0.5) {
     //   user.isVerified = true; 
     //   await user.save(); 
