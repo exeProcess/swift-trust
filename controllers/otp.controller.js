@@ -1,18 +1,32 @@
 const { User } = require('../models');
 const otpService = require('../utils/otp');
+const dojah = require('../utils/dojah')
 const notifier = require('../utils/notifier');
 
 exports.sendSMS = async (req, res) => {
+  const user = req.user
   try {
     const { phone } = req.body;
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    // const code = await notifier.sendSMS(phone, 'Your Swift-Trust Authentication OTP code is: 123456'); 
-    if(code.status === 'error') {
-      return res.status(500).json({ error: 'Failed to send OTP', details: code.message });
+    const sender_id = "Swift";
+    const channel = "sms";
+    const destination = phone;
+    const message = `Your Swift-Trust MFB Authentication OTP code is: ${code}`;
+    const payload = {
+      sender_id,
+      channel,
+      message,
+      destination
+    };
+    
+    const smsResult = await dojah.sendOtp(payload); 
+    if(smsResult.status === 400) {
+      return res.status(500).json({ error: 'Failed to send OTP', details: smsResult.message });
     }else {
-      return res.status(200).json({ message: 'OTP sent successfully', code: code.sms_status });
+      user.otp = code;
+      await user.save();
+      return res.status(200).json({ message: 'OTP sent successfully', details: smsResult });
     }
-    res.status(200).json({ message: 'OTP sent' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -44,6 +44,10 @@ module.exports = (sequelize, DataTypes) => {
     image: {
       type: DataTypes.TEXT // to hold base64 image
     },
+    otp: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     isVerified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false

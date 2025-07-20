@@ -25,11 +25,33 @@ const SECRET_KEY = process.env.DOJAH_API_KEY || 'prod_sk_nLczkaXORcuMuus8M5YSY9a
 // };
 
 exports.sendOtp = async (data) => {
-  const { sender_id, destination, channel, expiry, } = data;
+  const { sender_id, destination, channel, message, } = data;
   try {
-    return axios.post('https://api.dojah.io/api/v1/messaging/otp', { phone_number: phone }, { headers });
+    const sendSMS = await axios.post('https://api.dojah.io/api/v1/messaging/sms', 
+      { 
+        sender_id,
+        destination,
+        channel,
+        message
+      }, 
+      {
+        headers: {
+          "AppId": APP_ID,
+          'Authorization': SECRET_KEY,
+        }
+      }
+    );
+
+    if(!sendSMS.data){
+      return {
+        status: 400,
+        error: "Failed to send SMS"
+      }
+    }
+
+    return sendSMS.data;
   } catch (error) {
-    
+    return { status: 500, error: error.response?.data || error.message };
   }
 };
 
