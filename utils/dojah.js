@@ -45,7 +45,7 @@ exports.registerSenderId = async () => {
       }
     );
 
-    if(!senderId.data.enity.message){
+    if(!senderId.data.enity){
       return {
         error: "Failed to register SMS sender ID"
       }
