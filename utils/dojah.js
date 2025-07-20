@@ -36,7 +36,7 @@ exports.verifySelfieWithPhotoId = async (payload) => {
     const compressedSelfie = await compressBase64Image(selfie_image);
     const compressedPhotoId = await compressBase64Image(photoid_image);
     const response = await axios.post(
-      'https://api.dojah.io/api/v1/kyc/biometric/photoid/selfie',
+      'https://api.dojah.io/api/v1/kyc/photoid/verify',
       {
         selfie_image: compressedSelfie,
         photoid_image: compressedPhotoId,
