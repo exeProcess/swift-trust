@@ -50,8 +50,8 @@ exports.registerSenderId = async () => {
         error: "Failed to register SMS sender ID"
       }
     }
-    const mess = senderId.data.enity;
-    console.log(mess.message);
+    const mess = senderId.data;
+    console.log(mess.enity);
     return {
       status: 201,
       message: mess
