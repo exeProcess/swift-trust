@@ -25,7 +25,7 @@ const SECRET_KEY = process.env.DOJAH_API_KEY || 'prod_sk_nLczkaXORcuMuus8M5YSY9a
 // };
 
 exports.sendOtp = async (data) => {
-  const { sender_id, destination, channel, message, } = data;
+  const { sender_id, destination, channel, message, priority } = data;
   try {
     const sendSMS = await axios.post('https://api.dojah.io/api/v1/messaging/sms', 
       { 

@@ -11,6 +11,7 @@ exports.sendSMS = async (req, res) => {
     const sender_id = "Swift";
     const channel = "sms";
     const destination = phone;
+    const priority = true;
     const message = `Your Swift-Trust MFB Authentication OTP code is: ${code}`;
     const payload = {
       sender_id,
