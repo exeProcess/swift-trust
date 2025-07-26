@@ -2,7 +2,7 @@ const { Wallet, Transaction, PaymentIntent, User, Address } = require('../models
 const remita = require('../utils/remita');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
-const { fundBankoneAccount, withdrawFromBankoneAccount, intraBankTransfer, transferLocalBank } = require('../utils/bankOne');
+const { fundBankoneAccount, withdrawFromBankoneAccount, intraBankTransfer, transferLocalBank, createBankOneCustomerAndAccount } = require('../utils/bankOne');
 const { checkCreditScore } = require('../utils/dojah');
 const BANKONE_BASE_URL = process.env.BANKONE_BASE_URL;
 const BANKONE_AUTHTOKEN = process.env.BANKONE_AUTHTOKEN;
@@ -172,66 +172,37 @@ exports.getBankoneCustomer = async (req, res) => {
 
 // ✅ Create Wallet and BankOne Account
 exports.createWallet = async (req, res) => {
+  
   try {
     const user = await User.findByPk(req.user.id);
     
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    // Create wallet in local DB
-    const wallet = await Wallet.create({ UserId: req.user.id });
-
-    // Create account in BankOne
-    const bankoneRes = await axios.post(
-      `${BANKONE_BASE_URL}/https://staging.mybankone.com/BankOneWebAPI/api/Account/CreateAccount/2?authtoken=${BANKONE_AUTHTOKEN}`,
+    if (!user) throw new Error('User not found');
     
-      {
-        TransactionTrackingRef: `trx-${Date.now()}-${user.id}`,
-        AccountOpeningTrackingRef: `acct-${Date.now()}-${user.id}`,
-        ProductCode: BANKONE_PRODUCT_CODE,
-        LastName: user.last_name,
-        OtherNames: user.first_name + (user.middle_name ? ' ' + user.middle_name : ''),
-        BVN: user.bvn,
-        PhoneNo: user.phone_number1,
-        PlaceOfBirth: user.state_of_origin || 'Unknown',
-        Gender: user.gender?.startsWith('m') ? 'M' : 'F',
-        DateOfBirth: user.date_of_birth,
-        Address: user.residential_address || 'Unknown',
-        NextOfKinPhoneNo: user.next_of_kin_phone_number || '',
-        NextOfKinName: user.next_of_kin_name || '',
-        AccountInformationSource: 'Swift Trust MFB',
-        NotificationPreference: 1, 
-        TransactionPermission: 1,
-        AccountTier: 'Tier 1',
-        AccountOfficerCode: AccountOfficerCode || 'default-officer',
-        FirstName: user.first_name,
-        NationalIdentityNo: user.national_identity_number || '',
-        Email: user.email,
-        HasSufficientInfoOnAccountInfo: true
-      }
-    );
 
-    const data = bankoneRes.data;
-    if (!data.IsSuccessful) {
-      return res.status(400).json({ error: 'BankOne account creation failed', details: data.Description });
-    }
+    const payload =  {
+      id: user.id,
+      bvn: user.bvn,
+      first_name: user.firstName,
+      last_name: user.lastName,
+      middle_name: user.middleName,
+      phone_number1: user.phoneNumber1,
+      state_of_origin: user.stateOfOrigin,
+      gender: user.gender,
+      date_of_birth: user.dateOfBirth,
+      residential_address: user.residentialAddress,
+      nin: user.nin,
+      email: user.email
+    };
 
-    // Save account info to user
-    await user.update({
-      bankoneAccountNumber: data.Payload.AccountNumber
+    const createCustomerResponse = await createBankOneCustomerAndAccount(payload);
+
+    return res.status(200).json({
+      status: 200,
+      data: createCustomerResponse
     });
-
-    res.status(201).json({
-      message: 'Wallet and BankOne account created',
-      wallet,
-      bankone: {
-        accountNumber: data.Payload.AccountNumber,
-        customerId: data.Payload.CustomerID,
-        fullName: data.Payload.FullName
-      }
-    });
+    
   } catch (err) {
-    console.error('Create wallet error:', err.response?.data || err.message);
-    res.status(500).json({ error: 'Failed to create wallet/account', details: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 

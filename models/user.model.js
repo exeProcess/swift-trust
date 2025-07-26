@@ -12,6 +12,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true
     },
+    nin: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     firstName: {
       type: DataTypes.STRING,
       allowNull: false
@@ -29,20 +37,64 @@ module.exports = (sequelize, DataTypes) => {
     dateOfBirth: {
       type: DataTypes.DATEONLY
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    isEmailVerified: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
     phoneNumber1: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.STRING
     },
-    image: {
-      type: DataTypes.TEXT // to hold base64 image
+    phoneNumber2: {
+      type: DataTypes.STRING
+    },
+    email: {
+      type: DataTypes.STRING
+    },
+    enrollmentBank: {
+      type: DataTypes.STRING
+    },
+    enrollmentBranch: {
+      type: DataTypes.STRING
+    },
+    levelOfAccount: {
+      type: DataTypes.STRING
+    },
+    lgaOfOrigin: {
+      type: DataTypes.STRING
+    },
+    lgaOfResidence: {
+      type: DataTypes.STRING
+    },
+    maritalStatus: {
+      type: DataTypes.STRING
+    },
+    nameOnCard: {
+      type: DataTypes.STRING
+    },
+    nationality: {
+      type: DataTypes.STRING
+    },
+    registrationDate: {
+      type: DataTypes.STRING // can be changed to DataTypes.DATE if needed
+    },
+    residentialAddress: {
+      type: DataTypes.TEXT
+    },
+    stateOfOrigin: {
+      type: DataTypes.STRING
+    },
+    stateOfResidence: {
+      type: DataTypes.STRING
+    },
+    title: {
+      type: DataTypes.STRING
+    },
+    watchListed: {
+      type: DataTypes.STRING
+    },
+    imageBVN: {
+      type: DataTypes.TEXT, // to hold base64 image
+      allowNull: false,
+    },
+    imageNIN: {
+      type: DataTypes.TEXT,
+      allowNull: false
     },
     otp: {
       type: DataTypes.STRING,
@@ -53,10 +105,6 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false
     },
     bankoneCustomerId: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    bankoneAccountNumber: {
       type: DataTypes.STRING,
       allowNull: true
     }

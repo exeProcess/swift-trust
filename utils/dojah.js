@@ -2,6 +2,7 @@
 // services/dojahService.js
 const sharp = require('sharp');
 const axios = require('axios');
+const bankOne = require("./bankOne");
 
 const DOJAH_BASE_URL = process.env.DOJAH_BASE_URL;
 const APP_ID = process.env.DOJAH_APP_ID || '682aeea9d60ba3c1b823db4f';
@@ -25,14 +26,13 @@ const SECRET_KEY = process.env.DOJAH_API_KEY || 'prod_sk_nLczkaXORcuMuus8M5YSY9a
 // };
 
 exports.sendOtp = async (data) => {
-  const { sender_id, destination, channel, message, priority } = data;
+  const { sender_id, destination, channel } = data;
   try {
-    const sendSMS = await axios.post('https://api.dojah.io/api/v1/messaging/sms', 
+    const sendOTPRequest = await axios.post('https://api.dojah.io/api/v1/messaging/otp', 
       { 
         sender_id,
         destination,
         channel,
-        message
       }, 
       {
         headers: {
@@ -42,16 +42,16 @@ exports.sendOtp = async (data) => {
       }
     );
 
-    if(!sendSMS.data){
+    if(!sendOTPRequest.data){
       return {
         status: 400,
-        error: "Failed to send SMS"
+        error: "Failed to send OTP"
       }
     }
 
-    return sendSMS.data;
+    return sendOTPRequest.data;
   } catch (error) {
-    return { status: 500, error: error.response?.data || error.message };
+    return { status: 500, error: error.sendOTPRequest?.data || error.message };
   }
 };
 
@@ -250,7 +250,7 @@ exports.AMLCheck = async (data) => {
 exports.kycBVNFull = async (bvn) => {
   
     if (!bvn) {
-      return { error: 'BVN is required as a query parameter' };
+      throw new Error('BVN is required as a query parameter');
     }
   
     try {
@@ -273,7 +273,7 @@ exports.kycBVNFull = async (bvn) => {
   exports.checkCreditScore = async (bvn) => {
   
     if (!bvn) {
-      return { error: 'BVN is required as a query parameter' };
+      throw new Error('BVN is required as a query parameter');
     }
     try {
       const response = await axios.get('https://api.dojah.io/api/v1/credit_bureau', {
@@ -289,8 +289,7 @@ exports.kycBVNFull = async (bvn) => {
       };
     } catch (error) {
       return {
-        error: 'Failed to check credit score',
-        details: error.response?.data || error.message
+        error: error.response?.data || error.message
       };
     }
   };
@@ -299,7 +298,7 @@ exports.verifyNIN = async (nin) => {
 
   
   if (!nin) {
-    return { error: 'NIN is required as a query parameter' };
+    throw new Error('NIN is required as a query parameter');
   }
 
   try {
@@ -318,10 +317,28 @@ exports.verifyNIN = async (nin) => {
   } catch (error) {
 
     return {
-      error: 'Failed to verify NIN',
-      details: error.response?.data || error.message
+      error:  error.response?.data || error.message
     };
   }
 };
+
+exports.verifyOTP = async (data) => {
+  const { code, reference_id, userId} = data;
+  try {
+    const response = await axios.get('https://api.dojah.io/api/v1/messaging/otp/validate', {
+      params: { code, reference_id }, // Pass the NIN as a query param
+      headers: {
+        'AppId': APP_ID,
+        'Authorization': SECRET_KEY
+      }
+    });
+    if(!response.data.entity.valid){
+      throw new Error("Invalid OTP");
+    }
+    return {status: 200, message: "OTP validated successfully"};
+  } catch (error) {
+    return { error: error.response?.data || error.message}
+  }
+}
 
 

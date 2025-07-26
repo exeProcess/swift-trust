@@ -5,7 +5,7 @@ const auth = require('../middleware/auth.middleware');
 
 router.get('/', auth, walletController.getWallet);
 router.post('/fund', auth, walletController.initiateFunding);
-router.post('/create-customer', auth, walletController.createCustomer);
+router.post('/create-bankone-account', auth, walletController.createCustomer);
 router.post('/update-Customer', auth, walletController.updateBankoneCustomer);
 router.get('/get-Customer', auth, walletController.getBankoneCustomer);
 router.post('/create-wallet', auth, walletController.createWallet);

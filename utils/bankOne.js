@@ -283,3 +283,82 @@ exports.getBankOneStandingOrders = async (param) => {
     return {status: 500, error: 'Failed to retrieve standing orders', details: error.response?.data || error.message};
   }
 }
+
+exports.createBankOneCustomerAndAccount = async (data) => {
+  const { 
+    id,
+    bvn,
+    first_name, 
+    last_name, 
+    middle_name, 
+    phone_number1, 
+    state_of_origin, 
+    gender, 
+    date_of_birth, 
+    residential_address, 
+    nin, 
+    email 
+  } = data;
+
+  try {
+    const bankoneRes = await axios.post(
+      `${process.env.BANKONE_BASE_URL}/CreateCustomerAndAccount/2`,
+      {
+        TransactionTrackingRef: `trx-${Date.now()}-${id}`,
+        AccountOpeningTrackingRef: `acct-${Date.now()}-${id}`,
+        ProductCode: process.env.BANKONE_PRODUCT_CODE,
+        LastName: last_name,
+        OtherNames: first_name,
+        BVN: bvn,
+        PhoneNo: phone_number1,
+        PlaceOfBirth: state_of_origin || 'Unknown',
+        Gender: gender?.startsWith('m') ? 'M' : 'F',
+        DateOfBirth: date_of_birth,
+        Address: residential_address || 'Unknown',
+        NationalIdentityNo: nin,
+        Email: email,
+        HasSufficientInfoOnAccountInfo: true
+      },
+      {
+        params: { authtoken: process.env.BANKONE_AUTHTOKEN, version: '2' }
+      }
+    );
+
+    const bankoneData = bankoneRes.data;
+    if (!bankoneData.IsSuccessful) {
+      console.warn('BankOne account creation failed:', bankoneData.Description);
+      // optionally: store this result for retrying later
+      throw new Error("BankOne account creation failed");
+    } else {
+      // Optional: Save BankOne CustomerID & AccountNumber in DB
+      const updateUser = await User.update(
+        {
+          bankoneCustomerId: bankoneData.Payload.CustomerID,
+        },
+        {
+          where: { id: userId },
+        }
+      );
+
+      const createWallet = await Wallet.create({
+        userId,
+        accountNumber: bankoneData.Payload.AccountNumber
+      });
+
+      if(!updateUser){
+        throw new Error("Error updating customer details");
+      }
+
+      if(!createWallet){
+        throw new Error("Error creating customer's wallet");
+      }
+
+      return {
+        status: 200,
+        message: "Success"
+      };
+    }
+  } catch (error) {
+    return {error: error.message};
+  }
+}

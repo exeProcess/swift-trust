@@ -7,6 +7,7 @@ router.post('/register', authController.register);
 router.post('/set-pin', auth, authController.setPin);
 router.post('/login', auth, authController.login);
 router.post("/verify-bvn", authController.kycBVN)
+
 router.get("/", (req, res) => {
     res.send('Swift Trust Auth API is running');
 })

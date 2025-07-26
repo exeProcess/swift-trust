@@ -105,9 +105,19 @@ exports.kycBVN = async (req, res) => {
    }
 }
 
+exports.kycNIN = async (req, res) => {
+  try {
+    const { nin } = req.body;
+    const result = await verifyNIN(nin);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: 'NN verification failed', details: err.message });
+  }
+};
+
 exports.register = async (req, res) => {
   try {
-    const { bvn, referral } = req.body;
+    const { bvn, nin, referral } = req.body;
 
     if (!bvn) {
       return res.status(400).json({ error: 'BVN is required' });
@@ -120,25 +130,65 @@ exports.register = async (req, res) => {
     }
 
     // Verify BVN with Dojah
-    const result = await dojah.kycBVNFull(bvn);
-    if (!result || !result.entity) {
+    const verifyBVN = await dojah.kycBVNAdvance(bvn);
+    const verifyNIN = await dojah.verifyNIN(nin);
+
+    if (!verifyBVN) {
       return res.status(400).json({ error: 'Invalid BVN' });
     }
 
-    const entity = result.entity;
-    const firstName = entity.first_name;
-    const lastName = entity.last_name;
-    const middleName = entity.middle_name
-    const gender = entity.gender;
-    const phoneNumber1 = entity.phone_number1;
-    const dateOfBirth = entity.date_of_birth;
-    const image = entity.image;
-
-    if (firstName === "" || lastName === "" || phoneNumber1 === "") {
-      return res.status(400).json({ error: 'BVN verification failed, missing essential user details' });
+    if(!verifyNIN){
+      return res.status(400).json({ error: "Invalid NIN"});
+    }
+    
+    if(verifyBVN.entity.date_of_birth !== verifyNIN.entity.date_of_birth){
+      return res.status(400).json({status: 400, message: "Error validating user's NIN and BVN"});
     }
 
+    const entity = verifyBVN.entity;
+    const firstName = entity.first_name;
+    const lastName = entity.last_name;
+    const middleName = entity.middle_name;
+    const gender = entity.gender;
+    const dateOfBirth = entity.date_of_birth;
+    const phoneNumber1 = entity.phone_number1;
+    const phoneNumber2 = entity.phone_number2;
+    const email = entity.email;
+    const enrollmentBank = entity.enrollment_bank;
+    const enrollmentBranch = entity.enrollment_branch;
+    const levelOfAccount = entity.level_of_account;
+    const lgaOfOrigin = entity.lga_of_origin;
+    const lgaOfResidence = entity.lga_of_residence;
+    const maritalStatus = entity.marital_status;
+    const nameOnCard = entity.name_on_card;
+    const nationality = entity.nationality;
+    const registrationDate = entity.registration_date;
+    const residentialAddress = entity.residential_address;
+    const stateOfOrigin = entity.state_of_origin;
+    const stateOfResidence = entity.state_of_residence;
+    const title = entity.title;
+    const watchListed = entity.watch_listed;
+    const imageBVN = entity.image;
+    const imageNIN = verifyNIN.entity.photo;
+
+    // if (firstName === "" || lastName === "" || phoneNumber1 === "") {
+    //   return res.status(400).json({ error: 'BVN verification failed, missing essential user details' });
+    // }
+
     // // Create user
+    // const user = await User.create({
+    //   bvn,
+    //   firstName,
+    //   lastName,
+    //   middleName,
+    //   gender,
+    //   dateOfBirth,
+    //   phoneNumber1,
+    //   imageBVN,
+    //   imageNIN,
+    //   nin
+    // });
+
     const user = await User.create({
       bvn,
       firstName,
@@ -147,47 +197,30 @@ exports.register = async (req, res) => {
       gender,
       dateOfBirth,
       phoneNumber1,
-      image
+      phoneNumber2,
+      email,
+      enrollmentBank,
+      enrollmentBranch,
+      levelOfAccount,
+      lgaOfOrigin,
+      lgaOfResidence,
+      maritalStatus,
+      nameOnCard,
+      nationality,
+      registrationDate,
+      residentialAddress,
+      stateOfOrigin,
+      stateOfResidence,
+      title,
+      watchListed,
+      imageBVN,
+      imageNIN,
+      nin
     });
 
+
     const id = user.id;
-    await Wallet.create({ userId: id });
-
-    // --- CREATE CUSTOMER & ACCOUNT ON BANKONE ---
-    // const bankoneRes = await axios.post(
-    //   `${process.env.BANKONE_BASE_URL}/CreateCustomerAndAccount/2`,
-    //   {
-    //     TransactionTrackingRef: `trx-${Date.now()}-${id}`,
-    //     AccountOpeningTrackingRef: `acct-${Date.now()}-${id}`,
-    //     ProductCode: process.env.BANKONE_PRODUCT_CODE,
-    //     LastName: last_name,
-    //     OtherNames: first_name + (middle_name ? ' ' + middle_name : ''),
-    //     BVN: bvn,
-    //     PhoneNo: phone_number1,
-    //     PlaceOfBirth: state_of_origin || 'Unknown',
-    //     Gender: gender?.startsWith('m') ? 'M' : 'F',
-    //     DateOfBirth: date_of_birth,
-    //     Address: residential_address || 'Unknown',
-    //     NationalIdentityNo: '',
-    //     Email: email,
-    //     HasSufficientInfoOnAccountInfo: true
-    //   },
-    //   {
-    //     params: { authtoken: process.env.BANKONE_AUTHTOKEN, version: '2' }
-    //   }
-    // );
-
-    // const bankoneData = bankoneRes.data;
-    // if (!bankoneData.IsSuccessful) {
-    //   console.warn('BankOne account creation failed:', bankoneData.Description);
-    //   // optionally: store this result for retrying later
-    // } else {
-    //   // Optional: Save BankOne CustomerID & AccountNumber in DB
-    //   await user.update({
-    //     bankoneCustomerId: bankoneData.Payload.CustomerID,
-    //     bankoneAccountNumber: bankoneData.Payload.AccountNumber
-    //   });
-    // }
+    // await Wallet.create({ userId: id });
 
     const token = jwt.generateToken(user);
     return res.status(201).json({
@@ -203,13 +236,10 @@ exports.register = async (req, res) => {
 
 exports.verifySelfieWithPhotoId = async (req, res) => {
   const user = req.user;  
-  console.log('📦 Payload size (KB):', Buffer.byteLength(JSON.stringify(req.body)) / 1024);
   try {
-    const {
-      selfie_image,
-    } = req.body;
 
-    const photoid_image = user.image; 
+    const photoid_image = user.imageBVN; 
+    const selfie_image = user.imageNIN;
     const first_name = user.firstName; 
     const last_name = user.lastname;
 
@@ -270,47 +300,71 @@ exports.setPin = async (req, res) => {
   try {
     const { pin } = req.body;
     const hashed = await bcrypt.hash(pin, 10);
-    const saved = await Pin.create({ hashedPin: hashed, UserId: user.id });
+    const saved = await Pin.create({ hashedPin: hashed, userId: user.id });
     res.status(201).json({ message: 'PIN created' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-exports.login = async (req, res) => {
-  try {
-    const { phone, pin } = req.body;
+// exports.login = async (req, res) => {
+//   try {
+//     const { phone, password } = req.body;
+//     const user = await User.findOne({ where: { phone } });
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' });
+//     }
+//     const pinRecord = await Pin.findOne({ where: { userId: user.id } });
+//     if (!pinRecord) {
+//       return res.status(404).json({ error: 'PIN not set' });
+//     }
+//     const isMatch = await bcrypt.compare(pin, pinRecord.hashedPin);
+//     if (!isMatch) {
+//       return res.status(401).json({ error: 'Invalid PIN' });
+//     }
+//     const token = jwt.generateToken(user);
+//     res.status(200).json({ token });
+//   }
+//   catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// }
+
+exports.loginUser = async (req, res) => {
+  const { phone, password } = req.body;
+
+  try { 
     const user = await User.findOne({ where: { phone } });
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+
+    if (!user || !user.password) {
+      return res.status(400).json({ error: 'Invalid credentials.' });
     }
-    const pinRecord = await Pin.findOne({ where: { UserId: user.id } });
-    if (!pinRecord) {
-      return res.status(404).json({ error: 'PIN not set' });
-    }
-    const isMatch = await bcrypt.compare(pin, pinRecord.hashedPin);
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid PIN' });
+      return res.status(400).json({ error: 'Invalid credentials.' });
     }
+
     const token = jwt.generateToken(user);
-    res.status(200).json({ token });
+
+    res.status(200).json({ token, user });
+  } catch (err) {
+    res.status(500).json({ error: 'Login failed.' });
   }
-  catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-}
+};
+
 exports.getUser = async (req, res) => {
   const authUser = req.user; // from token middleware
 
   try {
     const user = await User.findByPk(authUser.id, {
-      include: [
-        { model: Profile },       // assuming Profile has userId foreign key
+      include: [      // assuming Profile has userId foreign key
         { model: Wallet },
         { model: Transaction },
-        {model: BankAccount},
-        {model: PaymentIntentModel},
-        {model: Transaction},
-        {model: Wallet}   // adjust these based on your models
+        { model: BankAccount},
+        { model: PaymentIntentModel},
+        { model: Transaction},
+        { model: Pin}
       ]
     });
 
@@ -324,3 +378,45 @@ exports.getUser = async (req, res) => {
   }
 };
 
+exports.createPassword = async (req, res) => {
+  const { password } = req.body;
+  const user = req.user; 
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password updated.' });
+  } catch (err) {
+    res.status(401).json({ error: err.message });
+  }
+};
+
+// exports.resetPin = async (req, res) => {
+
+// }
+
+
+exports.resetPassword = async (req, res) =>{
+  const { phone } = req.body;
+  try {
+    const user = User.findOne({where: phone});
+
+    if(!user) { 
+      return res.json(401).json({ status:"error", error: "User with this phone number not found"});
+    }
+
+    user.password = password;
+
+    await user.save();
+
+    return res.status(200).json({status: "success", message: "Password created successfuly"});
+  }catch (error) {
+    res.status(500).json({ error: "Error occured while creating password" });
+  }
+}
+
+exports.verifyNIN = async (req, res) => {
+
+}
