@@ -4,8 +4,9 @@ const authController = require('../controllers/auth.controller');
 const auth = require('../middleware/auth.middleware');
 
 router.post('/register', authController.register);
-router.post('/set-pin', auth, authController.setPin);
-router.post('/login', auth, authController.login);
+router.post('/create-pin', auth, authController.createPin);
+router.post('/reset-pin', authController.resetPin);
+router.post('/login', auth, authController.loginUser);
 router.post("/verify-bvn", authController.kycBVN)
 
 router.get("/", (req, res) => {

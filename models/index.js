@@ -29,7 +29,6 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.User = require('./user.model')(sequelize, DataTypes);
-db.Pin = require('./pin.model')(sequelize, DataTypes);
 db.KYC = require('./kyc.model')(sequelize, DataTypes);
 db.BankAccount = require('./bankAccount.model')(sequelize, DataTypes);
 db.Address = require('./address.model')(sequelize, DataTypes);
@@ -82,8 +81,6 @@ db.BankAccount.belongsTo(db.User);
 db.User.hasOne(db.Address);
 db.Address.belongsTo(db.User);
 
-db.User.hasOne(db.Pin);
-db.Pin.belongsTo(db.User);
 
 db.User.hasOne(db.KYC);
 db.KYC.belongsTo(db.User);

@@ -330,7 +330,7 @@ exports.setPin = async (req, res) => {
 // }
 
 exports.loginUser = async (req, res) => {
-  const { phone, password } = req.body;
+  const { phone, pin } = req.body;
 
   try { 
     const user = await User.findOne({ where: { phone } });
@@ -378,18 +378,24 @@ exports.getUser = async (req, res) => {
   }
 };
 
-exports.createPassword = async (req, res) => {
-  const { password } = req.body;
+exports.createPin = async (req, res) => {
+  const { pin, type } = req.body;
   const user = req.user; 
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    user.password = hashedPassword;
-    await user.save();
+    const hashedPin = await bcrypt.hash(password, 10);
+    if(type == "authentication") {
+      user.autheticationPin = hashedPin;
+      await user.save();
+    } 
 
-    res.status(200).json({ message: 'Password updated.' });
+    if(type == "transaction") {
+      user.transactionPin = hashedPin;
+      await user.save();
+    }
+    res.status(201).json({ status: 201, message: `${type} Pin created successfully` });
   } catch (err) {
-    res.status(401).json({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -398,25 +404,31 @@ exports.createPassword = async (req, res) => {
 // }
 
 
-exports.resetPassword = async (req, res) =>{
-  const { phone } = req.body;
+exports.resetPin = async (req, res) =>{
+  const { pin, type, phone } = req.body;
   try {
     const user = User.findOne({where: phone});
 
     if(!user) { 
-      return res.json(401).json({ status:"error", error: "User with this phone number not found"});
+      return res.json(404).json({ status: 404, error: "User with this phone number not found"});
     }
 
-    user.password = password;
+    const hashedPin = await bcrypt.hash(password, 10);
+    if(type == "authentication") {
+      user.autheticationPin = hashedPin;
+      await user.save();
+    } 
 
-    await user.save();
-
-    return res.status(200).json({status: "success", message: "Password created successfuly"});
-  }catch (error) {
-    res.status(500).json({ error: "Error occured while creating password" });
+    if(type == "transaction") {
+      user.transactionPin = hashedPin;
+      await user.save();
+    }
+    return res.status(201).json({ status: 201, message: `${type} Pin Reset successfully` });
+  }catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 }
 
-exports.verifyNIN = async (req, res) => {
+// exports.verifyNIN = async (req, res) => {
 
-}
+// }
