@@ -13,4 +13,6 @@ router.post('/startimes', auth, billsController.payStartimes);
 router.post('/spectranet', auth, billsController.paySpectranet);
 router.post('/smile', auth, billsController.paySmile);
 
+router.get('/vending-products', auth, getVendingProducts);
+
 module.exports = router;

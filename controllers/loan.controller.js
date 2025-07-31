@@ -4,10 +4,75 @@ const { requestLoan, getLoanDetails, getCustomerLoans, repayLoan } = require('..
 const { updateBankoneCustomer } = require('./wallet.controller');
 const bankOne = require('../utils/bankOne');
 const { Op } = require('sequelize');
-const remita = require('../utils/remita');
+// const remita = require('../utils/remita');
 const { v4: uuidv4 } = require('uuid');
+const { createDirectDebitMandate } = require('./remitaService');
 
 
+
+
+exports.initiateMandate = async (req, res) => {
+  try {
+    const response = await createDirectDebitMandate(req.body);
+    res.status(200).json({ success: true, data: response });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+
+exports.initiateOtpForMandate = async (mandateId, requestId) => {
+  const hash = generateApiDetailsHash({ mandateId, requestId });
+  const headers = {
+    'Content-Type': 'application/json',
+    'MERCHANT_ID': process.env.REMITA_MERCHANT_ID,
+    'API_KEY': process.env.REMITA_API_KEY,
+    'REQUEST_ID': requestId,
+    'REQUEST_TS': new Date().toISOString(),
+    'API_DETAILS_HASH': hash
+  };
+
+  const body = { mandateId, requestId };
+
+  try {
+    const res = await axios.post(`${process.env.REMITA_BASE_URL}/remita/exapp/api/v1/send/api/echannelsvc/echannel/mandate/requestAuthorization`, body, { headers });
+    return res.data;
+  } catch (error) {
+    console.error('OTP Initiation Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+
+exports.validateOtpActivation = async ({ remitaTransRef, authParams, requestId, requestTs }) => {
+  const baseUrl = 'https://api-demo.remita.net/remita/exapp/api/v1/directdebit/mandate/validateAuthorization';
+  const merchantId = process.env.REMITA_MERCHANT_ID;
+  const apiKey = process.env.REMITA_API_KEY;
+
+  const hashString = `${merchantId}${apiKey}${requestId}${requestTs}`;
+  const hash = crypto.createHash('sha512').update(hashString).digest('hex');
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'MERCHANT_ID': merchantId,
+    'API_KEY': apiKey,
+    'REQUEST_ID': requestId,
+    'REQUEST_TS': requestTs,
+    'API_DETAILS_HASH': hash
+  };
+
+  const payload = {
+    remitaTransRef,
+    authParams
+  };
+
+  try {
+    const response = await axios.post(baseUrl, payload, { headers });
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error;
+  }
+};
 exports.applyForLoan = async (req, res) => {
   const { amount, tenor, purpose } = req.body;
   const user = await User.findByPk(req.user.id);
