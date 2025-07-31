@@ -211,12 +211,12 @@ const electricityProviderCodes = {
   IBEDC: "ibedc_ng"
 }
 
-const billerCategory = {
-  electricity,
-  airtime,
-  internet_data_subscription,
-  cable_tv
-}
+// const billerCategory = {
+//   electricity,
+//   airtime,
+//   internet_data_subscription,
+//   cable_tv
+// }
 
 // const getElectricityProviders = async () => {
 //   const baseUrl = 'https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/providers/category/1';
