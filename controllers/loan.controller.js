@@ -4,16 +4,16 @@ const { requestLoan, getLoanDetails, getCustomerLoans, repayLoan } = require('..
 const { updateBankoneCustomer } = require('./wallet.controller');
 const bankOne = require('../utils/bankOne');
 const { Op } = require('sequelize');
-// const remita = require('../utils/remita');
+const remita = require('../utils/remita');
 const { v4: uuidv4 } = require('uuid');
-const { createDirectDebitMandate } = require('./remitaService');
+// const { createDirectDebitMandate } = require('./remitaService');
 
 
 
 
 exports.initiateMandate = async (req, res) => {
   try {
-    const response = await createDirectDebitMandate(req.body);
+    const response = await remita.createDirectDebitMandate(req.body);
     res.status(200).json({ success: true, data: response });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
