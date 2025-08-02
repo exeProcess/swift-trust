@@ -22,7 +22,7 @@ exports.sendVerificationEmail = async (to, code) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to,
-    subject: 'Your Kryptrex verification code',
+    subject: 'Your Swift Trust MFB verification code',
     text: `Your verification code is ${code}. It will expire shortly.`,
   };
 

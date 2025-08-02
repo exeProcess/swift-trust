@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
-    addressLine: {
+    addressNumber: {
       type: DataTypes.STRING,
     },
     state: {
@@ -14,10 +14,13 @@ module.exports = (sequelize, DataTypes) => {
     city: {
       type: DataTypes.STRING,
     },
-    proofDocUrl: {
-      type: DataTypes.STRING,
+    country: {
+      type: DataTypes.STRING
     },
-    UserId: {
+    proofOfAdress: {
+      type: DataTypes.Text,
+    },
+    userId: {
       type: DataTypes.UUID,
       allowNull: false
     }
