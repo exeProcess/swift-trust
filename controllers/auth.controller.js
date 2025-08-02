@@ -5,95 +5,7 @@ const dojah = require('../utils/dojah');
 const notifier = require('../utils/notifier');
 const paymentIntentModel = require('../models/paymentIntent.model');
 
-// exports.register = async (req, res) => {
-//   try {
-//     const { bvn, referral } = req.body;
 
-//     if (!bvn) {
-//       return res.status(400).json({ error: 'BVN is required' });
-//     }
-
-//     // Check if user already exists
-//     const existing = await User.findOne({ where: { bvn } });
-//     if (existing) {
-//       return res.status(400).json({ error: 'BVN already registered' });
-//     }
-
-//     // Verify BVN with Dojah
-//     const result = await dojah.verifyBVN(bvn);
-//     if (!result || !result.entity) {
-//       return res.status(400).json({ error: 'Invalid BVN' });
-//     }
-
-//     const entity = result.entity;
-//     const {
-//       first_name,
-//       last_name,
-//       middle_name,
-//       gender,
-//       date_of_birth,
-//       phone_number1,
-//       phone_number2,
-//       image,
-//       email,
-//       enrollment_bank,
-//       enrollment_branch,
-//       level_of_account,
-//       lga_of_origin,
-//       lga_of_residence,
-//       marital_status,
-//       name_on_card,
-//       nationality,
-//       registration_date,
-//       residential_address,
-//       state_of_origin,
-//       state_of_residence,
-//       title,
-//       watch_listed
-//     } = entity;
-
-//     if (!first_name || !last_name || !phone_number1) {
-//       return res.status(400).json({ error: 'BVN verification failed, missing essential user details' });
-//     }
-
-//     // Create user
-//     const user = await User.create({
-//       bvn,
-//       first_name,
-//       last_name,
-//       middle_name,
-//       gender,
-//       date_of_birth,
-//       phone_number1,
-//       phone_number2,
-//       image,
-//       email,
-//       enrollment_bank,
-//       enrollment_branch,
-//       level_of_account,
-//       lga_of_origin,
-//       lga_of_residence,
-//       marital_status,
-//       name_on_card,
-//       nationality,
-//       registration_date,
-//       residential_address,
-//       state_of_origin,
-//       state_of_residence,
-//       title,
-//       watch_listed
-//     });
-//     const id = user.id;
-//     await Wallet.create({
-//       userId: id
-//     });
-//     const token = jwt.generateToken(user); // assumes `generateToken(user)` returns a JWT
-//     res.status(201).json({ token, user:{ first_name, last_name, bvn, phone_number1} });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'Something went wrong' });
-//   }
-// };
 
 exports.kycBVN = async (req, res) => {
    try {
@@ -117,10 +29,13 @@ exports.kycNIN = async (req, res) => {
 
 exports.register = async (req, res) => {
   try {
-    const { bvn, nin, referral } = req.body;
+    const { bvn, nin } = req.body;
 
     if (!bvn) {
       return res.status(400).json({ error: 'BVN is required' });
+    }
+    if (!nin) {
+      return res.status(400).json({ error: 'NIN is required' });
     }
 
     // Check if user already exists
@@ -142,7 +57,7 @@ exports.register = async (req, res) => {
     }
     
     if(verifyBVN.entity.date_of_birth !== verifyNIN.entity.date_of_birth){
-      return res.status(400).json({status: 400, message: "Error validating user's NIN and BVN"});
+      return res.status(400).json({status: 400, message: "BVN and NIN records do not match"});
     }
 
     const entity = verifyBVN.entity;
@@ -171,23 +86,6 @@ exports.register = async (req, res) => {
     const imageBVN = entity.image;
     const imageNIN = verifyNIN.entity.photo;
 
-    // if (firstName === "" || lastName === "" || phoneNumber1 === "") {
-    //   return res.status(400).json({ error: 'BVN verification failed, missing essential user details' });
-    // }
-
-    // // Create user
-    // const user = await User.create({
-    //   bvn,
-    //   firstName,
-    //   lastName,
-    //   middleName,
-    //   gender,
-    //   dateOfBirth,
-    //   phoneNumber1,
-    //   imageBVN,
-    //   imageNIN,
-    //   nin
-    // });
 
     const user = await User.create({
       bvn,
@@ -218,14 +116,18 @@ exports.register = async (req, res) => {
       nin
     });
 
-
-    const id = user.id;
-    // await Wallet.create({ userId: id });
+    const responsePayload = {
+      id: user.id,
+      fullName: `${user.firstName} ${user.middleName} ${user.lastName}`,
+      dob: user.dateOfBirth,
+      phoneNumber: user.phoneNumber1,
+      email: user.email
+    };
 
     const token = jwt.generateToken(user);
     return res.status(201).json({
       token,
-      user
+      responsePayload
     });
   } catch (err) {
     console.error('Registration error:', err.result?.data || err.message);
@@ -234,76 +136,150 @@ exports.register = async (req, res) => {
 };
 
 
-exports.verifySelfieWithPhotoId = async (req, res) => {
-  const user = req.user;  
+// exports.verifySelfieWithPhotoId = async (req, res) => {
+//   const user = req.user;  
+//   try {
+
+//     const photoid_image = user.imageBVN; 
+//     const selfie_image = user.imageNIN;
+//     const first_name = user.firstName; 
+//     const last_name = user.lastname;
+
+//     const payload = {
+//       selfie_image,
+//       photoid_image,
+//       first_name,
+//       last_name
+//     };
+
+//     // Validate input
+//     if (!selfie_image) {
+//       return res.status(400).json({ error: 'Selfie image is required' });
+//     }
+
+
+//     // Call Dojah API
+//     const result = await dojah.verifySelfieWithPhotoId(
+//       payload
+//     );
+//     // Check for errors in result
+//     // if (!result || !result.entity) {
+//     //   return res.status(400).json({ error: 'Invalid result from Dojah API' });
+//     // }
+    
+    
+//     // if (result.entity.selfie.confidence_value < 90) {
+//     //   return res.status(400).json({ error: 'Selfie verification confidence too low', details: result.entity });
+//     // }else{
+//       return res.status(200).json(result);
+//     // }
+//     // if (result.data.entity.selfie.match && result.data.entity.selfie.confidence_value >= 0.5) {
+//     //   user.isVerified = true; 
+//     //   await user.save(); 
+//     //   const sendOtpresult = await notifier.sendSMS(user.phone_number1);
+//     //   if (sendOtpresult.status === 'error') {
+//     //     return res.status(500).json({ error: 'Failed to send OTP', details: sendOtpresult.message });
+//     //   }else {
+//     //     return res.status(200).json({
+//     //       message: 'Selfie and photo ID verification successful',
+//     //       otp_sent: true
+//     //     });
+//     //   }
+//     // }
+    
+//   } catch (err) {
+//     // console.error('Dojah API error:', err.result?.data || err.message);
+//     res.status(500).json({
+//       error: 'Failed to verify selfie and photo ID',
+//       details: err.result?.data || err.message
+//     });
+//   }
+// };
+
+
+exports.setLoginPin = async (req, res) => {
+  const user = req.user;
   try {
-
-    const photoid_image = user.imageBVN; 
-    const selfie_image = user.imageNIN;
-    const first_name = user.firstName; 
-    const last_name = user.lastname;
-
-    const payload = {
-      selfie_image,
-      photoid_image,
-      first_name,
-      last_name
-    };
-
-    // Validate input
-    if (!selfie_image) {
-      return res.status(400).json({ error: 'Selfie image is required' });
+    const { pin } = req.body;
+    if(!pin){
+      return res.status(400).json({status: 400, message: "Login pin is required"});
     }
-
-
-    // Call Dojah API
-    const result = await dojah.verifySelfieWithPhotoId(
-      payload
-    );
-    // Check for errors in result
-    // if (!result || !result.entity) {
-    //   return res.status(400).json({ error: 'Invalid result from Dojah API' });
-    // }
-    
-    
-    // if (result.entity.selfie.confidence_value < 90) {
-    //   return res.status(400).json({ error: 'Selfie verification confidence too low', details: result.entity });
-    // }else{
-      return res.status(200).json(result);
-    // }
-    // if (result.data.entity.selfie.match && result.data.entity.selfie.confidence_value >= 0.5) {
-    //   user.isVerified = true; 
-    //   await user.save(); 
-    //   const sendOtpresult = await notifier.sendSMS(user.phone_number1);
-    //   if (sendOtpresult.status === 'error') {
-    //     return res.status(500).json({ error: 'Failed to send OTP', details: sendOtpresult.message });
-    //   }else {
-    //     return res.status(200).json({
-    //       message: 'Selfie and photo ID verification successful',
-    //       otp_sent: true
-    //     });
-    //   }
-    // }
-    
+    const hashed = await bcrypt.hash(pin, 10);
+    // const saved = await Pin.create({ hashedPin: hashed, userId: user.id });
+    user.autheticationPin = hashed;
+    user.save();
+    res.status(201).json({ message: 'PIN created' });
   } catch (err) {
-    // console.error('Dojah API error:', err.result?.data || err.message);
-    res.status(500).json({
-      error: 'Failed to verify selfie and photo ID',
-      details: err.result?.data || err.message
-    });
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.setTransactionPin = async (req, res) => {
+  const user = req.user;
+  try {
+    const { pin } = req.body;
+    if(!pin){
+      return res.status(400).json({status: 400, message: "Transaction pin is required"});
+    }
+    const hashed = await bcrypt.hash(pin, 10);
+    // const saved = await Pin.create({ hashedPin: hashed, userId: user.id });
+    user.transactionPin = hashed;
+    user.save();
+    res.status(201).json({ message: 'PIN created' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
 
-exports.setPin = async (req, res) => {
-  const user = req.user;
+exports.loginWithPin = async (req, res) => {
+  const { phone, email, pin } = req.body;
+
+  if (!pin || (!phone && !email)) {
+    return res.status(400).json({ status: 400, message: "Phone or Email and PIN are required" });
+  }
+
   try {
-    const { pin } = req.body;
-    const hashed = await bcrypt.hash(pin, 10);
-    const saved = await Pin.create({ hashedPin: hashed, userId: user.id });
-    res.status(201).json({ message: 'PIN created' });
+    // Find user by phone or email
+    const user = await User.findOne({
+      where: {
+        ...(phone ? { phone } : {}),
+        ...(email ? { email } : {})
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ status: 404, message: "User not found" });
+    }
+
+    // Check if user has set a transaction pin
+    if (!user.transactionPin) {
+      return res.status(400).json({ status: 400, message: "Transaction PIN not set for this user" });
+    }
+
+    // Compare pin
+    const isMatch = await bcrypt.compare(pin, user.transactionPin);
+    if (!isMatch) {
+      return res.status(401).json({ status: 401, message: "Invalid PIN" });
+    }
+
+    // Optionally generate a token or session
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+    res.status(200).json({
+      status: 200,
+      message: "Login successful",
+      token, // optional
+      user: {
+        id: user.id,
+        email: user.email,
+        phone: user.phone,
+        name: user.name
+      }
+    });
+
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ status: 500, message: err.message });
   }
 };
 // exports.login = async (req, res) => {
@@ -329,29 +305,29 @@ exports.setPin = async (req, res) => {
 //   }
 // }
 
-exports.loginUser = async (req, res) => {
-  const { phone, pin } = req.body;
+// exports.loginUser = async (req, res) => {
+//   const { phone, pin } = req.body;
 
-  try { 
-    const user = await User.findOne({ where: { phone } });
+//   try { 
+//     const user = await User.findOne({ where: { phone } });
 
-    if (!user || !user.password) {
-      return res.status(400).json({ error: 'Invalid credentials.' });
-    }
+//     if (!user || !user.password) {
+//       return res.status(400).json({ error: 'Invalid credentials.' });
+//     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+//     const isMatch = await bcrypt.compare(password, user.password);
 
-    if (!isMatch) {
-      return res.status(400).json({ error: 'Invalid credentials.' });
-    }
+//     if (!isMatch) {
+//       return res.status(400).json({ error: 'Invalid credentials.' });
+//     }
 
-    const token = jwt.generateToken(user);
+//     const token = jwt.generateToken(user);
 
-    res.status(200).json({ token, user });
-  } catch (err) {
-    res.status(500).json({ error: 'Login failed.' });
-  }
-};
+//     res.status(200).json({ token, user });
+//   } catch (err) {
+//     res.status(500).json({ error: 'Login failed.' });
+//   }
+// };
 
 exports.getUser = async (req, res) => {
   const authUser = req.user; // from token middleware

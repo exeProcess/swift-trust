@@ -4,10 +4,12 @@ const authController = require('../controllers/auth.controller');
 const auth = require('../middleware/auth.middleware');
 
 router.post('/register', authController.register);
-router.post('/create-pin', auth, authController.createPin);
+router.post('/set-registeration-pin', authController.setLoginPin);
+router.post('/set-transaction-pin', authController.setTransactionPin);
+// router.post('/create-pin', auth, authController.createPin);
 router.post('/reset-pin', authController.resetPin);
 router.post('/login', auth, authController.loginUser);
-router.post("/verify-bvn", authController.kycBVN)
+router.post("/verify-bvn", authController.kycBVN);
 
 router.get("/", (req, res) => {
     res.send('Swift Trust Auth API is running');

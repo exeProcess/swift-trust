@@ -242,7 +242,7 @@ exports.AMLCheck = async (data) => {
       return response.data;
 
     } catch (error) {
-      console.error('❌ Error verifying BVN:', error.response?.data || error.message);
+      // console.error('❌ Error verifying BVN:', error.response?.data || error.message);
       return { error: error.response?.data || error.message };
     }
 } ;
