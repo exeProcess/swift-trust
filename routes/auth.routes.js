@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
 })
 
 
-router.post('/verify-selfie', auth, authController.verifySelfieWithPhotoId);
+// router.post('/verify-selfie', auth, authController.verifySelfieWithPhotoId);
 router.get('/get-user', auth, authController.getUser);
 
 module.exports = router;
