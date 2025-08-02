@@ -138,15 +138,15 @@ exports.register = async (req, res) => {
 
 exports.sendOtp = async (req, res) => {
   const user = req.user; 
-  const { phoneNumber, channel } = req.body;
+  const { phoneNumber, channel, email } = req.body;
 
 
   try {
     const userData = await User.findOne({ where: { id: user.id} });
     let verificationCode = generateSixDigitCode();
 
-    user.verificationCode = verificationCode;
-    user.save();
+    userData.verificationCode = verificationCode;
+    userData.save();
     const sender_id = "swift";
     const destination = phoneNumber;
     const priority = true;
