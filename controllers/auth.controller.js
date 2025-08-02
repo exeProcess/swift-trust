@@ -1,5 +1,6 @@
 const { User, Pin, Wallet, BankAccount, Transaction } = require('../models');
 const jwt = require('../utils/jwt');
+const { sendsendVerificationEmail } = require('../utils/emailService');
 const bcrypt = require('bcrypt');
 const dojah = require('../utils/dojah');
 const notifier = require('../utils/notifier');
@@ -135,66 +136,31 @@ exports.register = async (req, res) => {
   }
 };
 
-
-// exports.verifySelfieWithPhotoId = async (req, res) => {
-//   const user = req.user;  
-//   try {
-
-//     const photoid_image = user.imageBVN; 
-//     const selfie_image = user.imageNIN;
-//     const first_name = user.firstName; 
-//     const last_name = user.lastname;
-
-//     const payload = {
-//       selfie_image,
-//       photoid_image,
-//       first_name,
-//       last_name
-//     };
-
-//     // Validate input
-//     if (!selfie_image) {
-//       return res.status(400).json({ error: 'Selfie image is required' });
-//     }
+exports.sendOtp = async (req, res) => {
+  const user = req.user; 
+  const { phoneNumber, channel } = req.body;
 
 
-//     // Call Dojah API
-//     const result = await dojah.verifySelfieWithPhotoId(
-//       payload
-//     );
-//     // Check for errors in result
-//     // if (!result || !result.entity) {
-//     //   return res.status(400).json({ error: 'Invalid result from Dojah API' });
-//     // }
+  try {
+    const userData = await User.findOne({ where: { id: user.id} });
+    let verificationCode = generateSixDigitCode();
+
+    user.verificationCode = verificationCode;
+    user.save();
+    const sender_id = "swift";
+    const destination = phoneNumber;
+    const priority = true;
+    const otp = verificationCode;
+    await sendEmail(email, verificationCode, 'Your verification code is: ');
+    await dojah.sendOtp()
+
+  } catch (error) {
     
-    
-//     // if (result.entity.selfie.confidence_value < 90) {
-//     //   return res.status(400).json({ error: 'Selfie verification confidence too low', details: result.entity });
-//     // }else{
-//       return res.status(200).json(result);
-//     // }
-//     // if (result.data.entity.selfie.match && result.data.entity.selfie.confidence_value >= 0.5) {
-//     //   user.isVerified = true; 
-//     //   await user.save(); 
-//     //   const sendOtpresult = await notifier.sendSMS(user.phone_number1);
-//     //   if (sendOtpresult.status === 'error') {
-//     //     return res.status(500).json({ error: 'Failed to send OTP', details: sendOtpresult.message });
-//     //   }else {
-//     //     return res.status(200).json({
-//     //       message: 'Selfie and photo ID verification successful',
-//     //       otp_sent: true
-//     //     });
-//     //   }
-//     // }
-    
-//   } catch (err) {
-//     // console.error('Dojah API error:', err.result?.data || err.message);
-//     res.status(500).json({
-//       error: 'Failed to verify selfie and photo ID',
-//       details: err.result?.data || err.message
-//     });
-//   }
-// };
+  }
+
+}
+
+
 
 
 exports.setLoginPin = async (req, res) => {
@@ -405,6 +371,6 @@ exports.resetPin = async (req, res) =>{
   }
 }
 
-// exports.verifyNIN = async (req, res) => {
-
-// }
+const generateSixDigitCode = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}

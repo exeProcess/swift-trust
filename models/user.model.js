@@ -108,6 +108,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+    verificationCode: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     bankoneCustomerId: {
       type: DataTypes.STRING,
       allowNull: true
