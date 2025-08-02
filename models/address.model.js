@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
     proofOfAdress: {
-      type: DataTypes.Text,
+      type: DataTypes.TEXT,
     },
     userId: {
       type: DataTypes.UUID,

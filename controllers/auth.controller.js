@@ -179,10 +179,24 @@ exports.sendOtp = async (req, res) => {
 exports.verifyOtp = async (req, res) => {
   const user = req.user;
   const { otp } = req.body;
+
   try {
-    
-  } catch (error) {
-    
+    const user = await User.findOne({ where: { email } });
+
+    if (!user || user.verificationCode !== otp) {
+      return res.status(400).json({ error: 'Invalid verification code.' });
+    }
+
+    user.isVerified = true;
+    user.verificationCode = null;
+    await user.save();
+
+    // const token = jwtUtils.generateToken(user); 
+
+    return res.status(200).json({ status: 200, message: 'OTP Verification successful' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Verification failed.' });
   }
 }
 
