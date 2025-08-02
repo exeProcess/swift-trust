@@ -310,10 +310,7 @@ exports.verifyNIN = async (nin) => {
         'Authorization': SECRET_KEY
       }
     });
-    return {
-      message: 'NIN verification successful',
-      data: response.data
-    };
+    return response.data
   } catch (error) {
 
     return {
