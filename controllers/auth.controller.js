@@ -159,7 +159,7 @@ exports.sendOtp = async (req, res) => {
     }
     const sendEmailOtp = await sendVerificationEmail(email, verificationCode, 'Your verification code is: ');
     const sendPhoneNumberOtp =  await dojah.sendOtp(otpPayload);
-    if(!sendEmailOtp || sendPhoneNumberOtp){
+    if(!sendEmailOtp || !sendPhoneNumberOtp){
       return res.status(400).json({status: 400, message: "Error occured sending OTP. Try resending"});
     }
     return res.status(200).json({
