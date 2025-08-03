@@ -216,13 +216,14 @@ exports.setLoginPin = async (req, res) => {
   const user = req.user;
   try {
     const { pin } = req.body;
+    const userData = await User.findOne({ where: { id: user.id } });
     if(!pin){
       return res.status(400).json({status: 400, message: "Login pin is required"});
     }
     const hashed = await bcrypt.hash(pin, 10);
     // const saved = await Pin.create({ hashedPin: hashed, userId: user.id });
-    user.autheticationPin = hashed;
-    user.save();
+    userData.autheticationPin = hashed;
+    userData.save();
     res.status(201).json({ message: 'PIN created' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -233,13 +234,14 @@ exports.setTransactionPin = async (req, res) => {
   const user = req.user;
   try {
     const { pin } = req.body;
+    const userData = await User.findOne({ where: { id: user.id } });
     if(!pin){
       return res.status(400).json({status: 400, message: "Transaction pin is required"});
     }
     const hashed = await bcrypt.hash(pin, 10);
     // const saved = await Pin.create({ hashedPin: hashed, userId: user.id });
-    user.transactionPin = hashed;
-    user.save();
+    userData.transactionPin = hashed;
+    userData.save();
     res.status(201).json({ message: 'PIN created' });
   } catch (err) {
     res.status(500).json({ error: err.message });
