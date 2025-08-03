@@ -169,7 +169,7 @@ exports.sendOtp = async (req, res) => {
 
     await Wallet.create({
       userId: user.id,
-      accountNumber: phoneNumber.splice(1)
+      accountNumber: phoneNumber.slice(1)
     })
     return res.status(200).json({
       status: 200,
