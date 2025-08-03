@@ -1,6 +1,6 @@
 const { User, Pin, Wallet, BankAccount, Transaction } = require('../models');
 const jwt = require('../utils/jwt');
-const { sendVerificationEmail } = require('../utils/otp');
+const sendEmail = require('../utils/otp').sendVerificationEmail;
 const bcrypt = require('bcrypt');
 const dojah = require('../utils/dojah');
 const notifier = require('../utils/notifier');
@@ -138,6 +138,8 @@ exports.register = async (req, res) => {
   }
 };
 
+
+
 exports.sendOtp = async (req, res) => {
   const user = req.user; 
   const { phoneNumber, channel, email } = req.body;
@@ -151,21 +153,19 @@ exports.sendOtp = async (req, res) => {
     userData.phoneNumber1 = phoneNumber;
     userData.email = email !== undefined ? email : userData.email; 
     userData.save();
-    const sender_id = "swift";
-    const destination = phoneNumber;
-    const priority = true;
-    const otp = verificationCode;
-    const otpPayload = {
-      sender_id,
-      destination,
-      priority,
-      otp
-    }
-    const sendEmailOtp = await sendVerificationEmail(email, verificationCode, 'Your verification code is: ');
-    // const sendPhoneNumberOtp =  await dojah.sendOtp(otpPayload);
-    if(!sendEmailOtp){
-      return res.status(400).json({status: 400, message: "Error occured sending OTP. Try resending"});
-    }
+    // const sender_id = "swift";
+    // const destination = phoneNumber;
+    // const priority = true;
+    // const otp = verificationCode;
+    // const otpPayload = {
+    //   sender_id,
+    //   destination,
+    //   priority,
+    //   otp
+    // }
+   await sendEmail(email, verificationCode, 'Your verification code is: ');
+
+    
 
     await Wallet.create({
       userId: user.id,
