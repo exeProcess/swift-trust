@@ -190,14 +190,14 @@ exports.verifyOtp = async (req, res) => {
   const { otp } = req.body;
 
   try {
-    const user = await User.findOne({ where: { id: user.id } });
+    const userData = await User.findOne({ where: { id: user.id } });
 
-    if (!user || user.verificationCode !== otp) {
+    if (!userData || userData.verificationCode !== otp) {
       return res.status(400).json({ error: 'Invalid verification code.' });
     }
 
-    user.isVerified = true;
-    user.verificationCode = null;
+    userData.isVerified = true;
+    userData.verificationCode = null;
     await user.save();
 
     // const token = jwtUtils.generateToken(user); 
