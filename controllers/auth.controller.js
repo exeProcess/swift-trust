@@ -280,13 +280,13 @@ exports.loginWithPin = async (req, res) => {
       return res.status(401).json({ status: 401, message: "Invalid PIN" });
     }
 
-    // Optionally generate a token or session
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    
+    const token = jwt.generateToken(user);
 
     res.status(200).json({
       status: 200,
       message: "Login successful",
-      token, // optional
+      token, 
       user: {
         id: user.id,
         email: user.email,
