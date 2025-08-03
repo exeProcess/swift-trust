@@ -353,11 +353,6 @@ exports.getUser = async (req, res) => {
     const user = await User.findByPk(authUser.id, {
       include: [      // assuming Profile has userId foreign key
         { model: Wallet },
-        { model: Transaction },
-        { model: BankAccount},
-        { model: PaymentIntentModel},
-        { model: Transaction},
-        { model: Pin}
       ]
     });
 
