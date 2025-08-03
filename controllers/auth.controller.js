@@ -299,52 +299,7 @@ exports.loginWithPin = async (req, res) => {
     res.status(500).json({ status: 500, message: err.message });
   }
 };
-// exports.login = async (req, res) => {
-//   try {
-//     const { phone, password } = req.body;
-//     const user = await User.findOne({ where: { phone } });
-//     if (!user) {
-//       return res.status(404).json({ error: 'User not found' });
-//     }
-//     const pinRecord = await Pin.findOne({ where: { userId: user.id } });
-//     if (!pinRecord) {
-//       return res.status(404).json({ error: 'PIN not set' });
-//     }
-//     const isMatch = await bcrypt.compare(pin, pinRecord.hashedPin);
-//     if (!isMatch) {
-//       return res.status(401).json({ error: 'Invalid PIN' });
-//     }
-//     const token = jwt.generateToken(user);
-//     res.status(200).json({ token });
-//   }
-//   catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// }
 
-// exports.loginUser = async (req, res) => {
-//   const { phone, pin } = req.body;
-
-//   try { 
-//     const user = await User.findOne({ where: { phone } });
-
-//     if (!user || !user.password) {
-//       return res.status(400).json({ error: 'Invalid credentials.' });
-//     }
-
-//     const isMatch = await bcrypt.compare(password, user.password);
-
-//     if (!isMatch) {
-//       return res.status(400).json({ error: 'Invalid credentials.' });
-//     }
-
-//     const token = jwt.generateToken(user);
-
-//     res.status(200).json({ token, user });
-//   } catch (err) {
-//     res.status(500).json({ error: 'Login failed.' });
-//   }
-// };
 
 exports.getUser = async (req, res) => {
   const authUser = req.user; // from token middleware
@@ -366,57 +321,109 @@ exports.getUser = async (req, res) => {
   }
 };
 
-exports.createPin = async (req, res) => {
-  const { pin, type } = req.body;
-  const user = req.user; 
+
+
+// exports.resetPin = async (req, res) =>{
+//   const { pin, type, phone } = req.body;
+//   try {
+//     const user = User.findOne({where: phone});
+
+//     if(!user) { 
+//       return res.json(404).json({ status: 404, error: "User with this phone number not found"});
+//     }
+
+//     const hashedPin = await bcrypt.hash(password, 10);
+//     if(type == "authentication") {
+//       user.autheticationPin = hashedPin;
+//       await user.save();
+//     } 
+
+//     if(type == "transaction") {
+//       user.transactionPin = hashedPin;
+//       await user.save();
+//     }
+//     return res.status(201).json({ status: 201, message: `${type} Pin Reset successfully` });
+//   }catch (err) {
+//     return res.status(500).json({ error: err.message });
+//   }
+// }
+
+// const generateSixDigitCode = () => {
+//   return Math.floor(100000 + Math.random() * 900000).toString();
+// }
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
 
   try {
-    const hashedPin = await bcrypt.hash(password, 10);
-    if(type == "authentication") {
-      user.autheticationPin = hashedPin;
-      await user.save();
-    } 
+    const existing = await User.findOne({ where: { email } });
 
-    if(type == "transaction") {
-      user.transactionPin = hashedPin;
-      await user.save();
+    if (!existing) {
+      return res.status(400).json({ error: 'User with this email does not exists.' });
     }
-    res.status(201).json({ status: 201, message: `${type} Pin created successfully` });
+
+    let verificationCode = generateSixDigitCode();
+
+    // const user = await User.create({
+    //   email,
+    //   isVerified: false,
+    //   verificationCode,
+    // });
+
+    existing.verificationCode = verificationCode;
+    await existing.save();
+    await sendEmail(email, verificationCode, 'Your reset password verification code is: ');
+    
+    res.status(201).json({status: 200, message: 'Reset pin verification code sent to email.' });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: "Caught error: " + err.message });
   }
 };
 
-// exports.resetPin = async (req, res) => {
+exports.verifyResetPasswordOtp = async (req, res ) =>{
+  const { email, code } = req.body;
 
-// }
-
-
-exports.resetPin = async (req, res) =>{
-  const { pin, type, phone } = req.body;
   try {
-    const user = User.findOne({where: phone});
+    const user = await User.findOne({ where: { email } });
 
-    if(!user) { 
-      return res.json(404).json({ status: 404, error: "User with this phone number not found"});
+    if (!user || user.verificationCode !== code) {
+      return res.status(400).json({ error: 'Invalid verification code.' });
     }
 
-    const hashedPin = await bcrypt.hash(password, 10);
-    if(type == "authentication") {
-      user.autheticationPin = hashedPin;
-      await user.save();
-    } 
+    user.isVerified = true;
+    user.verificationCode = null;
+    await user.save();
 
-    if(type == "transaction") {
-      user.transactionPin = hashedPin;
-      await user.save();
-    }
-    return res.status(201).json({ status: 201, message: `${type} Pin Reset successfully` });
-  }catch (err) {
-    return res.status(500).json({ error: err.message });
+    // const token = jwtUtils.generateToken(user); 
+
+    return res.status(200).json({ status: 200, message: 'Verification successful. You can now reset your password.' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Verification failed.' });
   }
 }
 
-const generateSixDigitCode = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+exports.resetPassword = async (req, res) => {
+  const { email, pin } = req.body;
+  if (!email || !pin) {
+    return res.status(400).json({ error: 'Email and new password are required.' });
+  }
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(400).json({ error: 'User with this email does not exists.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(pin, 10);
+    user.authenticationPin = hashedPassword;
+    user.verificationCode = null; // Clear verification code after password reset
+    await user.save();
+
+    return res.status(200).json({ message: 'Pin reset successfully.' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Something went wrong.' });
+  }
 }

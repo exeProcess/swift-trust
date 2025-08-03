@@ -12,7 +12,7 @@ router.post('/verifyotp', auth, authController.verifyOtp);
 router.get("/get-user-info", auth, authController.getUser)
 
 router.post('/reset-pin', authController.resetPin);
-router.post('/login', auth, authController.loginWithPin);
+router.post('/login', authController.loginWithPin);
 router.post("/verify-bvn", authController.kycBVN);
 router.post("/sendotp", auth, authController.sendOtp);
 
