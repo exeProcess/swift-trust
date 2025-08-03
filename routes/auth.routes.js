@@ -4,8 +4,8 @@ const authController = require('../controllers/auth.controller');
 const auth = require('../middleware/auth.middleware');
 
 router.post('/register', authController.register);
-router.post('/set-registeration-pin', authController.setLoginPin);
-router.post('/set-transaction-pin', authController.setTransactionPin);
+router.post('/set-registeration-pin', auth, authController.setLoginPin);
+router.post('/set-transaction-pin', auth, authController.setTransactionPin);
 // router.post('/create-pin', auth, authController.createPin);
 router.post('/verifyotp', auth, authController.verifyOtp);
 
