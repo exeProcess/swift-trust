@@ -10,8 +10,10 @@ router.post('/set-transaction-pin', auth, authController.setTransactionPin);
 router.post('/verifyotp', auth, authController.verifyOtp);
 
 router.get("/get-user-info", auth, authController.getUser)
-
-router.post('/reset-pin', authController.resetPin);
+router.post("/forgot-password", authController.forgotPassword);
+router.post("/verify-reset-password-code", authController.verifyResetPasswordOtp);
+router.post("/reset-password", authController.resetPassword);
+// router.post('/reset-pin', authController.resetPin);
 router.post('/login', authController.loginWithPin);
 router.post("/verify-bvn", authController.kycBVN);
 router.post("/sendotp", auth, authController.sendOtp);
