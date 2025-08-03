@@ -13,8 +13,8 @@ const transporter = nodemailer.createTransport({
     port: 465,
     secure: true, // true for port 465, false for 587
     auth: {
-        user: process.env.EMAIL_USER, // Zoho Mail login
-        pass: process.env.EMAIL_PASS,  // Zoho Mail app-specific password
+        user: process.env.GMAIL_USER, // Zoho Mail login
+        pass: process.env.GMAIL_PASS,  // Zoho Mail app-specific password
     },
 });
 
