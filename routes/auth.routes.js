@@ -7,6 +7,8 @@ router.post('/register', authController.register);
 router.post('/set-registeration-pin', authController.setLoginPin);
 router.post('/set-transaction-pin', authController.setTransactionPin);
 // router.post('/create-pin', auth, authController.createPin);
+router.post('/verifyotp', auth, authController.verifyOtp);
+
 router.post('/reset-pin', authController.resetPin);
 router.post('/login', auth, authController.loginWithPin);
 router.post("/verify-bvn", authController.kycBVN);
