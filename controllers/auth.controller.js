@@ -348,9 +348,9 @@ exports.getUser = async (req, res) => {
 //   }
 // }
 
-// const generateSixDigitCode = () => {
-//   return Math.floor(100000 + Math.random() * 900000).toString();
-// }
+const generateSixDigitCode = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
