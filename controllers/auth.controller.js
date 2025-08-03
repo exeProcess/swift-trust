@@ -125,6 +125,8 @@ exports.register = async (req, res) => {
       email: user.email
     };
 
+    
+
     const token = jwt.generateToken(user);
     return res.status(201).json({
       token,
@@ -146,6 +148,8 @@ exports.sendOtp = async (req, res) => {
     let verificationCode = generateSixDigitCode();
 
     userData.verificationCode = verificationCode;
+    userData.phoneNumber1 = phoneNumber;
+    userData.email = email !== undefined ? email : userData.email; 
     userData.save();
     const sender_id = "swift";
     const destination = phoneNumber;
@@ -158,13 +162,18 @@ exports.sendOtp = async (req, res) => {
       otp
     }
     const sendEmailOtp = await sendVerificationEmail(email, verificationCode, 'Your verification code is: ');
-    const sendPhoneNumberOtp =  await dojah.sendOtp(otpPayload);
-    if(!sendEmailOtp || !sendPhoneNumberOtp){
+    // const sendPhoneNumberOtp =  await dojah.sendOtp(otpPayload);
+    if(!sendEmailOtp){
       return res.status(400).json({status: 400, message: "Error occured sending OTP. Try resending"});
     }
+
+    await Wallet.create({
+      userId: user.id,
+      accountNumber: phoneNumber.splice(1)
+    })
     return res.status(200).json({
       status: 200,
-      message: "Email & Phone number OTP sent"
+      message: "OTP sent to user's email successfully"
     });
 
   } catch (error) {
@@ -181,7 +190,7 @@ exports.verifyOtp = async (req, res) => {
   const { otp } = req.body;
 
   try {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { id: user.id } });
 
     if (!user || user.verificationCode !== otp) {
       return res.status(400).json({ error: 'Invalid verification code.' });
