@@ -222,7 +222,7 @@ exports.setLoginPin = async (req, res) => {
     }
     const hashed = await bcrypt.hash(pin, 10);
     // const saved = await Pin.create({ hashedPin: hashed, userId: user.id });
-    userData.autheticationPin = hashed;
+    userData.authenticationPin = hashed;
     await userData.save();
     res.status(201).json({ message: 'PIN created' });
   } catch (err) {
