@@ -1,4 +1,4 @@
-const { User, Pin, Wallet, BankAccount, Transaction } = require('../models');
+const { User, Wallet, sequelize} = require('../models');
 const jwt = require('../utils/jwt');
 const sendEmail = require('../utils/otp').sendVerificationEmail;
 const bcrypt = require('bcrypt');
@@ -152,7 +152,7 @@ exports.sendOtp = async (req, res) => {
     userData.verificationCode = verificationCode;
     userData.phoneNumber1 = phoneNumber;
     userData.email = email !== undefined ? email : userData.email; 
-    userData.save();
+    await userData.save();
     // const sender_id = "swift";
     // const destination = phoneNumber;
     // const priority = true;
@@ -170,7 +170,7 @@ exports.sendOtp = async (req, res) => {
     await Wallet.create({
       userId: user.id,
       accountNumber: phoneNumber.slice(1)
-    })
+    });
     return res.status(200).json({
       status: 200,
       message: "OTP sent to user's email successfully"
@@ -223,7 +223,7 @@ exports.setLoginPin = async (req, res) => {
     const hashed = await bcrypt.hash(pin, 10);
     // const saved = await Pin.create({ hashedPin: hashed, userId: user.id });
     userData.autheticationPin = hashed;
-    userData.save();
+    await userData.save();
     res.status(201).json({ message: 'PIN created' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -241,7 +241,7 @@ exports.setTransactionPin = async (req, res) => {
     const hashed = await bcrypt.hash(pin, 10);
     // const saved = await Pin.create({ hashedPin: hashed, userId: user.id });
     userData.transactionPin = hashed;
-    userData.save();
+    await userData.save();
     res.status(201).json({ message: 'PIN created' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -351,8 +351,8 @@ exports.getUser = async (req, res) => {
 
   try {
     const user = await User.findByPk(authUser.id, {
-      include: [      // assuming Profile has userId foreign key
-        { model: Wallet },
+      include: [
+        { model: Wallet, as: 'wallet' }
       ]
     });
 

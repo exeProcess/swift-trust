@@ -69,8 +69,8 @@ db.PaymentIntent.belongsTo(db.User);
 db.User.hasMany(db.Loan);
 db.Loan.belongsTo(db.User);
 
-db.User.hasOne(db.Wallet);
-db.Wallet.belongsTo(db.User);
+db.User.hasOne(db.Wallet, { foreignKey: 'userId', as: 'wallet' });
+db.Wallet.belongsTo(db.User, { foreignKey: 'userId' });
 
 db.Wallet.hasMany(db.Transaction);
 db.Transaction.belongsTo(db.Wallet);
