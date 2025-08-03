@@ -270,12 +270,12 @@ exports.loginWithPin = async (req, res) => {
     }
 
     // Check if user has set a transaction pin
-    if (!user.autheticationPin) {
+    if (!user.authenticationPin) {
       return res.status(400).json({ status: 400, message: "Autentication PIN not set for this user" });
     }
 
     // Compare pin
-    const isMatch = await bcrypt.compare(pin, user.autheticationPin);
+    const isMatch = await bcrypt.compare(pin, user.authenticationPin);
     if (!isMatch) {
       return res.status(401).json({ status: 401, message: "Invalid PIN" });
     }
