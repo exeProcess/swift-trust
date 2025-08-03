@@ -179,7 +179,7 @@ exports.sendOtp = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       status: 500,
-      message: error.sendEmailOtp?.error || error.sendPhoneNumberOtp?.data || "Error occured"
+      message: error.sendEmailOtp?.error || "Error occured"
     });
   }
 
