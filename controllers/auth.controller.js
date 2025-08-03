@@ -147,7 +147,7 @@ exports.sendOtp = async (req, res) => {
 
   try {
     const userData = await User.findOne({ where: { id: user.id} });
-    let verificationCode = generateSixDigitCode();
+    const verificationCode = generateSixDigitCode();
 
     userData.verificationCode = verificationCode;
     userData.phoneNumber1 = phoneNumber;
@@ -205,7 +205,7 @@ exports.verifyOtp = async (req, res) => {
     return res.status(200).json({ status: 200, message: 'OTP Verification successful' });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Verification failed.' });
+    return res.status(500).json({ error: err.message });
   }
 }
 
