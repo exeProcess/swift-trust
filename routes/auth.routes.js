@@ -10,6 +10,7 @@ router.post('/set-transaction-pin', authController.setTransactionPin);
 router.post('/reset-pin', authController.resetPin);
 router.post('/login', auth, authController.loginWithPin);
 router.post("/verify-bvn", authController.kycBVN);
+router.post("/sendotp", auth, authController.sendOtp);
 
 router.get("/", (req, res) => {
     res.send('Swift Trust Auth API is running');
