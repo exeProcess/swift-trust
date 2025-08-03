@@ -260,7 +260,7 @@ exports.loginWithPin = async (req, res) => {
     // Find user by phone or email
     const user = await User.findOne({
       where: {
-        ...(phone ? { phone } : {}),
+        ...(phone ? { phoneNumber1: phone } : {}),
         ...(email ? { email } : {})
       }
     });
