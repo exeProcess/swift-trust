@@ -161,6 +161,7 @@ exports.sendOtp = async (req, res) => {
     const otpPayload = {
       sender_id,
       destination,
+      channel,
       priority,
       otp
     }
