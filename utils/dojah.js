@@ -60,7 +60,7 @@ exports.sendOtp = async (data) => {
 exports.registerSenderId = async () => {
   try {
     const senderId = await axios.post('https://api.dojah.io/api/v1/messaging/sender_id', 
-      { sender_id: "Swift" }, 
+      { sender_id: "Swift Trust" }, 
       {
         headers: {
           "AppId": APP_ID,
