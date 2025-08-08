@@ -44,14 +44,14 @@ exports.sendOtp = async (data) => {
       }
     );
 
-    if(!sendOTPRequest.data){
+    if(!sendOTPRequest.data.entity){
       return {
         status: 400,
         error: "Failed to send OTP"
       }
     }
 
-    return sendOTPRequest.data;
+    return sendOTPRequest.data.entity.status;
   } catch (error) {
     return { status: 500, error: error.sendOTPRequest?.data || error.message };
   }

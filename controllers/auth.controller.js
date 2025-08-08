@@ -151,19 +151,25 @@ exports.sendOtp = async (req, res) => {
 
     userData.verificationCode = verificationCode;
     userData.phoneNumber1 = phoneNumber;
-    userData.email = email !== undefined ? email : userData.email; 
+    userData.email = email !== undefined ? email : userData.email;
+
     await userData.save();
-    // const sender_id = "swift";
-    // const destination = phoneNumber;
-    // const priority = true;
-    // const otp = verificationCode;
-    // const otpPayload = {
-    //   sender_id,
-    //   destination,
-    //   priority,
-    //   otp
-    // }
-   await sendEmail(email, verificationCode, 'Your verification code is: ');
+    const sender_id = "swift";
+    const destination = phoneNumber;
+    const priority = true;
+    const otp = verificationCode;
+    const otpPayload = {
+      sender_id,
+      destination,
+      priority,
+      otp
+    }
+
+    userData.verificationCode = verificationCode;
+    userData.phoneNumber1 = phoneNumber;
+    userData.email = email !== undefined ? email : userData.email;
+    await sendEmail(email, verificationCode, 'Your verification code is: ');
+    await dojah.sendOtp(otpPayload);
 
     
 
