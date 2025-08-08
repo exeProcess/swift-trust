@@ -9,13 +9,16 @@ const nodemailer = require('nodemailer');
 //   },
 // });
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
+    host: 'mail.swifttrustmfb.com',
     port: 465,
     secure: true, // true for port 465, false for 587
     auth: {
         user: process.env.GMAIL_USER, // Zoho Mail login
         pass: process.env.GMAIL_PASS,  // Zoho Mail app-specific password
     },
+    tls: {
+        rejectUnauthorized: false // To prevent self-signed certificate errors
+    }
 });
 
 exports.sendVerificationEmail = async (to, code) => {
