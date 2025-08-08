@@ -13,8 +13,8 @@ const transporter = nodemailer.createTransport({
     port: 465,
     secure: true, // true for port 465, false for 587
     auth: {
-        user: process.env.GMAIL_USER, // Zoho Mail login
-        pass: process.env.GMAIL_PASS,  // Zoho Mail app-specific password
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
     },
     tls: {
         rejectUnauthorized: false // To prevent self-signed certificate errors
@@ -23,7 +23,7 @@ const transporter = nodemailer.createTransport({
 
 exports.sendVerificationEmail = async (to, code) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: process.env.SMTP_USER,
     to,
     subject: 'Your Swift Trust MFB verification code',
     text: `Your verification code is ${code}. It will expire shortly.`,
