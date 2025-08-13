@@ -22,4 +22,18 @@ exports.gerRemitaVendorProducts = async (req, res) => {
         console.error('Error fetching Remita vendor products:', error.message);
         res.status(500).json({ error: 'Unable to retrieve vendor products from Remita' });
     }
+
+}
+
+exports.buyAirtime = async (req, res) => {
+    const user = req.user.id;
+
+    try{
+        const airtimePurchaseRequest = await remita.buyAirtime(req.body);
+
+        return res.status(200).json(airtimePurchaseRequest);
+    }catch (error) {
+        console.error('Error buying airtime:', error.message);
+        return res.status(500).json({ error: 'Unable to buy airtime' });
+    }
 }
