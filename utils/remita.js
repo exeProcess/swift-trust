@@ -230,7 +230,7 @@ exports.getVendingProducts = async (payload) => {
       },
       headers: {
         'Content-Type': 'application/json',
-        secretKey: process.env.REMITA_API_SECRET_KEY
+        secretKey: process.env.REMITA_API_SECRET_KEY || "sk_test_B+y9/BpYxgz5bxepOkEO1IEh5emZ+Kg6tstibGNi94l4FsX4ZiIBPI4j7bbSux4n"
       }
     });
     return getVendingProductResponse.data;
