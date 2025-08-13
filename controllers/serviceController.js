@@ -15,12 +15,15 @@ exports.getRemitaServiceVendors = async (req, res) => {
 
 exports.gerRemitaVendorProducts = async (req, res) => {
     const { categoryCode, provider } = req.params;
+    const payload = { 
+        categoryCode, provider 
+    };
     try {
-        const products = await remita.getVendingProducts({ categoryCode, provider });
-        res.status(200).json(products);
+        const products = await remita.getVendingProducts(payload);
+        return res.status(200).json(products);
     } catch (error) {
         console.error('Error fetching Remita vendor products:', error.message);
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: error.message });
     }
 
 }
