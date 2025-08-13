@@ -223,12 +223,12 @@ exports.buyAirtimeOrData = async (rawData) => {
     const response = await axios.post(
       "https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/transactions",
       {
-        "productCode": product,
-        "clientReference": `Airtime-${Date.now()}`,
-        "amount": amount,
-        "data": {
-          "accountNumber": account,
-          "phoneNumber": phoneNumber,
+        productCode: product,
+        clientReference: `Airtime-${Date.now()}`,
+        amount: amount,
+        data: {
+          accountNumber: account,
+          phoneNumber: phoneNumber,
         }
       },
       {
