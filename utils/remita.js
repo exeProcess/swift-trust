@@ -2,7 +2,7 @@ const axios = require('axios');
 const crypto = require('crypto');
 
 // const REMITA_API_KEY = process.env.REMITA_API_KEY;
-const REMITA_API_SECRET = process.env.REMITA_API_SECRET_KEY || 'sk_test_B+y9/BpYxgz5bxepOkEO1IEh5emZ+Kg6tstibGNi94l4FsX4ZiIBPI4j7bbSux4n';
+const REMITA_API_SECRET = process.env.REMITA_API_SECRET_KEY || 'remi_test_sk_YVZ6OXpRcHdmaitoOUU3TGZya1Fob2IxZSt1bUxMdnV3ZlZtb1E9PTdlM2M0ZjYyYzc2MzQ0YzA2YTFlODFhYWE2MmI5MzU2NzQ4NWY0OTY3ZDM1YmEzOWMzOTczZDk1YzU5NjE3NWM=';
 const REMITA_API_KEY = process.env.REMITA_API_PUBLIC_KEY || 'pk_test_B+y9/BpYxgzS0OO5rB0ldHvDDpC/rDvfLEpu+Xn5AK5J+tFa57Sw4nYgE/Ht/5lx'; 
 // const REMITA_BASE_URL = process.env.REMITA_BASE_URL;
 
@@ -219,7 +219,7 @@ exports.getVendingProducts = async (payload) => {
     return getVendingProductResponse.data;
   } catch (error) {
     console.error('Error fetching Remita vending products:', error.message);
-    throw new Error('Unable to retrieve vending products from Remita');
+    throw new Error(getVendingProductResponse?.data?.message);
   }
 };
 
