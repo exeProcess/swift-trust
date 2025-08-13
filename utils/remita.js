@@ -226,7 +226,7 @@ exports.buyAirtime = async ({ amount, phoneNumber, provider}) => {
   const account = "12345678910";
   switch (provider) {
     case 'mtn':
-      airtimeProviderCode = ` airtime-${provider}`;
+      airtimeProviderCode = 'airtime-mtn';
       break;
     case 'airtel':
       airtimeProviderCode = "186";
