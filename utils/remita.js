@@ -214,7 +214,7 @@ exports.getVendingProducts = async (payload) => {
 };
 
 exports.buyAirtime = async (rawData) => {
-  const account = "12345678910";
+  const account = "1111111111";
   const { amount, phoneNumber, provider} = rawData;
   // const payload = 
   // };
