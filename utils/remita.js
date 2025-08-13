@@ -223,7 +223,7 @@ exports.getVendingProducts = async (payload) => {
 
 exports.buyAirtime = async ({ amount, phoneNumber, provider}) => {
   let airtimeProviderCode = "";
-  const accountNumber = "12345678910";
+  const account = "12345678910";
   switch (provider) {
     case 'MTN':
       airtimeProviderCode = ` airtime-${provider}`;
@@ -241,12 +241,12 @@ exports.buyAirtime = async ({ amount, phoneNumber, provider}) => {
       throw new Error('Unsupported provider');
   }
   const payload = {
-    productCode: airtimeProviderCode,
+    "productCode": airtimeProviderCode,
     "clientReference": process.env.REMITA_MERCHANT_ID,
     "amount": amount,
     "data": {
-        "accountNumber": accountNumber,
-        "phoneNumber": phoneNumber,
+      "accountNumber": account,
+      "phoneNumber": phoneNumber,
     }
   };
 
@@ -255,14 +255,14 @@ exports.buyAirtime = async ({ amount, phoneNumber, provider}) => {
         payload,
         headers: {
           'Content-Type': 'application/json',
-          secretKey: process.env.REMITA_API_SECRET_KEY
+          'secretKey': process.env.REMITA_API_SECRET_KEY
         }
     });
 
     return response.data
   } catch (error) {
     console.error('Error buying airtime from Remita:', error.message);
-    throw new Error('Unable to buy airtime from Remita');
+    throw new Error(error.message);
   }
 };
 
