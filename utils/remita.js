@@ -200,16 +200,33 @@ const vendingCategoryTypes = {
 }
 
 exports.getVendingProducts = async (payload) => {
-  const { provider } = payload;
+  const { providerCode } = payload;
   const categoryCode = payload.category;
-  const providerCode = telcoProviderCodes[provider.toLowerCase()];
+  // const providerCode = telcoProviderCodes[provider.toLowerCase()];
+  let provider;
+  switch (providerCode) {
+    case "mtn":
+      provider = "mtn_ng";
+      break;
+    case "airtel":
+      provider = "airtel_ng";
+      break;
+    case "glo":
+      provider = "glo_ng";
+      break;
+    case "9mobile":
+      provider = "9mobile_ng";
+      break
+    default:
+      throw("Invalid provider");
+  }
 
   try{
     const getVendingProductResponse = await axios.get("https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/products",{
       params: {
         countryCode : "NGA",
         categoryCode : categoryCode,
-        provider: providerCode
+        provider: provider
       },
       headers: {
         'Content-Type': 'application/json',
