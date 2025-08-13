@@ -224,7 +224,7 @@ exports.getVendingProducts = async (payload) => {
     const getVendingProductResponse = await axios.get(`https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/products?page=0&pageSize=20&countryCode=NGA&categoryCode=${categoryCode}&provider=${providerCode}`,{
       headers: {
         'Content-Type': 'application/json',
-        secretKey: process.env.REMITA_API_SECRET_KEY || "sk_test_B+y9/BpYxgz5bxepOkEO1IEh5emZ+Kg6tstibGNi94l4FsX4ZiIBPI4j7bbSux4n"
+        'secretKey': "sk_test_B+y9/BpYxgz5bxepOkEO1IEh5emZ+Kg6tstibGNi94l4FsX4ZiIBPI4j7bbSux4n"
       }
     });
     return getVendingProductResponse.data;
