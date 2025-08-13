@@ -200,29 +200,28 @@ const vendingCategoryTypes = {
 }
 
 exports.getVendingProducts = async (payload) => {
-  const { providerCode } = payload;
-  const categoryCode = payload.category;
+  const { providerCode, categoryCode } = payload;
   // const providerCode = telcoProviderCodes[provider.toLowerCase()];
-  let provider;
-  switch (providerCode) {
-    case "mtn":
-      provider = "mtn_ng";
-      break;
-    case "airtel":
-      provider = "airtel_ng";
-      break;
-    case "glo":
-      provider = "glo_ng";
-      break;
-    case "9mobile":
-      provider = "9mobile_ng";
-      break
-    default:
-      throw("Invalid provider");
-  }
+  // let provider;
+  // switch (providerCode) {
+  //   case "mtn":
+  //     provider = "mtn_ng";
+  //     break;
+  //   case "airtel":
+  //     provider = "airtel_ng";
+  //     break;
+  //   case "glo":
+  //     provider = "glo_ng";
+  //     break;
+  //   case "9mobile":
+  //     provider = "9mobile_ng";
+  //     break
+  //   default:
+  //     throw("Invalid provider");
+  // }
 
   try{
-    const getVendingProductResponse = await axios.get(`https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/products?page=0&pageSize=20&countryCode=${countryCode}&categoryCode=${categoryCode}&provider=${providerCode}`,{
+    const getVendingProductResponse = await axios.get(`https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/products?page=0&pageSize=20&countryCode=NGA&categoryCode=${categoryCode}&provider=${providerCode}`,{
       headers: {
         'Content-Type': 'application/json',
         secretKey: process.env.REMITA_API_SECRET_KEY || "sk_test_B+y9/BpYxgz5bxepOkEO1IEh5emZ+Kg6tstibGNi94l4FsX4ZiIBPI4j7bbSux4n"
