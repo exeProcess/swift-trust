@@ -241,7 +241,7 @@ exports.buyAirtime = async ({ amount, phoneNumber, provider}) => {
       throw new Error('Unsupported provider');
   }
   const payload = {
-    productCode: ``,
+    productCode: airtimeProviderCode,
     "clientReference": process.env.REMITA_MERCHANT,
     "amount": amount,
     "data": {
