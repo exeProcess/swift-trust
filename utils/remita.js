@@ -200,7 +200,9 @@ const vendingCategoryTypes = {
 }
 
 exports.getVendingProducts = async (payload) => {
+  
   const { providerCode, categoryCode } = payload;
+  console.log(providerCode, categoryCode);
   // const providerCode = telcoProviderCodes[provider.toLowerCase()];
   // let provider;
   // switch (providerCode) {
