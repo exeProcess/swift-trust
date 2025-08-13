@@ -20,7 +20,7 @@ exports.gerRemitaVendorProducts = async (req, res) => {
         res.status(200).json(products);
     } catch (error) {
         console.error('Error fetching Remita vendor products:', error.message);
-        res.status(500).json({ error: 'Unable to retrieve vendor products from Remita' });
+        res.status(500).json({ error: error.message });
     }
 
 }
