@@ -242,7 +242,7 @@ exports.buyAirtime = async ({ amount, phoneNumber, provider}) => {
   }
   const payload = {
     "productCode": airtimeProviderCode,
-    "clientReference": process.env.REMITA_MERCHANT_ID,
+    // "clientReference": process.env.REMITA_MERCHANT_ID,
     "amount": amount,
     "data": {
       "accountNumber": account,
