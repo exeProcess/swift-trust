@@ -39,3 +39,13 @@ exports.buyAirtimeOrData = async (req, res) => {
         return res.status(500).json({ error: error.message});
     }
 }
+
+exports.buyElectricityOrCableTvSubscription = async (req, res) => {
+    try {
+        const electricityOrCableTvSubscriptionPurchaseRequest = await remita.buyElectricityOrCableTvSubscription(req.body);
+        return res.status(200).json(electricityOrCableTvSubscriptionPurchaseRequest);
+    } catch (error) {
+        console.error('Error buying electricity:', error.message);
+        return res.status(500).json({ error: electricityOrCableTvSubscriptionPurchaseRequest.error });
+    }
+}
