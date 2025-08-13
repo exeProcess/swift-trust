@@ -216,24 +216,28 @@ exports.getVendingProducts = async (payload) => {
 exports.buyAirtime = async (rawData) => {
   const account = "12345678910";
   const { amount, phoneNumber, provider} = rawData;
-  const payload = {
-    "productCode": provider,
-    "clientReference": `Airtime-${Date.now()}`,
-    "amount": amount,
-    "data": {
-      "accountNumber": account,
-      "phoneNumber": phoneNumber,
-    }
-  };
+  // const payload = 
+  // };
 
   try{
-    const response = await axios.post("https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/transactions", {
-        payload,
+    const response = await axios.post(
+      "https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/transactions",
+      {
+        productCode: provider,
+        clientReference: `Airtime-${Date.now()}`,
+        amount: amount,
+        data: {
+          accountNumber: account,
+          phoneNumber: phoneNumber,
+        }
+      },
+      {
         headers: {
           'Content-Type': 'application/json',
           'secretKey': "sk_test_B+y9/BpYxgz5bxepOkEO1IEh5emZ+Kg6tstibGNi94l4FsX4ZiIBPI4j7bbSux4n",
         }
-    });
+      }
+    );
 
     return response.data
   } catch (error) {
