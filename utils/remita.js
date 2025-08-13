@@ -202,7 +202,6 @@ const vendingCategoryTypes = {
 exports.getVendingProducts = async (payload) => {
   const { provider } = payload;
   const categoryCode = payload.category;
-  const countryCode = 'NG'; 
   const providerCode = telcoProviderCodes[provider.toLowerCase()];
 
   try{
