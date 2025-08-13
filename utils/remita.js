@@ -185,42 +185,12 @@ exports.createDirectDebitMandate = async (payload) => {
   }
 };
 
-const telcoProviderCodes = {
-  'mtn': "mtn_ng",
-  'airtel': "airtel_ng",
-  'glo': "glo_ng",
-  '9mobile': "9mobile_ng"
-};
 
-const vendingCategoryTypes = {
-  'airtime': 'airtime',
-  'data': 'internet_data_subscription',
-  'cable tv': 'cable_tv',
-  'electricity': 'electricity',
-}
 
 exports.getVendingProducts = async (payload) => {
   
   const { providerCode, categoryCode } = payload;
-  console.log(providerCode, categoryCode);
-  // const providerCode = telcoProviderCodes[provider.toLowerCase()];
-  // let provider;
-  // switch (providerCode) {
-  //   case "mtn":
-  //     provider = "mtn_ng";
-  //     break;
-  //   case "airtel":
-  //     provider = "airtel_ng";
-  //     break;
-  //   case "glo":
-  //     provider = "glo_ng";
-  //     break;
-  //   case "9mobile":
-  //     provider = "9mobile_ng";
-  //     break
-  //   default:
-  //     throw("Invalid provider");
-  // }
+  
 
   try{
     const getVendingProductResponse = await axios.get("https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/products",{
@@ -243,28 +213,12 @@ exports.getVendingProducts = async (payload) => {
   }
 };
 
-exports.buyAirtime = async ({ amount, phoneNumber, provider}) => {
-  let airtimeProviderCode = "";
+exports.buyAirtime = async (rawData) => {
   const account = "12345678910";
-  switch (provider) {
-    case 'mtn':
-      airtimeProviderCode = 'airtime-mtn';
-      break;
-    case 'airtel':
-      airtimeProviderCode = "186";
-      break;
-    case 'glo':
-      airtimeProviderCode = "168";
-      break;
-    case '9mobile':
-      airtimeProviderCode = "198";
-      break;
-    default:
-      throw new Error('Unsupported provider');
-  }
+  const { amount, phoneNumber, provider} = rawData;
   const payload = {
-    "productCode": airtimeProviderCode,
-    "clientReference": process.env.REMITA_MERCHANT_ID || 'CON13084',
+    "productCode": provider,
+    "clientReference": `Airtime-${Date.now()}`,
     "amount": amount,
     "data": {
       "accountNumber": account,
@@ -277,8 +231,7 @@ exports.buyAirtime = async ({ amount, phoneNumber, provider}) => {
         payload,
         headers: {
           'Content-Type': 'application/json',
-          'secretKey': REMITA_API_SECRET,
-          'apiKey': REMITA_API_KEY
+          'secretKey': "sk_test_B+y9/BpYxgz5bxepOkEO1IEh5emZ+Kg6tstibGNi94l4FsX4ZiIBPI4j7bbSux4n",
         }
     });
 
