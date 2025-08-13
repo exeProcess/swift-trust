@@ -246,7 +246,7 @@ exports.buyAirtimeOrData = async (rawData) => {
   }
 };
 
-exports.buyElectricity = async (rawData) => {
+exports.buyElectricityOrCableTvSubscription = async (rawData) => {
   const { amount, phoneNumber, product, account} = rawData;
   // const payload = 
   // };
@@ -278,37 +278,6 @@ exports.buyElectricity = async (rawData) => {
   }
 };
 
-exports.buyCableTvSubscription = async (rawData) => {
-  const { amount, phoneNumber, product, account} = rawData;
-  // const payload = 
-  // };
-
-  try{
-    const response = await axios.post(
-      "https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/transactions",
-      {
-        productCode: product,
-        clientReference: `ENERGY-${Date.now()}`,
-        amount: amount,
-        data: {
-          accountNumber: account,
-          phoneNumber: phoneNumber,
-        }
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'secretKey': "remi_test_sk_YVZ6OXpRcHdmaitoOUU3TGZya1Fob2IxZSt1bUxMdnV3ZlZtb1E9PTdlM2M0ZjYyYzc2MzQ0YzA2YTFlODFhYWE2MmI5MzU2NzQ4NWY0OTY3ZDM1YmEzOWMzOTczZDk1YzU5NjE3NWM=",
-        }
-      }
-    );
-
-    return response.data
-  } catch (error) {
-    console.error('Error buying airtime from Remita:', error.message);
-    throw new Error(error.response?.data?.message);
-  }
-};
 
 // exports.buyData = async (rawData) => {
 //   const 
