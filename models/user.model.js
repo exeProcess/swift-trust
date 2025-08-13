@@ -111,10 +111,6 @@ module.exports = (sequelize, DataTypes) => {
     verificationCode: {
       type: DataTypes.STRING,
       allowNull: true
-    },
-    bankoneCustomerId: {
-      type: DataTypes.STRING,
-      allowNull: true
     }
   });
 

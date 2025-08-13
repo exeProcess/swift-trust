@@ -309,6 +309,7 @@ exports.createBankOneCustomerAndAccount = async (data) => {
         ProductCode: process.env.BANKONE_PRODUCT_CODE,
         LastName: last_name,
         OtherNames: first_name,
+        MiddleName: middle_name,
         BVN: bvn,
         PhoneNo: phone_number1,
         PlaceOfBirth: state_of_origin || 'Unknown',
@@ -330,31 +331,20 @@ exports.createBankOneCustomerAndAccount = async (data) => {
       // optionally: store this result for retrying later
       throw new Error("BankOne account creation failed");
     } else {
-      // Optional: Save BankOne CustomerID & AccountNumber in DB
-      const updateUser = await User.update(
-        {
-          bankoneCustomerId: bankoneData.Payload.CustomerID,
-        },
-        {
-          where: { id: userId },
-        }
-      );
 
       const createWallet = await Wallet.create({
-        userId,
-        accountNumber: bankoneData.Payload.AccountNumber
+        userId: id,
+        accountNumber: bankoneData.Payload.AccountNumber,
+        bankOneCustomerId: bankoneData.data.Payload.CustomerID,
+        status: 'active',
       });
-
-      if(!updateUser){
-        throw new Error("Error updating customer details");
-      }
 
       if(!createWallet){
         throw new Error("Error creating customer's wallet");
       }
 
       return {
-        status: 200,
+        status: 201,
         message: "Success"
       };
     }

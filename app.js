@@ -21,6 +21,7 @@ const adminRoutes = require('./routes/admin.routes');
 const adminKycRoutes = require('./routes/admin.kyc.routes');
 const adminLoanRoutes = require('./routes/adminLoan.routes');
 const dojah = require("./utils/dojah")
+const serviceRoutes = require('./routes/service.routes');
 
 
 
@@ -36,6 +37,7 @@ const { sequelize } = require('./models');
 const authRoutes = require('./routes/auth.routes');
 
 app.use('/api/auth', authRoutes);
+app.use('/api/services', serviceRoutes);
 app.use('/api/otp', otpRoutes);
 app.use('/api/kyc', kycRoutes);
 app.use('/api/bank', bankRoutes);

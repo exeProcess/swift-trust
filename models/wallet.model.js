@@ -5,13 +5,9 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
-    balance: {
-      type: DataTypes.DECIMAL(20, 2),
-      defaultValue: 0.0
-    },
-    currency: {
+    bankOneCustomerId: {
       type: DataTypes.STRING,
-      defaultValue: 'NGN'
+      allowNull: false,
     },
     accountNumber: {
       type: DataTypes.STRING,
@@ -20,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
     userId: {
       type: DataTypes.UUID,
       allowNull: false
+    },
+    status: {
+      type: DataTypes.ENUM("active", "inactive", "suspended"),
+      defaultValue: 'active',
     }
   });
 

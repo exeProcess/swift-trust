@@ -184,149 +184,117 @@ exports.createDirectDebitMandate = async (payload) => {
   }
 };
 
-const electricity = 1;
-const airtime = 2;
-const data = 3;
-const cablesub = 4;
+const telcoProviderCodes = {
+  'MTN': "mtn_ng",
+  'Airtel': "airtel_ng",
+  'Glo': "glo_ng",
+  '9mobile': "9mobile_ng"
+};
 
-
-const airtimeAndDataproviderCodes = {
-  MTN: "mtn_ng",
-  GLO: "glo_ng",
-  AIRTEL: "airtel_ng",
-  ETISALAT: "9mobile_ng"
+const vendingCategoryTypes = {
+  'airtime': 'airtime',
+  'data': 'internet_data_subscription',
+  'cable tv': 'cable_tv',
+  'electricity': 'electricity',
 }
 
-const cableTvProviderCodes = {
-  DSTV: "dstv_ng",
-  GOTV: "gotv_ng",
-  STARTIMES: "startimes_ng"
-}
-
-const electricityProviderCodes = {
-  EKEDC: "ekedc_ng",
-  IKEDC: "ikedc_ng",
-  AEDC: "aedc_ng",
-  PHEDC: "phedc_ng",
-  IBEDC: "ibedc_ng"
-}
-
-// const billerCategory = {
-//   electricity,
-//   airtime,
-//   internet_data_subscription,
-//   cable_tv
-// }
-
-// const getElectricityProviders = async () => {
-//   const baseUrl = 'https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/providers/category/1';
-//   const secretKey = process.env.REMITA_SECRET_KEY; // Store your test/live secret key in .env
-
-//   try {
-//     const response = await axios.get(baseUrl, {
-//       headers: {
-//         'secretKey': secretKey
-//       }
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     throw error.response ? error.response.data : error;
-//   }
-// };
-
-// exports.getAirtimeProviders = async () => {
-//   const baseUrl = 'https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/providers/category/2';
-//   const secretKey = process.env.REMITA_SECRET_KEY;
-
-//   try {
-//     const response = await axios.get(baseUrl, {
-//       headers: {
-//         'secretKey': secretKey
-//       }
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     throw error.response ? error.response.data : error;
-//   }
-// };
-
-// exports.getCableTvProviders = async () => {
-//   const baseUrl = 'https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/providers/category/4';
-//   const secretKey = process.env.REMITA_SECRET_KEY;
-
-//   try {
-//     const response = await axios.get(baseUrl, {
-//       headers: {
-//         'secretKey': secretKey
-//       }
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     throw error.response ? error.response.data : error;
-//   }
-// }
-
-// exports.getDataProviders = async () => {
-//   const baseUrl = 'https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/providers/category/3';
-//   const secretKey = process.env.REMITA_SECRET_KEY;
-
-//   try {
-//     const response = await axios.get(baseUrl, {
-//       headers: {
-//         'secretKey': secretKey
-//       }
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     throw error.response ? error.response.data : error;
-//   }
-// };
-
-// exports.getBillerCategories = async () => {
-//   const url = 'https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/categories?page=0&size=20';
-//   const secretKey = process.env.REMITA_SECRET_KEY;
-
-//   try {
-//     const response = await axios.get(url, {
-//       headers: {
-//         'secretKey': secretKey
-//       }
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     throw error.response ? error.response.data : error;
-//   }
-// };
-
-exports.buyAirtime = async (payload) => {
-
-}
-
-exports.getproduct = async (categoryCode, provider) => {
-  const url = `${BASE_URL}/products?page=0&pageSize=20&countryCode=NGA&categoryCode=${categoryCode}&provider=${provider}`;
-  const secretKey = process.env.REMITA_SECRET_KEY;
-
-  try {
-    const response = await axios.get(url, {
-      headers: {
-        secretKey,
+exports.getVendingProducts = async (payload) => {
+  const { provider } = payload;
+  const categoryCode = payload.category;
+  const countryCode = 'NG'; 
+  try{
+    const getVendingProductResponse = await axios.get("https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/products",{
+      params: {
+        countryCode,
+        categoryCode,
+        provider 
       },
+      headers: {
+        'Content-Type': 'application/json',
+        secretKey: process.env.REMITA_API_SECRET_KEY
+      }
     });
-    return response.data;
+    return getVendingProductResponse.data;
   } catch (error) {
     console.error('Error fetching Remita vending products:', error.message);
     throw new Error('Unable to retrieve vending products from Remita');
   }
+};
 
+exports.buyAirtime = async ({ amount, phoneNumber, provider}) => {
+  let airtimeProviderCode = "";
+  const accountNumber = "12345678910";
+  switch (provider) {
+    case 'MTN':
+      airtimeProviderCode = ` airtime-${provider}`;
+      break;
+    case 'Airtel':
+      airtimeProviderCode = "186";
+      break;
+    case 'Glo':
+      airtimeProviderCode = "168";
+      break;
+    case '9mobile':
+      airtimeProviderCode = "198";
+      break;
+    default:
+      throw new Error('Unsupported provider');
+  }
+  const payload = {
+    productCode: ``,
+    "clientReference": process.env.REMITA_MERCHANT,
+    "amount": amount,
+    "data": {
+        "accountNumber": accountNumber,
+        "phoneNumber": phoneNumber,
+    }
+  };
+
+  try{
+    const response = await axios.post("https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/transactions", {
+        payload,
+        headers: {
+          'Content-Type': 'application/json',
+          secretKey: process.env.REMITA_API_SECRET_KEY
+        }
+    });
+
+    return response.data
+  } catch (error) {
+    console.error('Error buying airtime from Remita:', error.message);
+    throw new Error('Unable to buy airtime from Remita');
+  }
+};
+
+
+exports.getVendingCategory = async () => {
+   try{
+    const getVendingCategoryResponse = await axios.get(`https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/categories?page=0&size=20`, {
+      headers: {
+        'Content-Type': 'application/json',
+        secretKey: process.env.REMITA_API_SECRET_KEY
+      }
+    });
+    return getVendingCategoryResponse.data;
+   } catch (error) {
+    console.error('Error fetching Remita vending categories:', error.message);
+    throw new Error('Unable to retrieve vending categories from Remita');
+    }
 }
 
-// exports.payUtilityBill
+exports.getProvidersByCode = async (categoryCode) => {
+  try {
+    const getProvidersResponse = await axios.get(`https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/providers/${categoryCode}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        secretKey: process.env.REMITA_API_SECRET_KEY
+      }
+    });
 
-exports.buyCableTVSubscription = async (payload) => {
- 
+    return getProvidersResponse.data;
+  } catch (error) {
+    console.error('Error fetching Remita vending providers:', error.message);
+    throw new Error('Unable to retrieve vending providers from Remita');
+  }
 }
+

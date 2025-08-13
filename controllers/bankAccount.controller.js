@@ -1,4 +1,5 @@
-const { BankAccount } = require('../models');
+const { BankAccount, User,  } = require('../models');
+const bankOne = require('../utils/bankOne');
 
 const dojah = require('../utils/dojah');
 const {getCommercialBankList, getMFBankList, validateAccountNumber, updateAccountTier, } = require('../utils/bankOne');
@@ -17,6 +18,52 @@ exports.addBankAccount = async (req, res) => {
     res.status(201).json({ bank, resolved: verify.data });
   } catch (err) {
     res.status(400).json({ error: err.response?.data || err.message });
+  }
+};
+
+exports.createBankOneCustomerAndAccount = async (userId) => {;
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const id = user.id;
+    const bvn = user.bvn;
+    const first_name = user.firstName;
+    const last_name = user.lastName;
+    const middle_name = user.middleName || '';  
+    const phone_number1 = user.phoneNumber1 || ''; 
+    const state_of_origin = user.stateOfOrigin || '';
+    const gender = user.gender; 
+    const date_of_birth = user.dateOfBirth || '';
+    const residential_address = user.residentialAddress || '';
+    const nin = user.nin || '';
+    const email = user.email || '';
+
+    const customerAndAccontCreationRequestPayload = {
+      id,
+      first_name,
+      last_name,
+      middle_name,
+      phone_number1,
+      state_of_origin,
+      nin,
+      bvn,
+      email,
+      residential_address,
+      gender,
+      date_of_birth,
+    }
+    await bankOne.createBankOneCustomerAndAccount(customerAndAccontCreationRequestPayload);
+
+    return { message: 'Bank One customer and account created successfully',
+      status: 201
+    };    
+  } catch (err) {
+    console.error('Error creating Bank One customer and account:', err);
+    return { status: '500', 
+      message: err.message 
+    };
   }
 };
 

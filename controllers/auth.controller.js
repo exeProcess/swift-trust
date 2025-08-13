@@ -1,6 +1,7 @@
 const { User, Wallet, sequelize} = require('../models');
 const jwt = require('../utils/jwt');
 const sendEmail = require('../utils/otp').sendVerificationEmail;
+const { createBankOneCustomerAndAccount } = require('../controllers/bankAccount.controller');
 const bcrypt = require('bcrypt');
 const dojah = require('../utils/dojah');
 const notifier = require('../utils/notifier');
@@ -117,6 +118,8 @@ exports.register = async (req, res) => {
       nin
     });
 
+    
+
     const responsePayload = {
       id: user.id,
       fullName: `${user.firstName} ${user.middleName} ${user.lastName}`,
@@ -157,14 +160,13 @@ exports.sendOtp = async (req, res) => {
     const sender_id = "swift";
     const destination = phoneNumber;
     const priority = true;
-    const otp = verificationCode;
     const otpPayload = {
       sender_id,
       destination,
       channel,
       priority,
-      otp
-    }
+      verificationCode
+    };
 
     userData.verificationCode = verificationCode;
     userData.phoneNumber1 = phoneNumber;
@@ -256,6 +258,8 @@ exports.setTransactionPin = async (req, res) => {
 };
 
 
+
+
 exports.loginWithPin = async (req, res) => {
   const { phone, email, pin } = req.body;
 
@@ -312,15 +316,16 @@ exports.getUser = async (req, res) => {
   const authUser = req.user; // from token middleware
 
   try {
+    // const createBankOneCustomerAndAccount = await createBankOneCustomerAndAccount(authUser.id);
+
+    // if (createBankOneCustomerAndAccount !== 201) {
+    //   return res.status(createBankOneCustomerAndAccount.status).json({ error: createBankOneCustomerAndAccount.message });
+    // }
     const user = await User.findByPk(authUser.id, {
       include: [
         { model: Wallet, as: 'wallet' }
       ]
     });
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
 
     res.status(200).json(user);
   } catch (err) {
