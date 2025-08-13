@@ -236,7 +236,7 @@ exports.getVendingProducts = async (payload) => {
     return getVendingProductResponse.data;
   } catch (error) {
     console.error('Error fetching Remita vending products:', error.message);
-    throw new Error(getVendingProductResponse?.data?.message);
+    throw new Error(error.getVendingCategoryResponse?.data?.message);
   }
 };
 

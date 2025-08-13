@@ -14,9 +14,9 @@ exports.getRemitaServiceVendors = async (req, res) => {
 }
 
 exports.gerRemitaVendorProducts = async (req, res) => {
-    const { categoryCode, provider } = req.params;
+    const { categoryCode, providerCode } = req.params;
     const payload = { 
-        categoryCode, provider 
+        categoryCode, providerCode 
     };
     try {
         const products = await remita.getVendingProducts(payload);
