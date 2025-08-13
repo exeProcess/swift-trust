@@ -262,7 +262,7 @@ exports.buyAirtime = async ({ amount, phoneNumber, provider}) => {
     return response.data
   } catch (error) {
     console.error('Error buying airtime from Remita:', error.message);
-    throw new Error(error.message);
+    throw new Error(error.response?.data?.message);
   }
 };
 
