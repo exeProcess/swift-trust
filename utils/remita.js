@@ -186,9 +186,9 @@ exports.createDirectDebitMandate = async (payload) => {
 };
 
 const telcoProviderCodes = {
-  'MTN': "mtn_ng",
-  'Airtel': "airtel_ng",
-  'Glo': "glo_ng",
+  'mtn': "mtn_ng",
+  'airtel': "airtel_ng",
+  'glo': "glo_ng",
   '9mobile': "9mobile_ng"
 };
 
@@ -203,8 +203,10 @@ exports.getVendingProducts = async (payload) => {
   const { provider } = payload;
   const categoryCode = payload.category;
   const countryCode = 'NG'; 
+  const providerCode = telcoProviderCodes[provider.toLowerCase()];
+
   try{
-    const getVendingProductResponse = await axios.get("https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/products",{
+    const getVendingProductResponse = await axios.get(`https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/products?page=0&pageSize=20&countryCode=NGA&categoryCode=${categoryCode}&provider=${providerCode}`,{
       params: {
         countryCode,
         categoryCode,
@@ -284,7 +286,8 @@ exports.getVendingCategory = async () => {
     }
 }
 
-exports.getProvidersByCode = async (categoryCode) => {
+exports.getProvidersByCode = async (payLoad) => {
+  const { categoryCode, provider } = payLoad;
   try {
     const getProvidersResponse = await axios.get(`https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/providers/${categoryCode}`, {
       headers: {
