@@ -4,7 +4,7 @@ const serviceController = require('../controllers/serviceController');
 const auth = require('../middleware/auth.middleware');
 
 router.get('/get-vendors/:service', serviceController.getRemitaServiceVendors);
-router.get('/get-vendor-products', serviceController.gerRemitaVendorProducts);
+router.get('/get-vendor-products/:categoryCode/:productCode', serviceController.gerRemitaVendorProducts);
 router.post('/buy-airtime', auth, serviceController.buyAirtime);
 
 module.exports = router;
