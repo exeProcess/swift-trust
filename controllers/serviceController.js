@@ -29,7 +29,7 @@ exports.gerRemitaVendorProducts = async (req, res) => {
 }
 
 exports.buyAirtimeOrData = async (req, res) => {
-    const user = req.user.id;
+    // const user = req.user.id;
 
     try{
         const airtimeOrDataPurchaseRequest = await remita.buyAirtimeOrData(req.body);
