@@ -206,11 +206,11 @@ exports.getVendingProducts = async (payload) => {
   const providerCode = telcoProviderCodes[provider.toLowerCase()];
 
   try{
-    const getVendingProductResponse = await axios.get(`https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/products?page=0&pageSize=20&countryCode=NGA&categoryCode=${categoryCode}&provider=${providerCode}`,{
+    const getVendingProductResponse = await axios.get("https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/products",{
       params: {
-        countryCode,
-        categoryCode,
-        provider 
+        countryCode : "NGA",
+        categoryCode : categoryCode,
+        provider: providerCode
       },
       headers: {
         'Content-Type': 'application/json',
