@@ -255,7 +255,7 @@ exports.buyAirtime = async ({ amount, phoneNumber, provider}) => {
         payload,
         headers: {
           'Content-Type': 'application/json',
-          'secretKey': process.env.REMITA_API_SECRET_KEY
+          'secretKey': REMITA_API_SECRET
         }
     });
 
