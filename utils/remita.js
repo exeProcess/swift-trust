@@ -1,9 +1,9 @@
 const axios = require('axios');
 const crypto = require('crypto');
 
-const REMITA_API_KEY = process.env.REMITA_API_KEY;
+// const REMITA_API_KEY = process.env.REMITA_API_KEY;
 const REMITA_API_SECRET = process.env.REMITA_API_SECRET;
-const REMITA_BASE_URL = process.env.REMITA_BASE_URL;
+// const REMITA_BASE_URL = process.env.REMITA_BASE_URL;
 
 exports.sendToBank = async ({ amount, accountNumber, bankCode, reference }) => {
   const payload = {
