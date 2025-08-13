@@ -34,6 +34,6 @@ exports.buyAirtime = async (req, res) => {
         return res.status(200).json(airtimePurchaseRequest);
     }catch (error) {
         console.error('Error buying airtime:', error.message);
-        return res.status(500).json({ error: 'Unable to buy airtime' });
+        return res.status(500).json({ error: error.message);
     }
 }
