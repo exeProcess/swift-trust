@@ -234,7 +234,7 @@ exports.buyAirtimeOrData = async (rawData) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          'secretKey': "sk_test_B+y9/BpYxgz5bxepOkEO1IEh5emZ+Kg6tstibGNi94l4FsX4ZiIBPI4j7bbSux4n",
+          'secretKey': "remi_test_sk_YVZ6OXpRcHdmaitoOUU3TGZya1Fob2IxZSt1bUxMdnV3ZlZtb1E9PTdlM2M0ZjYyYzc2MzQ0YzA2YTFlODFhYWE2MmI5MzU2NzQ4NWY0OTY3ZDM1YmEzOWMzOTczZDk1YzU5NjE3NWM=",
         }
       }
     );
