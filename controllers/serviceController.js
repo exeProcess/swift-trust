@@ -28,15 +28,14 @@ exports.gerRemitaVendorProducts = async (req, res) => {
 
 }
 
-exports.buyAirtime = async (req, res) => {
+exports.buyAirtimeOrData = async (req, res) => {
     const user = req.user.id;
 
     try{
-        const airtimePurchaseRequest = await remita.buyAirtime(req.body);
-
-        return res.status(200).json(airtimePurchaseRequest);
+        const airtimeOrDataPurchaseRequest = await remita.buyAirtimeOrData(req.body);
+        return res.status(200).json(airtimeOrDataPurchaseRequest);
     }catch (error) {
-        console.error('Error buying airtime:', error.message);
+        //console.error('Error buying airtime:', error.message);
         return res.status(500).json({ error: error.message});
     }
 }

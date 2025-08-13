@@ -213,9 +213,9 @@ exports.getVendingProducts = async (payload) => {
   }
 };
 
-exports.buyAirtime = async (rawData) => {
+exports.buyAirtimeOrData = async (rawData) => {
   const account = "12345678910";
-  const { amount, phoneNumber, provider} = rawData;
+  const { amount, phoneNumber, product} = rawData;
   // const payload = 
   // };
 
@@ -223,12 +223,12 @@ exports.buyAirtime = async (rawData) => {
     const response = await axios.post(
       "https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/transactions",
       {
-        productCode: provider,
-        clientReference: `Airtime-${Date.now()}`,
-        amount: amount,
-        data: {
-          accountNumber: account,
-          phoneNumber: phoneNumber,
+        "productCode": product,
+        "clientReference": `Airtime-${Date.now()}`,
+        "amount": amount,
+        "data": {
+          "accountNumber": account,
+          "phoneNumber": phoneNumber,
         }
       },
       {
@@ -245,6 +245,9 @@ exports.buyAirtime = async (rawData) => {
     throw new Error(error.response?.data?.message);
   }
 };
+
+// exports.buyData = async (rawData) => {
+//   const 
 
 
 exports.getVendingCategory = async () => {

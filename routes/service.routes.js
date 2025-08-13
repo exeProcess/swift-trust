@@ -5,6 +5,6 @@ const auth = require('../middleware/auth.middleware');
 
 router.get('/get-vendors/:service', serviceController.getRemitaServiceVendors);
 router.get('/get-vendor-products/:categoryCode/:providerCode', serviceController.gerRemitaVendorProducts);
-router.post('/buy-airtime', auth, serviceController.buyAirtime);
-
+router.post('/buy-airtime', auth, serviceController.buyAirtimeOrData);
+router.post('/buy-data', auth, serviceController.buyAirtimeOrData); 
 module.exports = router;
