@@ -247,7 +247,7 @@ exports.buyAirtimeOrData = async (rawData) => {
 };
 
 exports.buyElectricityOrCableTvSubscription = async (rawData) => {
-  const { amount, phoneNumber, product, account} = rawData;
+  const { amount, productCode, destination} = rawData;
   // const payload = 
   // };
 
@@ -255,11 +255,11 @@ exports.buyElectricityOrCableTvSubscription = async (rawData) => {
     const response = await axios.post(
       "https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/vending/transactions",
       {
-        productCode: product,
+        productCode: productCode,
         clientReference: `ENERGY-${Date.now()}`,
         amount: amount,
         data: {
-          accountNumber: account,
+          accountNumber: destination,
           phoneNumber: phoneNumber,
         }
       },
