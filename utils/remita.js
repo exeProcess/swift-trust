@@ -2,7 +2,7 @@ const axios = require('axios');
 const crypto = require('crypto');
 
 // const REMITA_API_KEY = process.env.REMITA_API_KEY;
-const REMITA_API_SECRET = process.env.REMITA_API_SECRET;
+const REMITA_API_SECRET = process.env.REMITA_API_SECRET_KEY || 'remi_test_sk_YVZ6OXpRcHdmaitoOUU3TGZya1Fob2IxZSt1bUxMdnV3ZlZtb1E9PTdlM2M0ZjYyYzc2MzQ0YzA2YTFlODFhYWE2MmI5MzU2NzQ4NWY0OTY3ZDM1YmEzOWMzOTczZDk1YzU5NjE3NWM=';
 // const REMITA_BASE_URL = process.env.REMITA_BASE_URL;
 
 exports.sendToBank = async ({ amount, accountNumber, bankCode, reference }) => {
@@ -255,7 +255,7 @@ exports.buyAirtime = async ({ amount, phoneNumber, provider}) => {
         payload,
         headers: {
           'Content-Type': 'application/json',
-          secretKey: process.env.REMITA_API_SECRET_KEY
+          'secretKey': process.env.REMITA_API_SECRET_KEY
         }
     });
 
