@@ -323,7 +323,13 @@ exports.createBankOneCustomerAndAccount = async (data) => {
         NextOfKinName: nextOfKinName,
         NextOfKinPhoneNo: nextOfnextOfKinPhoneNumber,
         ReferralName: "swift Trust",
-        HasSufficientInfoOnAccountInfo: true
+        AccountInformationSource: 1,
+        OtherAccountInformationSource: "Online campaign",
+        AccountOfficerCode: "101",
+        HasSufficientInfoOnAccountInfo: true,
+        NotificationPreference: "SMS",
+        TransactionPermission: "FULL",
+        AccountTier: 1
       },
       {
   "TransactionTrackingRef": "TRX123456789",
