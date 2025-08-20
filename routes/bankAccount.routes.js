@@ -4,7 +4,7 @@ const bankController = require('../controllers/bankAccount.controller');
 const auth = require('../middleware/auth.middleware');
 
 router.post('/add', auth, bankController.addBankAccount);
-router.post('/create-bank-one-customer', auth, bankController.createBankOneCustomerAndAccount);
+router.post('/create-bank-one-customer', bankController.createBankOneCustomerAndAccount);
 router.get('/mfbanks', auth, bankController.getMFBankAccounts);
 router.get('/commercialbanks', auth, bankController.getCommercialBankAccounts);
 router.post('/validate-account', auth, bankController.validateAccountNumber);

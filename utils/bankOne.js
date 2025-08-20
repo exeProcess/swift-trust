@@ -284,51 +284,75 @@ exports.getBankOneStandingOrders = async (param) => {
   }
 }
 
-exports.createBankOneCustomerAndAccount = async (data) => {
-  const { 
-    id,
-    bvn,
-    first_name, 
-    last_name, 
-    middle_name, 
-    phone_number1, 
-    state_of_origin, 
-    gender, 
-    date_of_birth, 
-    residential_address,
-    nextOfnextOfKinPhoneNumber,
-    nextOfKinName,
-    nin, 
-    email 
-  } = data;
+exports.createBankOneCustomerAndAccount = async () => {
+  // const { 
+  //   id,
+  //   bvn,
+  //   first_name, 
+  //   last_name, 
+  //   middle_name, 
+  //   phone_number1, 
+  //   state_of_origin, 
+  //   gender, 
+  //   date_of_birth, 
+  //   residential_address,
+  //   nextOfnextOfKinPhoneNumber,
+  //   nextOfKinName,
+  //   nin, 
+  //   email 
+  // } = data;
 
   try {
     const bankoneRes = await axios.post(
       `http://staging.mybankone.com/BankOneWebAPI/api/Account/CreateCustomerAndAccount/2?authToken=721893ee-8643-49cf-9a48-b56eb4c8ad8c`,
+      // {
+      //   TransactionTrackingRef: `trx-${Date.now()}-${id}`,
+      //   AccountOpeningTrackingRef: `acct-${Date.now()}-${id}`,
+      //   ProductCode: "005",
+      //   LastName: last_name,
+      //   OtherNames: middle_name,
+      //   BVN: bvn,
+      //   PhoneNo: phone_number1,
+      //   Gender: gender,
+      //   PlaceOfBirth: state_of_origin,
+      //   DateOfBirth: date_of_birth,
+      //   Address: residential_address,
+      //   NationalIdentityNo: nin,
+      //   NextOfKinPhoneNo: nextOfnextOfKinPhoneNumber,
+      //   NextOfKinName: nextOfKinName,
+      //   HasSufficientInfoOnAccountInfo: true,
+      //   AccountOfficerCode: "005",
+      //   AccountInformationSource: 1,
+      //   Email: email,
+      //   NotificationPreference: 1,
+      //   TransactionPermission: 1,
+      //   AccountTier: 1,
+      //   FirstName: first_name
+      // }
       {
-        TransactionTrackingRef: `trx-${Date.now()}-${id}`,
-        AccountOpeningTrackingRef: `acct-${Date.now()}-${id}`,
-        ProductCode: "005",
-        LastName: last_name,
-        OtherNames: middle_name,
-        BVN: bvn,
-        PhoneNo: phone_number1,
-        Gender: gender,
-        PlaceOfBirth: state_of_origin,
-        DateOfBirth: date_of_birth,
-        Address: residential_address,
-        NationalIdentityNo: nin,
-        NextOfKinPhoneNo: nextOfnextOfKinPhoneNumber,
-        NextOfKinName: nextOfKinName,
-        HasSufficientInfoOnAccountInfo: true,
-        AccountOfficerCode: "005",
-        AccountInformationSource: 1,
-        Email: email,
-        NotificationPreference: 1,
-        TransactionPermission: 1,
-        AccountTier: 1,
-        FirstName: first_name
-      }
+  "TransactionTrackingRef": "trx-123456tw90",
+  "AccountOpeningTrackingRef": "acct-123456ft90",
+  "ProductCode": "005",
+  "LastName": "Dummy1LastName",
+  "OtherNames": "Dummy1MiddleName",
+  "BVN": "12345673681",
+  "PhoneNo": "08012345678",
+  "Gender": "Male",
+  "PlaceOfBirth": "Lagos",
+  "DateOfBirth": "1990-01-08",
+  "Address": "123 Lagos Street, Nigeria",
+  "NationalIdentityNo": "A12345678",
+  "NextOfKinPhoneNo": "08098765432",
+  "NextOfKinName": "DummyNextOfKinName",
+  "HasSufficientInfoOnAccountInfo": true,
+  "AccountOfficerCode": "005",
+  "AccountInformationSource": 1,
+  "Email": "dummyaddress@example.com",
+  "NotificationPreference": 1,
+  "TransactionPermission": 1,
+  "AccountTier": 1,
+  "FirstName": "Dummy1FirstName"
+ }
     );
 
     if (!bankoneRes.data.IsSuccessful) {
