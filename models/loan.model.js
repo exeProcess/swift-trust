@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     dueDate: {
       type: DataTypes.DATE
     },
-    UserId: {
+    userId: {
       type: DataTypes.UUID,
       allowNull: false
     }

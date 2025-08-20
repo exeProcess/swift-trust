@@ -295,7 +295,9 @@ exports.createBankOneCustomerAndAccount = async (data) => {
     state_of_origin, 
     gender, 
     date_of_birth, 
-    residential_address, 
+    residential_address,
+    nextOfnextOfKinPhoneNumber,
+    nextOfKinName,
     nin, 
     email 
   } = data;
@@ -310,7 +312,7 @@ exports.createBankOneCustomerAndAccount = async (data) => {
         LastName: last_name,
         OtherNames: first_name,
         MiddleName: middle_name,
-        BVN: bvn,
+        BankVerificationNumber: bvn,
         PhoneNo: phone_number1,
         PlaceOfBirth: state_of_origin || 'Unknown',
         Gender: gender?.startsWith('m') ? 'M' : 'F',
@@ -318,8 +320,37 @@ exports.createBankOneCustomerAndAccount = async (data) => {
         Address: residential_address || 'Unknown',
         NationalIdentityNo: nin,
         Email: email,
+        NextOfKinName: nextOfKinName,
+        NextOfKinPhoneNo: nextOfnextOfKinPhoneNumber,
+        ReferralName: "swift Trust",
         HasSufficientInfoOnAccountInfo: true
       },
+      {
+  "TransactionTrackingRef": "TRX123456789",
+  "AccountOpeningTrackingRef": "ACCOPEN123456",
+  "ProductCode": "100304",
+  "LastName": "Ajani",
+  "OtherNames": "Habeeb",
+  "BankVerificationNumber": "22168035115",
+  "PhoneNo": "2348065962091",
+  "PlaceOfBirth": "Lagos",
+  "Gender": "Male",
+  "DateOfBirth": "1994-05-12",
+  "Address": "12 Example Street, Lagos",
+  "NationalIdentityNo": "48454005510",
+  "NextOfKinPhoneNo": "2348012345678",
+  "NextOfKinName": "Ade Ajani",
+  "ReferralPhoneNo": "2348098765432",
+  "ReferralName": "Olu Ajayi",
+  "HasSufficientInfoOnAccountInfo": true,
+  "AccountInformationSource": 1,
+  "OtherAccountInformationSource": "Online campaign",
+  "AccountOfficerCode": "101",
+  "Email": "testuser@example.com",
+  "NotificationPreference": "SMS",
+  "TransactionPermission": "FULL",
+  "AccountTier": 1
+},
       {
         params: { authtoken: process.env.BANKONE_AUTHTOKEN, version: '2' }
       }

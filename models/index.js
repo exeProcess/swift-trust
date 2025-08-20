@@ -43,6 +43,7 @@ db.Admin = require('./admin.model')(sequelize, DataTypes);
 db.Notification = require('./notification.model')(sequelize, DataTypes);
 db.LoanRate = require('./loanRate.model')(sequelize, DataTypes);
 db.LoanTenor = require('./loanTenor.model')(sequelize, DataTypes);
+db.Nok = require('./nok.models')(sequelize, DataTypes);
 
 
 
@@ -50,6 +51,9 @@ db.LoanTenor = require('./loanTenor.model')(sequelize, DataTypes);
 // Associations
 db.User.hasMany(db.Card);
 db.Card.belongsTo(db.User);
+
+db.User.hasOne(db.Nok);
+db.Nok.belongsTo(db.User);
 
 db.User.hasMany(db.Notification);
 db.Notification.belongsTo(db.User);
