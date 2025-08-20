@@ -331,8 +331,8 @@ exports.createBankOneCustomerAndAccount = async () => {
       //   FirstName: first_name
       // }
       {
-        TransactionTrackingRef: "trx-123456tw90",
-        AccountOpeningTrackingRef: "acct-123456ft90",
+        TransactionTrackingRef: `trx-${Date.now()}`,
+        AccountOpeningTrackingRef: `acct-${Date.now()}`,
         ProductCode: "005",
         LastName: "Dummy12LastName",
         OtherNames: "Dummy12MiddleName",
@@ -353,14 +353,14 @@ exports.createBankOneCustomerAndAccount = async () => {
         TransactionPermission: 1,
         AccountTier: 1,
         FirstName: "Dummy12FirstName"
-      },
+      }
     );
 
-    if (!bankoneRes.data.IsSuccessful) {
-      console.warn(`BankOne account creation failed: ${bankoneRes.message}`);
-      // optionally: store this result for retrying later
-      throw new Error("BankOne account creation failed");
-    } 
+    // if (!bankoneRes.data.IsSuccessful) {
+    //   console.warn(`BankOne account creation failed: ${bankoneRes.message}`);
+    //   // optionally: store this result for retrying later
+    //   throw new Error("BankOne account creation failed");
+    // } 
 
     return bankoneRes;
     
