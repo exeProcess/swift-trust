@@ -61,7 +61,7 @@ exports.getRemitaBankList = async (req, res) => {
     }
 }
 
-expoorts.nameEnquiry = async (req, res) => {
+exports.nameEnquiry = async (req, res) => {
     try {
         const { accountNumber, bankCode } = req.body;
         if (!accountNumber || !bankCode) {
