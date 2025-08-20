@@ -334,9 +334,9 @@ exports.createBankOneCustomerAndAccount = async () => {
         TransactionTrackingRef: `trx-${Date.now()}`,
         AccountOpeningTrackingRef: `acct-${Date.now()}`,
         ProductCode: "005",
-        LastName: "Dummy12LastName",
-        OtherNames: "Dummy12MiddleName",
-        BVN: "12345643681",
+        LastName: "Dummy123LastName",
+        OtherNames: "Dummy123MiddleName",
+        BVN: "12344643681",
         PhoneNo: "08012345678",
         Gender: "Male",
         PlaceOfBirth: "Lagos",
@@ -344,15 +344,15 @@ exports.createBankOneCustomerAndAccount = async () => {
         Address: "123 Lagos Street, Nigeria",
         NationalIdentityNo: "A12345678",
         NextOfKinPhoneNo: "08098765432",
-        NextOfKinName: "Dummy12NextOfKinName",
+        NextOfKinName: "Dummy123NextOfKinName",
         HasSufficientInfoOnAccountInfo: true,
-        AccountOfficerCode: "003",
+        AccountOfficerCode: "005",
         AccountInformationSource: 1,
-        Email: "dummy12address@example.com",
+        Email: "dummy123address@example.com",
         NotificationPreference: 1,
         TransactionPermission: 1,
         AccountTier: 1,
-        FirstName: "Dummy12FirstName"
+        FirstName: "Dummy123FirstName"
       }
     );
 
