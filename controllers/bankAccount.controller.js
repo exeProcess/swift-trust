@@ -60,14 +60,12 @@ exports.createBankOneCustomerAndAccount = async (req, res) => {;
       nextOfKinPhoneNumber,
       date_of_birth,
     }
-    const req = await bankOne.createBankOneCustomerAndAccount(customerAndAccontCreationRequestPayload);
+    const bankOneCustomerAndAccountCreationResponse = await bankOne.createBankOneCustomerAndAccount(customerAndAccontCreationRequestPayload);
 
-    return req;    
+    return res.status(200).json(bankOneCustomerAndAccountCreationResponse);    
   } catch (err) {
     console.error('Error creating Bank One customer and account:', err);
-    return { status: '500', 
-      message: err.message 
-    };
+    return res.status(500).json({error: err.message});
   }
 };
 
