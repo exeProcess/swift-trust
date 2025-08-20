@@ -9,4 +9,5 @@ router.post('/buy-airtime', serviceController.buyAirtimeOrData);
 router.post('/buy-data', serviceController.buyAirtimeOrData); 
 router.post('/buy-electricity', serviceController.buyElectricityOrCableTvSubscription);
 router.post('/buy-cable-tv', serviceController.buyElectricityOrCableTvSubscription);
+router.get('/get-bank-list', serviceController.getRemitaBankList);
 module.exports = router;

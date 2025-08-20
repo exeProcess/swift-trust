@@ -50,3 +50,28 @@ exports.buyElectricityOrCableTvSubscription = async (req, res) => {
         return res.status(500).json({ error: electricityOrCableTvSubscriptionPurchaseRequest.error });
     }
 }
+
+exports.getRemitaBankList = async (req, res) => {
+    try {
+        const banks = await remita.getRemitaBankList();
+        return res.status(200).json(banks);
+    } catch (error) {
+        console.error('Error fetching Remita bank list:', error.message);
+        return res.status(500).json({ error: error.message });
+    }
+}
+
+expoorts.nameEnquiry = async (req, res) => {
+    try {
+        const { accountNumber, bankCode } = req.body;
+        if (!accountNumber || !bankCode) {
+            return res.status(400).json({ error: 'Account number and bank code are required' });
+        }
+
+        const result = await remita.nameEnquiry(accountNumber, bankCode);
+        return res.status(result.status).json(result);
+    } catch (error) {
+        console.error('Error in name enquiry:', error.message);
+        return res.status(500).json({ error: error.message });
+    }
+}

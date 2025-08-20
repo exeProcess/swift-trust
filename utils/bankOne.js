@@ -304,61 +304,33 @@ exports.createBankOneCustomerAndAccount = async (data) => {
 
   try {
     const bankoneRes = await axios.post(
-      `${process.env.BANKONE_BASE_URL}/CreateCustomerAndAccount/2`,
+      `http://staging.mybankone.com/BankOneWebAPI/api/Account/CreateCustomerAndAccount/`,
       {
         TransactionTrackingRef: `trx-${Date.now()}-${id}`,
         AccountOpeningTrackingRef: `acct-${Date.now()}-${id}`,
-        ProductCode: process.env.BANKONE_PRODUCT_CODE,
+        ProductCode: "005",
         LastName: last_name,
-        OtherNames: first_name,
-        MiddleName: middle_name,
-        BankVerificationNumber: bvn,
+        OtherNames: middle_name,
+        BVN: bvn,
         PhoneNo: phone_number1,
-        PlaceOfBirth: state_of_origin || 'Unknown',
-        Gender: gender?.startsWith('m') ? 'M' : 'F',
+        Gender: gender,
+        PlaceOfBirth: state_of_origin,
         DateOfBirth: date_of_birth,
-        Address: residential_address || 'Unknown',
+        Address: residential_address,
         NationalIdentityNo: nin,
-        Email: email,
-        NextOfKinName: nextOfKinName,
         NextOfKinPhoneNo: nextOfnextOfKinPhoneNumber,
-        ReferralName: "Swift Trust",
-        AccountInformationSource: 1,
-        OtherAccountInformationSource: "Online campaign",
-        AccountOfficerCode: "101",
+        NextOfKinName: nextOfKinName,
         HasSufficientInfoOnAccountInfo: true,
-        NotificationPreference: "SMS",
-        TransactionPermission: "FULL",
-        AccountTier: 1
+        AccountOfficerCode: "005",
+        AccountInformationSource: 1,
+        Email: email,
+        NotificationPreference: 1,
+        TransactionPermission: 1,
+        AccountTier: 1,
+        FirstName: first_name
       },
       {
-  "TransactionTrackingRef": "TRX123456789",
-  "AccountOpeningTrackingRef": "ACCOPEN123456",
-  "ProductCode": "100304",
-  "LastName": "Ajani",
-  "OtherNames": "Habeeb",
-  "BankVerificationNumber": "22168035115",
-  "PhoneNo": "2348065962091",
-  "PlaceOfBirth": "Lagos",
-  "Gender": "Male",
-  "DateOfBirth": "1994-05-12",
-  "Address": "12 Example Street, Lagos",
-  "NationalIdentityNo": "48454005510",
-  "NextOfKinPhoneNo": "2348012345678",
-  "NextOfKinName": "Ade Ajani",
-  "ReferralPhoneNo": "2348098765432",
-  "ReferralName": "Olu Ajayi",
-  "HasSufficientInfoOnAccountInfo": true,
-  "AccountInformationSource": 1,
-  "OtherAccountInformationSource": "Online campaign",
-  "AccountOfficerCode": "101",
-  "Email": "testuser@example.com",
-  "NotificationPreference": "SMS",
-  "TransactionPermission": "FULL",
-  "AccountTier": 1
-},
-      {
-        params: { authtoken: process.env.BANKONE_AUTHTOKEN, version: '2' }
+        params: { authToken: process.env.BANKONE_AUTHTOKEN, version: '2' }
       }
     );
 
@@ -367,24 +339,13 @@ exports.createBankOneCustomerAndAccount = async (data) => {
       console.warn('BankOne account creation failed:', bankoneData.Description);
       // optionally: store this result for retrying later
       throw new Error("BankOne account creation failed");
-    } else {
-
-      const createWallet = await Wallet.create({
-        userId: id,
-        accountNumber: bankoneData.Payload.AccountNumber,
-        bankOneCustomerId: bankoneData.data.Payload.CustomerID,
-        status: 'active',
-      });
-
-      if(!createWallet){
-        throw new Error("Error creating customer's wallet");
-      }
+    } 
 
       return {
         status: 201,
         message: "Success"
       };
-    }
+    
   } catch (error) {
     return {error: error.message};
   }

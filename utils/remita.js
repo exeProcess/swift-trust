@@ -336,3 +336,35 @@ exports.getProvidersByCode = async (payLoad) => {
   }
 }
 
+exports.getRemitaBankList = async () => {
+  try {
+    const response = await axios.get('https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/interbank/transaction/bank/list', {
+      headers: {
+        'Content-Type': 'application/json',
+        'secretKey': "remi_test_sk_YVZ6OXpRcHdmaitoOUU3TGZya1Fob2IxZSt1bUxMdnV3ZlZtb1E9PTdlM2M0ZjYyYzc2MzQ0YzA2YTFlODFhYWE2MmI5MzU2NzQ4NWY0OTY3ZDM1YmEzOWMzOTczZDk1YzU5NjE3NWM=",
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching bank list from Remita:', error.message);
+    throw new Error('Unable to retrieve bank list from Remita');
+  }
+} 
+
+exports.nameEnquiry = async (accountNumber, bankCode) => {
+  try {
+    const response = await axios.post('https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/interbank/name/enquiry', {
+      destinationAccountNumber: accountNumber,
+      destinationBankCode: bankCode
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'secretKey': "remi_test_sk_YVZ6OXpRcHdmaitoOUU3TGZya1Fob2IxZSt1bUxMdnV3ZlZtb1E9PTdlM2M0ZjYyYzc2MzQ0YzA2YTFlODFhYWE2MmI5MzU2NzQ4NWY0OTY3ZDM1YmEzOWMzOTczZDk1YzU5NjE3NWM="
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error performing name enquiry:', error.message);
+    throw new Error('Unable to perform name enquiry');
+  }
+}
