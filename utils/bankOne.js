@@ -330,20 +330,19 @@ exports.createBankOneCustomerAndAccount = async (data) => {
         FirstName: first_name
       },
       {
-        params: { authToken: process.env.BANKONE_AUTHTOKEN, version: '2' }
+        params: { authToken: "721893ee-8643-49cf-9a48-b56eb4c8ad8c", version: '2' }
       }
     );
 
-    const bankoneData = bankoneRes.data;
-    if (!bankoneData.IsSuccessful) {
-      console.warn('BankOne account creation failed:', bankoneData.Description);
+    if (!bankoneRes.data.IsSuccessful) {
+      console.warn('BankOne account creation failed:');
       // optionally: store this result for retrying later
       throw new Error("BankOne account creation failed");
     } 
 
-    return bankoneData.message;
+    return bankoneRes.data.message;
     
   } catch (error) {
-    return {error: bankoneData?.message};
+    return {error: error.message};
   }
 }
