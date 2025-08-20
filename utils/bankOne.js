@@ -346,7 +346,7 @@ exports.createBankOneCustomerAndAccount = async () => {
         NextOfKinPhoneNo: "08098765432",
         NextOfKinName: "Dummy123NextOfKinName",
         HasSufficientInfoOnAccountInfo: true,
-        AccountOfficerCode: "STMFB 043",
+        AccountOfficerCode: "043",
         AccountInformationSource: 1,
         Email: "dummy123address@example.com",
         NotificationPreference: 1,
