@@ -333,7 +333,7 @@ exports.createBankOneCustomerAndAccount = async () => {
       {
         TransactionTrackingRef: `trx-${Date.now()}`,
         AccountOpeningTrackingRef: `acct-${Date.now()}`,
-        ProductCode: "005",
+        ProductCode: "100",
         LastName: "Dummy123LastName",
         OtherNames: "Dummy123MiddleName",
         BVN: "12344643681",
@@ -346,7 +346,7 @@ exports.createBankOneCustomerAndAccount = async () => {
         NextOfKinPhoneNo: "08098765432",
         NextOfKinName: "Dummy123NextOfKinName",
         HasSufficientInfoOnAccountInfo: true,
-        AccountOfficerCode: "005",
+        AccountOfficerCode: "STMFB 043",
         AccountInformationSource: 1,
         Email: "dummy123address@example.com",
         NotificationPreference: 1,
