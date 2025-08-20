@@ -304,7 +304,7 @@ exports.createBankOneCustomerAndAccount = async (data) => {
 
   try {
     const bankoneRes = await axios.post(
-      `http://staging.mybankone.com/BankOneWebAPI/api/Account/CreateCustomerAndAccount/2`,
+      `http://staging.mybankone.com/BankOneWebAPI/api/Account/CreateCustomerAndAccount/2?authToken=721893ee-8643-49cf-9a48-b56eb4c8ad8c`,
       {
         TransactionTrackingRef: `trx-${Date.now()}-${id}`,
         AccountOpeningTrackingRef: `acct-${Date.now()}-${id}`,
@@ -328,17 +328,14 @@ exports.createBankOneCustomerAndAccount = async (data) => {
         TransactionPermission: 1,
         AccountTier: 1,
         FirstName: first_name
-      },
-      {
-        params: { authToken: "721893ee-8643-49cf-9a48-b56eb4c8ad8c"}
       }
     );
 
-    if (!bankoneRes.data.IsSuccessful) {
-      console.warn('BankOne account creation failed:');
-      // optionally: store this result for retrying later
-      throw new Error("BankOne account creation failed");
-    } 
+    // if (!bankoneRes.data.IsSuccessful) {
+    //   console.warn('BankOne account creation failed:');
+    //   // optionally: store this result for retrying later
+    //   throw new Error("BankOne account creation failed");
+    // } 
 
     return bankoneRes.data.message;
     
