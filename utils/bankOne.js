@@ -331,15 +331,15 @@ exports.createBankOneCustomerAndAccount = async (data) => {
       }
     );
 
-    // if (!bankoneRes.data.IsSuccessful) {
-    //   console.warn('BankOne account creation failed:');
-    //   // optionally: store this result for retrying later
-    //   throw new Error("BankOne account creation failed");
-    // } 
+    if (!bankoneRes.data.IsSuccessful) {
+      console.warn(`BankOne account creation failed: ${bankoneRes}`);
+      // optionally: store this result for retrying later
+      throw new Error("BankOne account creation failed");
+    } 
 
     return bankoneRes.data.message;
     
   } catch (error) {
-    return {error: error.message};
+    throw new Error(error.bankoneRes?.message);
   }
 }
