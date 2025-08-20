@@ -322,7 +322,7 @@ exports.createBankOneCustomerAndAccount = async (data) => {
         Email: email,
         NextOfKinName: nextOfKinName,
         NextOfKinPhoneNo: nextOfnextOfKinPhoneNumber,
-        ReferralName: "swift Trust",
+        ReferralName: "Swift Trust",
         AccountInformationSource: 1,
         OtherAccountInformationSource: "Online campaign",
         AccountOfficerCode: "101",

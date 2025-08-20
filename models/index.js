@@ -44,6 +44,7 @@ db.Notification = require('./notification.model')(sequelize, DataTypes);
 db.LoanRate = require('./loanRate.model')(sequelize, DataTypes);
 db.LoanTenor = require('./loanTenor.model')(sequelize, DataTypes);
 db.Nok = require('./nok.models')(sequelize, DataTypes);
+db.Employment = require('./employment.model')(sequelize, DataTypes);
 
 
 
@@ -51,6 +52,9 @@ db.Nok = require('./nok.models')(sequelize, DataTypes);
 // Associations
 db.User.hasMany(db.Card);
 db.Card.belongsTo(db.User);
+
+db.User.hasOne(db.Employment);
+db.Employment.belongsTo(db.User);
 
 db.User.hasOne(db.Nok);
 db.Nok.belongsTo(db.User);
@@ -76,8 +80,8 @@ db.Loan.belongsTo(db.User);
 db.User.hasOne(db.Wallet, { foreignKey: 'userId', as: 'wallet' });
 db.Wallet.belongsTo(db.User, { foreignKey: 'userId' });
 
-db.Wallet.hasMany(db.Transaction);
-db.Transaction.belongsTo(db.Wallet);
+db.User.hasMany(db.Transaction);
+db.Transaction.belongsTo(db.User);
 
 db.User.hasMany(db.BankAccount);
 db.BankAccount.belongsTo(db.User);

@@ -8,7 +8,8 @@ router.post('/set-registeration-pin', auth, authController.setLoginPin);
 router.post('/set-transaction-pin', auth, authController.setTransactionPin);
 // router.post('/create-pin', auth, authController.createPin);
 router.post('/verifyotp', auth, authController.verifyOtp);
-
+router.post('/upload-next-of-kin', auth, authController.updateNextOfKinInfo);
+router.post('/update-employment-info', auth, authController.updateEmploymentInfo);
 router.get("/get-user-info", auth, authController.getUser)
 router.post("/forgot-password", authController.forgotPassword);
 router.post("/verify-reset-password-code", authController.verifyResetPasswordOtp);

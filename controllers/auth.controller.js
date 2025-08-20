@@ -316,11 +316,11 @@ exports.getUser = async (req, res) => {
   const authUser = req.user; // from token middleware
 
   try {
-    // const createBankOneCustomerAndAccount = await createBankOneCustomerAndAccount(authUser.id);
+    const createBankOneCustomerAndAccount = await createBankOneCustomerAndAccount(authUser.id);
 
-    // if (createBankOneCustomerAndAccount !== 201) {
-    //   return res.status(createBankOneCustomerAndAccount.status).json({ error: createBankOneCustomerAndAccount.message });
-    // }
+    if (createBankOneCustomerAndAccount !== 201) {
+      return res.status(createBankOneCustomerAndAccount.status).json({ error: createBankOneCustomerAndAccount.message });
+    }
     const user = await User.findByPk(authUser.id, {
       include: [
         { model: Wallet, as: 'wallet' }
@@ -333,8 +333,54 @@ exports.getUser = async (req, res) => {
   }
 };
 
+exports.updateNextOfKinInfo = async (req, res) => {
+  const user = req.user;
+  const { nextOfKinName, nextOfKinPhoneNumber, relationship, address} = req.body;
 
+  if (!nextOfKinName || !nextOfKinPhoneNumber || !relationship || !address) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+  try {
+    const updateNOK = await Nok.create({
+      userId: user.id,
+      nextOfKinName,
+      nextOfKinPhoneNumber,
+      relationship,
+      address
+    });
+    res.status(201).json({
+      status: 201,
+      message: 'Next of Kin information updated successfully',
+    });
+  } catch (err) {
+    console.error('Error updating Next of Kin information:', err);
+    res.status(500).json({ error: 'Failed to update Next of Kin information', details: err.message });
+  }
+};
 
+exports.updateEmploymentInfo = async (req, res) => {
+  const user = req.user;
+  const { occupation, employerName, employerAddress, industry } = req.body;
+  if (!occupation) {
+    return res.status(400).json({ error: 'Occupation is required' });
+  }
+  try {
+    const employment = await Employment.create({
+      userId: user.id,
+      occupation,
+      employerName,
+      employerAddress,
+      industry
+    });
+    res.status(201).json({
+      status: 201,
+      message: 'Employment information updated successfully',
+    });
+  } catch (err) {
+    console.error('Error updating Employment information:', err);
+    res.status(500).json({ error: 'Failed to update Employment information', details: err.message });
+  }
+};
 // exports.resetPin = async (req, res) =>{
 //   const { pin, type, phone } = req.body;
 //   try {

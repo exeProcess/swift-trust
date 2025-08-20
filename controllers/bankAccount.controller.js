@@ -1,4 +1,4 @@
-const { BankAccount, User,  } = require('../models');
+const { BankAccount, User, Nok  } = require('../models');
 const bankOne = require('../utils/bankOne');
 
 const dojah = require('../utils/dojah');
@@ -13,7 +13,7 @@ exports.addBankAccount = async (req, res) => {
       accountNumber,
       bankName,
       bankCode,
-      UserId: req.user.id
+      userId: req.user.id
     });
     res.status(201).json({ bank, resolved: verify.data });
   } catch (err) {
@@ -24,6 +24,7 @@ exports.addBankAccount = async (req, res) => {
 exports.createBankOneCustomerAndAccount = async (userId) => {;
   try {
     const user = await User.findByPk(userId);
+    const nextOfKin = await Nok.findOne({where: userId});
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -37,6 +38,8 @@ exports.createBankOneCustomerAndAccount = async (userId) => {;
     const gender = user.gender; 
     const date_of_birth = user.dateOfBirth || '';
     const residential_address = user.residentialAddress || '';
+    const nextOfKinName = nextOfKin.nextOfKinName;
+    const nextOfKinPhoneNumber = nextOfKin.nextOfKinPhoneNumber;
     const nin = user.nin || '';
     const email = user.email || '';
 
@@ -52,6 +55,8 @@ exports.createBankOneCustomerAndAccount = async (userId) => {;
       email,
       residential_address,
       gender,
+      nextOfKinName,
+      nextOfKinPhoneNumber,
       date_of_birth,
     }
     await bankOne.createBankOneCustomerAndAccount(customerAndAccontCreationRequestPayload);

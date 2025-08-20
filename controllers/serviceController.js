@@ -1,4 +1,4 @@
-const { User, Wallet, sequelize} = require('../models');
+const { User, Wallet, Transaction, sequelize} = require('../models');
 const jwt = require('../utils/jwt');
 const remita = require('../utils/remita');
 
@@ -33,6 +33,7 @@ exports.buyAirtimeOrData = async (req, res) => {
 
     try{
         const airtimeOrDataPurchaseRequest = await remita.buyAirtimeOrData(req.body);
+        
         return res.status(200).json(airtimeOrDataPurchaseRequest);
     }catch (error) {
         //console.error('Error buying airtime:', error.message);

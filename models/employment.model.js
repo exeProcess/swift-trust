@@ -1,23 +1,23 @@
 module.exports = (sequelize, DataTypes) => {
-  const Nok = sequelize.define('Nok', {
+  const Employment = sequelize.define('Employment', {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
-    nextOfKinName: {
-      type: DataTypes.DECIMAL(20, 2),
+    occupation: {
+      type: DataTypes.STRING,
       allowNull: false
     },
-    nextOfKinPhoneNumber: {
-      type: DataTypes.FLOAT,
-      defaultValue: 5.0
-    },
-    address: {
+    industry: {
       type: DataTypes.STRING,
       allowNull: true
     },
-    relationship: {
+    employerName: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    employerAddress: {
       type: DataTypes.STRING,
       allowNull: true
     },
@@ -27,6 +27,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-  return Nok;
+  return Employment;
 };
 

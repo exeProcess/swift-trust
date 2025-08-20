@@ -5,9 +5,18 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
-    type: {
-      type: DataTypes.ENUM('loan', 'repayment', 'withdrawal', 'deposit', 'fee'),
+    userId: {
+      type: DataTypes.UUID,
       allowNull: false
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    type: {
+      type: DataTypes.ENUM('loan', 'repayment', 'withdrawal', 'deposit', 'fee', 'bill payment'),
+      allowNull: false,
+      defaultValue: 'deposit',
     },
     amount: {
       type: DataTypes.DECIMAL(20, 2),
@@ -16,16 +25,6 @@ module.exports = (sequelize, DataTypes) => {
     description: {
       type: DataTypes.STRING
     },
-    balanceBefore: {
-      type: DataTypes.DECIMAL(20, 2)
-    },
-    balanceAfter: {
-      type: DataTypes.DECIMAL(20, 2)
-    },
-    WalletId: {
-      type: DataTypes.UUID,
-      allowNull: false
-    }
   });
 
   return Transaction;

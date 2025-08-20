@@ -1,5 +1,7 @@
 const axios = require('axios');
 const crypto = require('crypto');
+const { User, Wallet, Transaction, sequelize} = require('../models');
+
 
 // const REMITA_API_KEY = process.env.REMITA_API_KEY;
 const REMITA_API_SECRET = process.env.REMITA_API_SECRET_KEY || 'remi_test_sk_YVZ6OXpRcHdmaitoOUU3TGZya1Fob2IxZSt1bUxMdnV3ZlZtb1E9PTdlM2M0ZjYyYzc2MzQ0YzA2YTFlODFhYWE2MmI5MzU2NzQ4NWY0OTY3ZDM1YmEzOWMzOTczZDk1YzU5NjE3NWM=';
@@ -215,7 +217,7 @@ exports.getVendingProducts = async (payload) => {
 
 exports.buyAirtimeOrData = async (rawData) => {
   const account = "12345678910";
-  const { amount, phoneNumber, product} = rawData;
+  const { amount, phoneNumber, product, category} = rawData;
   // const payload = 
   // };
 
@@ -238,7 +240,18 @@ exports.buyAirtimeOrData = async (rawData) => {
         }
       }
     );
-
+    if(response.data.status == "00" && response.data.message == "Success"){
+      const transaction = await Transaction.create({
+        userId: req.user.id,
+        title: category,
+        type: 'bill payment',
+        amount: amount,
+        description: `Purchased ${response.data.productName} for ${response.data.phoneNumber}`,
+      });
+    }
+            
+            
+        
     return response.data
   } catch (error) {
     console.error('Error buying airtime from Remita:', error.message);
@@ -247,7 +260,7 @@ exports.buyAirtimeOrData = async (rawData) => {
 };
 
 exports.buyElectricityOrCableTvSubscription = async (rawData) => {
-  const { amount, productCode, destination} = rawData;
+  const { amount, productCode, destination, category} = rawData;
   // const payload = 
   // };
 
@@ -270,7 +283,15 @@ exports.buyElectricityOrCableTvSubscription = async (rawData) => {
         }
       }
     );
-
+    if(response.data.status == "00" && response.data.message == "Success"){
+      const transaction = await Transaction.create({
+        userId: req.user.id,
+        title: category,
+        type: 'bill payment',
+        amount: amount,
+        description: `Purchased ${response.data.productName} for ${response.data.phoneNumber}`,
+      });
+    }
     return response.data
   } catch (error) {
     console.error('Error buying airtime from Remita:', error.message);
