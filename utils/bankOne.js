@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { User, Pin, Wallet } = require('../models');
+const { header } = require('express-validator');
 
 const BANKONE_BASE_URL = process.env.BANKONE_BASE_URL;
 const BANKONE_AUTHTOKEN = process.env.BANKONE_AUTHTOKEN;
@@ -330,29 +331,29 @@ exports.createBankOneCustomerAndAccount = async () => {
       //   FirstName: first_name
       // }
       {
-  "TransactionTrackingRef": "trx-123456tw90",
-  "AccountOpeningTrackingRef": "acct-123456ft90",
-  "ProductCode": "005",
-  "LastName": "Dummy1LastName",
-  "OtherNames": "Dummy1MiddleName",
-  "BVN": "12345673681",
-  "PhoneNo": "08012345678",
-  "Gender": "Male",
-  "PlaceOfBirth": "Lagos",
-  "DateOfBirth": "1990-01-08",
-  "Address": "123 Lagos Street, Nigeria",
-  "NationalIdentityNo": "A12345678",
-  "NextOfKinPhoneNo": "08098765432",
-  "NextOfKinName": "DummyNextOfKinName",
-  "HasSufficientInfoOnAccountInfo": true,
-  "AccountOfficerCode": "005",
-  "AccountInformationSource": 1,
-  "Email": "dummyaddress@example.com",
-  "NotificationPreference": 1,
-  "TransactionPermission": 1,
-  "AccountTier": 1,
-  "FirstName": "Dummy1FirstName"
- }
+        TransactionTrackingRef: "trx-123456tw90",
+        AccountOpeningTrackingRef: "acct-123456ft90",
+        ProductCode: "005",
+        LastName: "Dummy12LastName",
+        OtherNames: "Dummy12MiddleName",
+        BVN: "12345643681",
+        PhoneNo: "08012345678",
+        Gender: "Male",
+        PlaceOfBirth: "Lagos",
+        DateOfBirth: "1990-01-08",
+        Address: "123 Lagos Street, Nigeria",
+        NationalIdentityNo: "A12345678",
+        NextOfKinPhoneNo: "08098765432",
+        NextOfKinName: "Dummy12NextOfKinName",
+        HasSufficientInfoOnAccountInfo: true,
+        AccountOfficerCode: "005",
+        AccountInformationSource: 1,
+        Email: "dummy12address@example.com",
+        NotificationPreference: 1,
+        TransactionPermission: 1,
+        AccountTier: 1,
+        FirstName: "Dummy12FirstName"
+      },
     );
 
     if (!bankoneRes.data.IsSuccessful) {
