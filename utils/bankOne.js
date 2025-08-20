@@ -362,7 +362,7 @@ exports.createBankOneCustomerAndAccount = async () => {
     //   throw new Error("BankOne account creation failed");
     // } 
 
-    return bankoneRes;
+    return bankoneRes.data;
     
   } catch (error) {
     return {message: error.message};
