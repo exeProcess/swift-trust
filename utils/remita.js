@@ -368,3 +368,40 @@ exports.nameEnquiry = async (accountNumber, bankCode) => {
     throw new Error('Unable to perform name enquiry');
   }
 }
+
+exports.fundWallet = async (data) => {
+
+  try {
+    const response = await axios.post(
+      'https://api-demo.systemspecsng.com/services/connect-gateway/api/v1/integration/single/payment',
+      {
+        amount: 3400,
+        transactionRef: `trx-${Date.now()}', // Replace with actual transaction reference
+        transactionDescription: "Test Transaction",
+        channel: "WEB",
+        currency: "NGN",
+        destinationAccount: "0586957398",
+        destinationAccountName: "Paul Reed",
+        destinationBankCode: "058",
+        destinationEmail: "donald@yupmail.com",
+        sourceAccount: "0442999282",
+        sourceAccountName: "James John",
+        sourceBankCode: "044",
+        originalAccountNumber: "2142999282",
+        originalBankCode: "214",
+        customReference: ""
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          // Add authentication headers here if required
+          // e.g. "Authorization": `Bearer ${process.env.ACCESS_TOKEN}`
+        }
+      }
+    );
+
+    console.log("Payment Response:", response.data);
+  } catch (error) {
+    console.error("Error making payment:", error.response ? error.response.data : error.message);
+  }
+}

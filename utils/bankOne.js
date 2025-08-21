@@ -331,8 +331,8 @@ exports.createBankOneCustomerAndAccount = async () => {
       //   FirstName: first_name
       // }
       {
-        TransactionTrackingRef: `trx-${Date.now()}`,
-        AccountOpeningTrackingRef: `acct-${Date.now()}`,
+        TransactionTrackingRef: "trx-123456tw90",
+        AccountOpeningTrackingRef: "acct-123456ft90",
         ProductCode: "005",
         LastName: "Dummy1236LastName",
         OtherNames: "Dummy1253MiddleName",
