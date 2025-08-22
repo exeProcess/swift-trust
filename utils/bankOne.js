@@ -287,7 +287,6 @@ exports.getBankOneStandingOrders = async (param) => {
 
 exports.createBankOneCustomerAndAccount = async (data) => {
   const { 
-    id,
     bvn,
     first_name, 
     last_name, 
