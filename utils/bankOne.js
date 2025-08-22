@@ -285,23 +285,23 @@ exports.getBankOneStandingOrders = async (param) => {
   }
 }
 
-exports.createBankOneCustomerAndAccount = async () => {
-  // const { 
-  //   id,
-  //   bvn,
-  //   first_name, 
-  //   last_name, 
-  //   middle_name, 
-  //   phone_number1, 
-  //   state_of_origin, 
-  //   gender, 
-  //   date_of_birth, 
-  //   residential_address,
-  //   nextOfnextOfKinPhoneNumber,
-  //   nextOfKinName,
-  //   nin, 
-  //   email 
-  // } = data;
+exports.createBankOneCustomerAndAccount = async (data) => {
+  const { 
+    id,
+    bvn,
+    first_name, 
+    last_name, 
+    middle_name, 
+    phone_number1, 
+    state_of_origin, 
+    gender, 
+    date_of_birth, 
+    residential_address,
+    nextOfnextOfKinPhoneNumber,
+    nextOfKinName,
+    nin, 
+    email 
+  } = data;
 
   try {
     const bankoneRes = await axios.post(
@@ -331,13 +331,13 @@ exports.createBankOneCustomerAndAccount = async () => {
       //   FirstName: first_name
       // }
       {
-        TransactionTrackingRef: "trx-123456tw90",
-        AccountOpeningTrackingRef: "acct-123456ft90",
+        TransactionTrackingRef: "Swift-100304",
+        AccountOpeningTrackingRef: "acct-100304",
         ProductCode: "005",
-        LastName: "Dummy1236LastName",
-        OtherNames: "Dummy1253MiddleName",
-        BVN: "12344543681",
-        PhoneNo: "08012345678",
+        LastName: last_name,
+        OtherNames: middle_name,
+        BVN: bvn,
+        PhoneNo: phone_number1,
         Gender: "Male",
         PlaceOfBirth: "Lagos",
         DateOfBirth: "1990-01-08",

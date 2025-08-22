@@ -22,45 +22,45 @@ exports.addBankAccount = async (req, res) => {
 };
 
 exports.createBankOneCustomerAndAccount = async (req, res) => {;
-  // const userId = req.user.id;
+  const userId = req.user.id;
   try {
-    // const user = await User.findByPk(userId);
-    // const nextOfKin = await Nok.findOne({where: userId});
-    // if (!user) {
-    //   return res.status(404).json({ error: 'User not found' });
-    // }
-    // const id = user.id;
-    // const bvn = user.bvn;
-    // const first_name = user.firstName;
-    // const last_name = user.lastName;
-    // const middle_name = user.middleName || '';  
-    // const phone_number1 = user.phoneNumber1 || ''; 
-    // const state_of_origin = user.stateOfOrigin || '';
-    // const gender = user.gender; 
-    // const date_of_birth = user.dateOfBirth || '';
-    // const residential_address = user.residentialAddress || '';
-    // const nextOfKinName = "";
-    // const nextOfKinPhoneNumber = "";
-    // const nin = user.nin || '';
-    // const email = user.email || '';
+    const user = await User.findByPk(userId);
+    const nextOfKin = await Nok.findOne({where: userId});
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const id = user.id;
+    const bvn = user.bvn;
+    const first_name = user.firstName;
+    const last_name = user.lastName;
+    const middle_name = user.middleName || '';  
+    const phone_number1 = user.phoneNumber1 || ''; 
+    const state_of_origin = user.stateOfOrigin || '';
+    const gender = user.gender; 
+    const date_of_birth = user.dateOfBirth || '';
+    const residential_address = user.residentialAddress || '';
+    const nextOfKinName = "";
+    const nextOfKinPhoneNumber = "";
+    const nin = user.nin || '';
+    const email = user.email || '';
 
-    // const customerAndAccontCreationRequestPayload = {
-    //   id,
-    //   first_name,
-    //   last_name,
-    //   middle_name,
-    //   phone_number1,
-    //   state_of_origin,
-    //   nin,
-    //   bvn,
-    //   email,
-    //   residential_address,
-    //   gender,
-    //   nextOfKinName,
-    //   nextOfKinPhoneNumber,
-    //   date_of_birth,
-    // }
-    const bankOneCustomerAndAccountCreationResponse = await bankOne.createBankOneCustomerAndAccount();
+    const customerAndAccontCreationRequestPayload = {
+      id,
+      first_name,
+      last_name,
+      middle_name,
+      phone_number1,
+      state_of_origin,
+      nin,
+      bvn,
+      email,
+      residential_address,
+      gender,
+      nextOfKinName,
+      nextOfKinPhoneNumber,
+      date_of_birth,
+    }
+    const bankOneCustomerAndAccountCreationResponse = await bankOne.createBankOneCustomerAndAccount(customerAndAccontCreationRequestPayload);
 
     return res.status(200).json(bankOneCustomerAndAccountCreationResponse);    
   } catch (err) {
