@@ -21,7 +21,7 @@ exports.addBankAccount = async (req, res) => {
   }
 };
 
-exports.createBankOneCustomerAndAccount = async (req, res) => {;
+exports.createBankOneCustomerAndAccount = async (req, res) => {
   const userId = req.user.id;
   try {
     const user = await User.findByPk(userId);
