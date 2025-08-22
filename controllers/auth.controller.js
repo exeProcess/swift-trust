@@ -316,11 +316,6 @@ exports.getUser = async (req, res) => {
   const authUser = req.user; // from token middleware
 
   try {
-    const createBankOneCustomerAndAccount = await createBankOneCustomerAndAccount(authUser.id);
-
-    if (createBankOneCustomerAndAccount !== 201) {
-      return res.status(createBankOneCustomerAndAccount.status).json({ error: createBankOneCustomerAndAccount.message });
-    }
     const user = await User.findByPk(authUser.id, {
       include: [
         { model: Wallet, as: 'wallet' }
