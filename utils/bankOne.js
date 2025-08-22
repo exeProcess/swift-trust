@@ -311,7 +311,7 @@ exports.createBankOneCustomerAndAccount = async (data) => {
         ProductCode: "005",
         LastName: last_name,
         OtherNames: middle_name,
-        BVN: "23482651209",
+        BVN: "23487651209",
         PhoneNo: phone_number1,
         Gender: gender,
         PlaceOfBirth: state_of_origin,

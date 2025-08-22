@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 5.0
     },
     status: {
-      type: DataTypes.ENUM('pending', 'approved', 'rejected', 'disbursed', 'repaid','defaulted'),
+      type: DataTypes.ENUM('pending', 'active', 'rejected', 'disbursed', 'repaid','defaulted'),
       defaultValue: 'pending'
     },
     tenor: {
