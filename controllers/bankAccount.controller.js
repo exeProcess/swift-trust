@@ -29,7 +29,7 @@ exports.createBankOneCustomerAndAccount = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    const id = user.id;
+    // const id = user.id;
     const bvn = user.bvn;
     const first_name = user.firstName;
     const last_name = user.lastName;
@@ -45,7 +45,6 @@ exports.createBankOneCustomerAndAccount = async (req, res) => {
     const email = user.email || '';
 
     const customerAndAccontCreationRequestPayload = {
-      id,
       first_name,
       last_name,
       middle_name,
@@ -60,9 +59,9 @@ exports.createBankOneCustomerAndAccount = async (req, res) => {
       nextOfKinPhoneNumber,
       date_of_birth,
     }
-    const bankOneCustomerAndAccountCreationResponse = await bankOne.createBankOneCustomerAndAccount(customerAndAccontCreationRequestPayload);
+    // const bankOneCustomerAndAccountCreationResponse = await bankOne.createBankOneCustomerAndAccount(customerAndAccontCreationRequestPayload);
 
-    return res.status(200).json(bankOneCustomerAndAccountCreationResponse);    
+    return res.status(200).json(customerAndAccontCreationRequestPayload);    
   } catch (err) {
     console.error('Error creating Bank One customer and account:', err);
     return res.status(500).json({error: err.message});

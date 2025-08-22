@@ -306,8 +306,8 @@ exports.createBankOneCustomerAndAccount = async (data) => {
     const bankoneRes = await axios.post(
       `http://staging.mybankone.com/BankOneWebAPI/api/Account/CreateCustomerAndAccount/version?version=2&authToken=721893ee-8643-49cf-9a48-b56eb4c8ad8c`,
       {
-        TransactionTrackingRef: "Swift-100304",
-        AccountOpeningTrackingRef: "acct-100304",
+        TransactionTrackingRef: "trx-123456tw90",
+        AccountOpeningTrackingRef: "acct-123456ft90",
         ProductCode: "005",
         LastName: last_name,
         OtherNames: middle_name,
