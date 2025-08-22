@@ -25,7 +25,7 @@ exports.createBankOneCustomerAndAccount = async (req, res) => {
   const userId = req.user.id;
   try {
     const user = await User.findByPk(userId);
-    const nextOfKin = await Nok.findOne({where: userId});
+    // const nextOfKin = await Nok.findOne({where: userId});
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
