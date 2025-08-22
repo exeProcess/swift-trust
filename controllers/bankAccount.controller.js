@@ -36,7 +36,7 @@ exports.createBankOneCustomerAndAccount = async (req, res) => {
     const middle_name = user.middleName || '';  
     const phone_number1 = user.phoneNumber1 || ''; 
     const state_of_origin = user.stateOfOrigin || '';
-    const gender = user.gender; 
+    const gender = user.gender == "M"? "Male": "Female"; 
     const date_of_birth = user.dateOfBirth || '';
     const residential_address = user.residentialAddress || '';
     const nextOfKinName = "sample";
