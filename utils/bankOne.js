@@ -303,42 +303,37 @@ exports.createBankOneCustomerAndAccount = async (data) => {
   } = data;
 
   try {
-  //   const bankoneRes = await axios.post(
-  //     `http://staging.mybankone.com/BankOneWebAPI/api/Account/CreateCustomerAndAccount/version?version=2&authToken=721893ee-8643-49cf-9a48-b56eb4c8ad8c`,
-  //     {
-  //       TransactionTrackingRef: "trx-123456tw90",
-  //       AccountOpeningTrackingRef: "acct-123456ft90",
-  //       ProductCode: "005",
-  //       LastName: last_name,
-  //       OtherNames: middle_name,
-  //       BVN: bvn,
-  //       PhoneNo: phone_number1,
-  //       Gender: gender,
-  //       PlaceOfBirth: state_of_origin,
-  //       DateOfBirth: date_of_birth,
-  //       Address: residential_address,
-  //       NationalIdentityNo: nin,
-  //       NextOfKinPhoneNo: nextOfnextOfKinPhoneNumber,
-  //       NextOfKinName: nextOfKinName,
-  //       HasSufficientInfoOnAccountInfo: true,
-  //       AccountOfficerCode: "005",
-  //       AccountInformationSource: 1,
-  //       Email: email,
-  //       NotificationPreference: 1,
-  //       TransactionPermission: 1,
-  //       AccountTier: 1,
-  //       FirstName: first_name
-  //     },
-  // );
+    const bankoneRes = await axios.post(
+      `http://staging.mybankone.com/BankOneWebAPI/api/Account/CreateCustomerAndAccount/version?version=2&authToken=721893ee-8643-49cf-9a48-b56eb4c8ad8c`,
+      {
+        TransactionTrackingRef: "trx-123456tw90",
+        AccountOpeningTrackingRef: "acct-123456ft90",
+        ProductCode: "005",
+        LastName: last_name,
+        OtherNames: middle_name,
+        BVN: bvn,
+        PhoneNo: phone_number1,
+        Gender: gender,
+        PlaceOfBirth: state_of_origin,
+        DateOfBirth: date_of_birth,
+        Address: residential_address,
+        NationalIdentityNo: nin,
+        NextOfKinPhoneNo: nextOfnextOfKinPhoneNumber,
+        NextOfKinName: nextOfKinName,
+        HasSufficientInfoOnAccountInfo: true,
+        AccountOfficerCode: "005",
+        AccountInformationSource: 1,
+        Email: email,
+        NotificationPreference: 1,
+        TransactionPermission: 1,
+        AccountTier: 1,
+        FirstName: first_name
+      },
+  );
 
-    // if (!bankoneRes.data.IsSuccessful) {
-    //   console.warn(`BankOne account creation failed: ${bankoneRes.message}`);
-    //   throw new Error("BankOne account creation failed");
-    // } 
-
-    return data;
+    return bankoneRes.data;
     
   } catch (error) {
-    return {message: error.message};
+    return {message: error.bankoneRes?.message};
   }
 }

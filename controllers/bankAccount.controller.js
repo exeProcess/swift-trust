@@ -39,8 +39,8 @@ exports.createBankOneCustomerAndAccount = async (req, res) => {
     const gender = user.gender; 
     const date_of_birth = user.dateOfBirth || '';
     const residential_address = user.residentialAddress || '';
-    const nextOfKinName = "";
-    const nextOfKinPhoneNumber = "";
+    const nextOfKinName = "sample";
+    const nextOfKinPhoneNumber = "08022222222";
     const nin = user.nin || '';
     const email = user.email || '';
 
@@ -59,7 +59,7 @@ exports.createBankOneCustomerAndAccount = async (req, res) => {
       nextOfKinPhoneNumber,
       date_of_birth,
     }
-    // const bankOneCustomerAndAccountCreationResponse = await bankOne.createBankOneCustomerAndAccount(customerAndAccontCreationRequestPayload);
+    const bankOneCustomerAndAccountCreationResponse = await bankOne.createBankOneCustomerAndAccount(customerAndAccontCreationRequestPayload);
 
     return res.status(200).json(customerAndAccontCreationRequestPayload);    
   } catch (err) {
