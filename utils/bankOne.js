@@ -306,30 +306,6 @@ exports.createBankOneCustomerAndAccount = async (data) => {
   try {
     const bankoneRes = await axios.post(
       `http://staging.mybankone.com/BankOneWebAPI/api/Account/CreateCustomerAndAccount/version?version=2&authToken=721893ee-8643-49cf-9a48-b56eb4c8ad8c`,
-      // {
-      //   TransactionTrackingRef: `trx-${Date.now()}-${id}`,
-      //   AccountOpeningTrackingRef: `acct-${Date.now()}-${id}`,
-      //   ProductCode: "005",
-      //   LastName: last_name,
-      //   OtherNames: middle_name,
-      //   BVN: bvn,
-      //   PhoneNo: phone_number1,
-      //   Gender: gender,
-      //   PlaceOfBirth: state_of_origin,
-      //   DateOfBirth: date_of_birth,
-      //   Address: residential_address,
-      //   NationalIdentityNo: nin,
-      //   NextOfKinPhoneNo: nextOfnextOfKinPhoneNumber,
-      //   NextOfKinName: nextOfKinName,
-      //   HasSufficientInfoOnAccountInfo: true,
-      //   AccountOfficerCode: "005",
-      //   AccountInformationSource: 1,
-      //   Email: email,
-      //   NotificationPreference: 1,
-      //   TransactionPermission: 1,
-      //   AccountTier: 1,
-      //   FirstName: first_name
-      // }
       {
         TransactionTrackingRef: "Swift-100304",
         AccountOpeningTrackingRef: "acct-100304",
@@ -338,21 +314,21 @@ exports.createBankOneCustomerAndAccount = async (data) => {
         OtherNames: middle_name,
         BVN: bvn,
         PhoneNo: phone_number1,
-        Gender: "Male",
-        PlaceOfBirth: "Lagos",
-        DateOfBirth: "1990-01-08",
-        Address: "123 Lagos Street, Nigeria",
-        NationalIdentityNo: "A12345678",
-        NextOfKinPhoneNo: "08098765432",
-        NextOfKinName: "Dummy1253NextOfKinName",
+        Gender: gender,
+        PlaceOfBirth: state_of_origin,
+        DateOfBirth: date_of_birth,
+        Address: residential_address,
+        NationalIdentityNo: nin,
+        NextOfKinPhoneNo: nextOfnextOfKinPhoneNumber,
+        NextOfKinName: nextOfKinName,
         HasSufficientInfoOnAccountInfo: true,
         AccountOfficerCode: "005",
         AccountInformationSource: 1,
-        Email: "dummy1253address@example.com",
+        Email: email,
         NotificationPreference: 1,
         TransactionPermission: 1,
         AccountTier: 1,
-        FirstName: "Dummy1253FirstName"
+        FirstName: first_name
       },
   );
 
