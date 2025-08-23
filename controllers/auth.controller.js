@@ -157,29 +157,38 @@ exports.sendOtp = async (req, res) => {
     userData.email = email !== undefined ? email : userData.email;
 
     await userData.save();
-    const sender_id = "swift";
-    const destination = phoneNumber;
-    const priority = true;
-    const otpPayload = {
-      sender_id,
-      destination,
-      channel,
-      priority,
-      verificationCode
-    };
+    
 
-    userData.verificationCode = verificationCode;
-    userData.phoneNumber1 = phoneNumber;
-    userData.email = email !== undefined ? email : userData.email;
+    if(channel == "sms" || channel == "voice" || channel == "whatsapp"){
+      const sender_id = "swift Trust";
+      const destination = phoneNumber;
+      const priority = true;
+      const otpPayload = {
+        sender_id,
+        destination,
+        channel,
+        priority,
+        verificationCode
+      };
+
+      await dojah.sendOtp(otpPayload);
+
+      // if(sendDojahOtp.status != "SMS sent successfully"){
+      //   throw new Error("Error occured sending OTP through Dojah");
+      // }
+    }
+    
+
+    
     await sendEmail(email, verificationCode, 'Your verification code is: ');
-    await dojah.sendOtp(otpPayload);
+    
 
     
 
-    await Wallet.create({
-      userId: user.id,
-      accountNumber: phoneNumber.slice(1)
-    });
+    // await Wallet.create({
+    //   userId: user.id,
+    //   accountNumber: phoneNumber.slice(1)
+    // });
     return res.status(200).json({
       status: 200,
       message: "OTP sent to user's email successfully"

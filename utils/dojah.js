@@ -52,7 +52,7 @@ exports.sendOtp = async (data) => {
       }
     }
 
-    return sendOTPRequest.data.entity.status;
+    return sendOTPRequest.data.entity;
   } catch (error) {
     return { status: 500, error: error.sendOTPRequest?.data || error.message };
   }
