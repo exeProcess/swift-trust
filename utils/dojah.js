@@ -341,4 +341,33 @@ exports.verifyOTP = async (data) => {
   }
 }
 
+exports.fetchBanks = async (req, res) => {
+
+  try {
+    const response = await axios.get(
+      `${https://api.dojah.io/api/v1/general/banks`,{
+        headers: {
+          'AppId': APP_ID,
+          'Authorization': SECRET_KEY
+        }
+      }
+      
+    );
+
+    const result = response.data;
+
+    res.status(200).json({
+      message: 'success',
+      data: result
+    });
+  } catch (error) {
+    console.error('❌ Error making request:', error.response?.data || error.message);
+
+    res.status(500).json({
+      error: 'Failed to connect to server',
+      details: error.response?.data || error.message
+    });
+  }
+};
+
 
