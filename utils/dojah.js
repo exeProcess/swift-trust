@@ -345,7 +345,7 @@ exports.fetchBanks = async (req, res) => {
 
   try {
     const response = await axios.get(
-      `${https://api.dojah.io/api/v1/general/banks`,{
+      `https://api.dojah.io/api/v1/general/banks`,{
         headers: {
           'AppId': APP_ID,
           'Authorization': SECRET_KEY
