@@ -21,9 +21,9 @@ const SECRET_KEY = process.env.DOJAH_API_KEY || 'prod_sk_nLczkaXORcuMuus8M5YSY9a
 //   return axios.get('https://api.dojah.io/api/v1/kyc/bvn/advance', { bvn }, { headers });
 // };
 
-// exports.resolveBankAccount = async (account_number, bank_code) => {
-//   return axios.post('https://api.dojah.io/api/v1/financial-institutions/resolve', { account_number, bank_code }, { headers });
-// };
+exports.resolveBankAccount = async (account_number, bank_code) => {
+   return axios.post('https://api.dojah.io/api/v1/financial-institutions/resolve', { account_number, bank_code }, { headers });
+};
 
 exports.sendOtp = async (data) => {
   const { sender_id, destination, channel, priority, verificationCode } = data;
