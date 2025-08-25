@@ -1,4 +1,4 @@
-const { User, Wallet, sequelize} = require('../models');
+const { User, Wallet, Nok, sequelize} = require('../models');
 const jwt = require('../utils/jwt');
 const sendEmail = require('../utils/otp').sendVerificationEmail;
 const { createBankOneCustomerAndAccount } = require('../controllers/bankAccount.controller');
