@@ -7,7 +7,7 @@ const {getCommercialBankList, getMFBankList, validateAccountNumber, updateAccoun
 exports.addBankAccount = async (req, res) => {
   try {
     const { accountNumber, bankName, bankCode } = req.body;
-    const verify = await dojah.resolveBankAccount(accountNumber, bankCode);
+  
 
     const bank = await BankAccount.create({
       accountNumber,
@@ -15,7 +15,7 @@ exports.addBankAccount = async (req, res) => {
       bankCode,
       userId: req.user.id
     });
-    res.status(201).json({ bank, resolved: verify.data });
+    res.status(201).json({ status:200, message: "Bank added successfully"});
   } catch (err) {
     res.status(400).json({ error: err.response?.data || err.message });
   }
